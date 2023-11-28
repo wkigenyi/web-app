@@ -5,8 +5,8 @@
   window["env"]["fineractApiUrls"] = '';
   window["env"]["fineractApiUrl"]  = '';
 
-  window["env"]["apiProvider"] = '/fineract-provider/api';
-  window["env"]["apiVersion"]  = '/v1';
+  window["env"]["apiProvider"] = '';
+  window["env"]["apiVersion"]  = '';
 
   window["env"]["fineractPlatformTenantId"]  = '';
   window["env"]["fineractPlatformTenantIds"]  = '';
@@ -16,4 +16,11 @@
   window["env"]["supportedLanguages"] = '';
 
   window['env']['preloadClients'] = '';
+
+  // Char delimiter to Export CSV options: ',' ';' '|' ' '
+  window['env']['defaultCharDelimiter'] = '';
+
+  // Display or not the BackEnd Info
+  window['env']['displayBackEndInfo'] = '';
+
 })(this);
