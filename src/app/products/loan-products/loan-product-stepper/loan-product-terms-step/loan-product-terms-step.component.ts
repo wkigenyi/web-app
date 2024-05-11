@@ -1,7 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormArray, UntypedFormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { TooltipPosition } from '@angular/material/tooltip';
 
 import { FormDialogComponent } from 'app/shared/form-dialog/form-dialog.component';
 import { DeleteDialogComponent } from 'app/shared/delete-dialog/delete-dialog.component';
@@ -9,17 +8,22 @@ import { DeleteDialogComponent } from 'app/shared/delete-dialog/delete-dialog.co
 import { FormfieldBase } from 'app/shared/form-dialog/formfield/model/formfield-base';
 import { InputBase } from 'app/shared/form-dialog/formfield/model/input-base';
 import { SelectBase } from 'app/shared/form-dialog/formfield/model/select-base';
+import { ProcessingStrategyService } from '../../services/processing-strategy.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'mifosx-loan-product-terms-step',
   templateUrl: './loan-product-terms-step.component.html',
   styleUrls: ['./loan-product-terms-step.component.scss']
 })
-export class LoanProductTermsStepComponent implements OnInit {
+export class LoanProductTermsStepComponent implements OnInit, OnChanges {
 
   @Input() loanProductsTemplate: any;
 
   loanProductTermsForm: UntypedFormGroup;
+
+  /** Zero Interest control. */
+  zeroInterest = new UntypedFormControl(false);
 
   valueConditionTypeData: any;
   floatingRateData: any;
@@ -29,9 +33,12 @@ export class LoanProductTermsStepComponent implements OnInit {
   repaymentStartDateTypeOptions: any;
 
   displayedColumns: string[] = ['valueConditionType', 'borrowerCycleNumber', 'minValue', 'defaultValue', 'maxValue', 'actions'];
+  isAdvancedTransactionProcessingStrategy = false;
 
   constructor(private formBuilder: UntypedFormBuilder,
-              public dialog: MatDialog) {
+    private processingStrategyService: ProcessingStrategyService,
+    private dialog: MatDialog,
+    private translateService: TranslateService) {
     this.createLoanProductTermsForm();
     this.setConditionalControls();
   }
@@ -83,6 +90,13 @@ export class LoanProductTermsStepComponent implements OnInit {
       this.formBuilder.array(this.loanProductsTemplate.numberOfRepaymentVariationsForBorrowerCycle.map((variation: any) => ({ ...variation, valueConditionType: variation.valueConditionType.id }))));
     this.loanProductTermsForm.setControl('interestRateVariationsForBorrowerCycle',
       this.formBuilder.array(this.loanProductsTemplate.interestRateVariationsForBorrowerCycle.map((variation: any) => ({ ...variation, valueConditionType: variation.valueConditionType.id }))));
+
+    this.zeroInterest.patchValue((this.loanProductsTemplate.minInterestRatePerPeriod === 0 && this.loanProductsTemplate.interestRatePerPeriod === 0 && this.loanProductsTemplate.maxInterestRatePerPeriod === 0));
+
+    this.processingStrategyService.advancedTransactionProcessingStrategy.subscribe((value: boolean) => {
+      this.isAdvancedTransactionProcessingStrategy = value;
+    });
+    this.validateAdvancedPaymentStrategyControls();
   }
 
   createLoanProductTermsForm() {
@@ -103,8 +117,13 @@ export class LoanProductTermsStepComponent implements OnInit {
       'repaymentEvery': ['', Validators.required],
       'repaymentFrequencyType': ['', Validators.required],
       'minimumDaysBetweenDisbursalAndFirstRepayment': [''],
-      'repaymentStartDateType': [1]
+      'repaymentStartDateType': [1],
+      'fixedLength': [null]
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.validateAdvancedPaymentStrategyControls();
   }
 
   setConditionalControls() {
@@ -149,18 +168,37 @@ export class LoanProductTermsStepComponent implements OnInit {
         }
       });
 
-      this.loanProductTermsForm.get('useBorrowerCycle').valueChanges
-        .subscribe(useBorrowerCycle => {
-          if (useBorrowerCycle) {
-            this.loanProductTermsForm.addControl('principalVariationsForBorrowerCycle', this.formBuilder.array([]));
-            this.loanProductTermsForm.addControl('numberOfRepaymentVariationsForBorrowerCycle', this.formBuilder.array([]));
-            this.loanProductTermsForm.addControl('interestRateVariationsForBorrowerCycle', this.formBuilder.array([]));
-          } else {
-            this.loanProductTermsForm.removeControl('principalVariationsForBorrowerCycle');
-            this.loanProductTermsForm.removeControl('numberOfRepaymentVariationsForBorrowerCycle');
-            this.loanProductTermsForm.removeControl('interestRateVariationsForBorrowerCycle');
-          }
-        });
+    this.loanProductTermsForm.get('useBorrowerCycle').valueChanges
+      .subscribe(useBorrowerCycle => {
+        if (useBorrowerCycle) {
+          this.loanProductTermsForm.addControl('principalVariationsForBorrowerCycle', this.formBuilder.array([]));
+          this.loanProductTermsForm.addControl('numberOfRepaymentVariationsForBorrowerCycle', this.formBuilder.array([]));
+          this.loanProductTermsForm.addControl('interestRateVariationsForBorrowerCycle', this.formBuilder.array([]));
+        } else {
+          this.loanProductTermsForm.removeControl('principalVariationsForBorrowerCycle');
+          this.loanProductTermsForm.removeControl('numberOfRepaymentVariationsForBorrowerCycle');
+          this.loanProductTermsForm.removeControl('interestRateVariationsForBorrowerCycle');
+        }
+      });
+
+    this.zeroInterest.valueChanges.subscribe(zeroInterest => {
+      if (zeroInterest) {
+        this.loanProductTermsForm.get('minInterestRatePerPeriod').patchValue(0);
+        this.loanProductTermsForm.get('minInterestRatePerPeriod').disable();
+        this.loanProductTermsForm.get('interestRatePerPeriod').patchValue(0);
+        this.loanProductTermsForm.get('interestRatePerPeriod').disable();
+        this.loanProductTermsForm.get('maxInterestRatePerPeriod').patchValue(0);
+        this.loanProductTermsForm.get('maxInterestRatePerPeriod').disable();
+      } else {
+        this.loanProductTermsForm.get('minInterestRatePerPeriod').patchValue(this.loanProductsTemplate.minInterestRatePerPeriod);
+        this.loanProductTermsForm.get('minInterestRatePerPeriod').enable();
+        this.loanProductTermsForm.get('interestRatePerPeriod').patchValue(this.loanProductsTemplate.interestRatePerPeriod);
+        this.loanProductTermsForm.get('interestRatePerPeriod').enable();
+        this.loanProductTermsForm.get('maxInterestRatePerPeriod').patchValue(this.loanProductsTemplate.maxInterestRatePerPeriod);
+        this.loanProductTermsForm.get('maxInterestRatePerPeriod').enable();
+      }
+      this.validateAdvancedPaymentStrategyControls();
+    });
   }
 
   get principalVariationsForBorrowerCycle(): UntypedFormArray {
@@ -217,9 +255,15 @@ export class LoanProductTermsStepComponent implements OnInit {
 
   getData(formType: string, values?: any) {
     switch (formType) {
-      case 'Principal': return { title: 'Principal by loan cycle', formfields: this.getFormfields(values) };
-      case 'NumberOfRepayments': return { title: 'Number of repayments by loan cycle', formfields: this.getFormfields(values) };
-      case 'NominalInterestRate': return { title: 'Nominal interest rate by loan cycle', formfields: this.getFormfields(values) };
+      case 'Principal': return {
+        title: this.translateService.instant('labels.heading.Principal by loan cycle'), formfields: this.getFormfields(values)
+      };
+      case 'NumberOfRepayments': return {
+        title: this.translateService.instant('labels.heading.Number of Repayments by loan cycle'), formfields: this.getFormfields(values)
+      };
+      case 'NominalInterestRate': return {
+        title: this.translateService.instant('labels.heading.Nominal Interest Rate by loan cycle'), formfields: this.getFormfields(values)
+      };
     }
   }
 
@@ -227,7 +271,7 @@ export class LoanProductTermsStepComponent implements OnInit {
     const formfields: FormfieldBase[] = [
       new SelectBase({
         controlName: 'valueConditionType',
-        label: 'Condition',
+        label: this.translateService.instant('labels.inputs.Condition'),
         value: values ? values.valueConditionType : this.valueConditionTypeData[0].id,
         options: { label: 'value', value: 'id', data: this.valueConditionTypeData },
         required: true,
@@ -235,7 +279,7 @@ export class LoanProductTermsStepComponent implements OnInit {
       }),
       new InputBase({
         controlName: 'borrowerCycleNumber',
-        label: 'Loan Cycle',
+        label: this.translateService.instant('labels.inputs.Loan Cycle'),
         value: values ? values.borrowerCycleNumber : undefined,
         type: 'number',
         required: true,
@@ -243,14 +287,14 @@ export class LoanProductTermsStepComponent implements OnInit {
       }),
       new InputBase({
         controlName: 'minValue',
-        label: 'Minimum',
+        label: this.translateService.instant('labels.inputs.Minimum'),
         value: values ? values.minValue : undefined,
         type: 'number',
         order: 3
       }),
       new InputBase({
         controlName: 'defaultValue',
-        label: 'Default',
+        label: this.translateService.instant('labels.inputs.Default'),
         value: values ? values.defaultValue : undefined,
         type: 'number',
         required: true,
@@ -258,7 +302,7 @@ export class LoanProductTermsStepComponent implements OnInit {
       }),
       new InputBase({
         controlName: 'maxValue',
-        label: 'Maximum',
+        label: this.translateService.instant('labels.inputs.Maximum'),
         value: values ? values.maxValue : undefined,
         type: 'number',
         order: 5
@@ -268,7 +312,23 @@ export class LoanProductTermsStepComponent implements OnInit {
   }
 
   get loanProductTerms() {
-    return this.loanProductTermsForm.value;
+    return this.loanProductTermsForm.getRawValue();
+  }
+
+  isZeroInterest(): boolean {
+    return this.zeroInterest.value;
+  }
+
+  allowFixedLength(): boolean {
+    return this.isAdvancedTransactionProcessingStrategy && this.isZeroInterest();
+  }
+
+  private validateAdvancedPaymentStrategyControls(): void {
+    if (this.allowFixedLength()) {
+      this.loanProductTermsForm.get('fixedLength').patchValue(this.loanProductsTemplate.fixedLength || null);
+    } else {
+      this.loanProductTermsForm.get('fixedLength').patchValue(null);
+    }
   }
 
 }

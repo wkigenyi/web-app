@@ -60,15 +60,6 @@
     <table>
       <tbody>
         <tr>
-          <td>{{"labels.inputs.External Id" | translate }}</td>
-          <td>
-            <span *ngIf="recurringDepositsAccountData.externalId">
-              <mifosx-external-identifier externalId="{{recurringDepositsAccountData.externalId}}" completed="true"></mifosx-external-identifier>
-            </span>
-            <span *ngIf="!recurringDepositsAccountData.externalId"> {{"labels.inputs.Not Available" | translate}} </span>
-          </td>
-        </tr>
-        <tr>
           <td>{{"labels.inputs.Principal Amount" | translate }}</td>
           <td class="r-amount">
             <span>{{recurringDepositsAccountData.depositAmount | currency:currency.code:'symbol-narrow':'1.2-2'}}</span>
@@ -266,7 +257,7 @@
           <td><span>{{recurringDepositsAccountData.interestCalculationType.value}}</span></td>
         </tr>
         <tr>
-          <td># {{"labels.inputs.Days in Year" | translate }}</td>
+          <td>{{"labels.inputs.Days in Year" | translate }}</td>
           <td><span>{{recurringDepositsAccountData.interestCalculationDaysInYearType.value}}</span></td>
         </tr>
         <tr *ngIf="recurringDepositsAccountData.preClosurePenalApplicable">
@@ -295,7 +286,7 @@
           <td><span>{{recurringDepositsAccountData.interestCalculationType.value}}</span></td>
         </tr>
         <tr>
-          <td># {{"labels.inputs.Days in Year" | translate }}</td>
+          <td>{{"labels.inputs.Days in Year" | translate }}</td>
           <td><span>{{recurringDepositsAccountData.interestCalculationDaysInYearType.value}}</span></td>
         </tr>
         <tr *ngIf="recurringDepositsAccountData.preClosurePenalApplicable">

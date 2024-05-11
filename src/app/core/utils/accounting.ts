@@ -9,7 +9,24 @@ import { OptionData } from 'app/shared/models/option-data.model';
   export class Accounting {
 
     public getAccountingRulesForSavings(): string[] {
-        return ['None', 'Cash', 'Accrual (periodic)'];
+        return ['NONE', 'Cash', 'Accrual (periodic)'];
+    }
+
+    public getAccountingRulesForLoans(): string[] {
+        return ['NONE', 'Cash', 'Accrual (periodic)', 'Accrual (upfront)'];
+    }
+
+    public getAccountRuleName(value: string): string {
+        if (['ACCRUAL PERIODIC', 'ACCRUAL (PERIODIC)'].includes(value)) {
+            return 'Accrual (periodic)';
+        } else if (['ACCRUAL UPFRONT', 'ACCRUAL (UPFRONT)'].includes(value)) {
+            return 'Accrual (upfront)';
+        } else if (value === 'CASH BASED') {
+            return 'Cash';
+        } else if (value === 'NONE') {
+            return 'NONE';
+        }
+        return '';
     }
 
     public isNoneAccounting(accountingRule: OptionData): boolean {

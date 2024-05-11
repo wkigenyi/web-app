@@ -54,16 +54,29 @@
     <mifosx-language-selector class="ml-1 language" fxHide.lt-md></mifosx-language-selector>
   </div>
 
+  <button mat-icon-button [matMenuTriggerFor]="languageMenu">
+    <mat-icon class="lg-icon">language</mat-icon>
+  </button>
+
   <div #notifications>
     <mifosx-notifications-tray fxHide.lt-md></mifosx-notifications-tray>
   </div>
 
+  <div #themeToggle>
+    <mifosx-theme-toggle></mifosx-theme-toggle>
+  </div>
+  
   <div #appMenu>
     <button mat-icon-button class="ml-1 img-button" [matMenuTriggerFor]="applicationMenu">
       <img src="assets/images/user_placeholder.png">
     </button>
   </div>
 </mat-toolbar>
+
+<!-- Language selector menu for small screen view -->
+<mat-menu #languageMenu="matMenu">
+    <mifosx-language-selector class="ml-1 language"></mifosx-language-selector>
+</mat-menu>
 
 <mat-menu #institutionMenu="matMenu" [overlapTrigger]="false">
   <button mat-menu-item routerLink="/clients">{{'labels.menus.Clients' | translate}}</button>

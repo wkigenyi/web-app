@@ -46,6 +46,8 @@ import { StepperButtonsComponent } from './steppers/stepper-buttons/stepper-butt
 import { GlAccountSelectorComponent } from './accounting/gl-account-selector/gl-account-selector.component';
 import { GlAccountDisplayComponent } from './accounting/gl-account-display/gl-account-display.component';
 import { ViewSavingsAccountingDetailsComponent } from './accounting/view-savings-accounting-details/view-savings-accounting-details.component';
+import { ThemeToggleComponent } from './theme-toggle/theme-toggle.component';
+import { LongTextComponent } from './long-text/long-text.component';
 
 /**
  * Shared Module
@@ -98,7 +100,9 @@ import { ViewSavingsAccountingDetailsComponent } from './accounting/view-savings
     StepperButtonsComponent,
     GlAccountSelectorComponent,
     GlAccountDisplayComponent,
-    ViewSavingsAccountingDetailsComponent
+    ViewSavingsAccountingDetailsComponent,
+    ThemeToggleComponent,
+    LongTextComponent
   ],
   exports: [
     FileUploadComponent,
@@ -130,6 +134,8 @@ import { ViewSavingsAccountingDetailsComponent } from './accounting/view-savings
     GlAccountSelectorComponent,
     GlAccountDisplayComponent,
     ViewSavingsAccountingDetailsComponent,
+    ThemeToggleComponent,
+    LongTextComponent
   ]
 })
 export class SharedModule { }
