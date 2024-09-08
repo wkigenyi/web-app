@@ -18,7 +18,7 @@ export const environment = {
   apiVersion: window['env']['apiVersion'] || '/v1',
   serverUrl: '',
   oauth: {
-    enabled: false,  // For connecting to Mifos X using OAuth2 Authentication change the value to true
+    enabled: false,  // For connecting to Mifos/Fineract X using OAuth2 Authentication change the value to true
     serverUrl: ''
   },
   warningDialog: {
