@@ -3,7 +3,7 @@ import { DelinquencyBucket, LoanProduct } from '../../models/loan-product.model'
 import { AccountingMapping, Charge, ChargeToIncomeAccountMapping, GLAccount, PaymentChannelToFundSourceMapping, PaymentType, PaymentTypeOption } from '../../../../shared/models/general.model';
 import { AdvancePaymentAllocationData, CreditAllocation, PaymentAllocation } from '../../loan-product-stepper/loan-product-payment-strategy-step/payment-allocation-model';
 import { LoanProducts } from '../../loan-products';
-import { CodeName, OptionData } from '../../../../shared/models/option-data.model';
+import { CodeName, OptionData, StringEnumOptionData } from '../../../../shared/models/option-data.model';
 import { Accounting } from 'app/core/utils/accounting';
 
 @Component({
@@ -19,6 +19,7 @@ export class LoanProductSummaryComponent implements OnInit, OnChanges {
   @Input() useDueForRepaymentsConfigurations: boolean;
   @Input() paymentAllocations: PaymentAllocation | null;
   @Input() creditAllocations: CreditAllocation | null;
+  @Input() supportedInterestRefundTypes: StringEnumOptionData[] | null;
 
   variationsDisplayedColumns: string[] = ['valueConditionType', 'borrowerCycleNumber', 'minValue', 'defaultValue', 'maxValue'];
   chargesDisplayedColumns: string[] = ['name', 'chargeCalculationType', 'amount', 'chargeTimeType'];
@@ -97,6 +98,7 @@ export class LoanProductSummaryComponent implements OnInit, OnChanges {
           'overpaymentLiabilityAccount': this.glAccountLookUp(this.loanProduct.overpaymentLiabilityAccountId, liabilityAccountData),
         };
 
+        this.paymentChannelToFundSourceMappings = [];
         if (this.loanProduct.paymentChannelToFundSourceMappings?.length > 0) {
           const paymentTypesData = this.loanProductsTemplate.paymentTypeOptions || [];
           this.loanProduct.paymentChannelToFundSourceMappings.forEach((m: any) => {
@@ -329,6 +331,10 @@ export class LoanProductSummaryComponent implements OnInit, OnChanges {
 
   getAccountingRuleName(value: string): string {
     return this.accounting.getAccountRuleName(value.toUpperCase());
+  }
+
+  mapHumanReadableValueStringEnumOptionDataList(incomingParameter: StringEnumOptionData[]): string[] {
+    return incomingParameter.map(v => v.value);
   }
 
 }
