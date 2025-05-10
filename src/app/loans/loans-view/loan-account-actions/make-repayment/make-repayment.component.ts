@@ -65,7 +65,6 @@ export class MakeRepaymentComponent implements OnInit {
     if (this.dataObject.currency) {
       this.currency = this.dataObject.currency;
     }
-    this.command = this.dataObject.type.code.split('.')[1];
   }
 
   /**
@@ -82,12 +81,22 @@ export class MakeRepaymentComponent implements OnInit {
       note: ''
     });
 
-    this.repaymentLoanForm.addControl(
-      'transactionAmount',
-      new UntypedFormControl('', [
-        Validators.required,
-        Validators.min(0.001)])
-    );
+    if (this.isCapitalizedIncome()) {
+      this.repaymentLoanForm.addControl(
+        'transactionAmount',
+        new UntypedFormControl('', [
+          Validators.required,
+          Validators.min(0.001),
+          Validators.max(this.dataObject.amount)])
+      );
+    } else {
+      this.repaymentLoanForm.addControl(
+        'transactionAmount',
+        new UntypedFormControl('', [
+          Validators.required,
+          Validators.min(0.001)])
+      );
+    }
   }
 
   setRepaymentLoanDetails() {
