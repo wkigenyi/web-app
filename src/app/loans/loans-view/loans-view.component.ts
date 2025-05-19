@@ -17,6 +17,7 @@ import { Currency } from 'app/shared/models/general.model';
 import { DelinquencyPausePeriod } from '../models/loan-account.model';
 import { TranslateService } from '@ngx-translate/core';
 import { LoanTransaction } from 'app/products/loan-products/models/loan-account.model';
+import { OptionData } from 'app/shared/models/option-data.model';
 
 @Component({
   selector: 'mifosx-loans-view',
@@ -46,6 +47,7 @@ export class LoansViewComponent implements OnInit {
 
   loanDelinquencyClassificationStyle = '';
   loanStatus: LoanStatus;
+  loanSubStatus: OptionData | null = null;
   currency: Currency;
   loanReAged = false;
   loanReAmortized = false;
@@ -63,6 +65,7 @@ export class LoansViewComponent implements OnInit {
         this.loanDatatables = data.loanDatatables;
         this.loanDisplayArrearsDelinquency = data.loanArrearsDelinquencyConfig.value || 0;
         this.loanStatus = this.loanDetailsData.status;
+        this.loanSubStatus = this.loanDetailsData.subStatus === undefined ? null : this.loanDetailsData.subStatus;
         this.currency = this.loanDetailsData.currency;
         if (this.loanStatus.active) {
           this.loanDetailsData.transactions.forEach((lt: LoanTransaction) => {
@@ -75,6 +78,7 @@ export class LoansViewComponent implements OnInit {
             }
           });
         }
+        this.setConditionalButtons();
       }
     );
     this.loanId = this.route.snapshot.params['loanId'];
@@ -90,6 +94,8 @@ export class LoansViewComponent implements OnInit {
     });
     this.recalculateInterest = this.loanDetailsData.recalculateInterest || true;
     this.status = this.loanDetailsData.status.value;
+    this.loanStatus = this.loanDetailsData.status;
+    this.loanSubStatus = this.loanDetailsData.subStatus === undefined ? null : this.loanDetailsData.subStatus;
     if (this.loanStatus.active && this.loanDetailsData.multiDisburseLoan) {
       if (this.loanDetailsData && this.loanDetailsData.transactions) {
         this.loanDetailsData.transactions.forEach((transaction: any) => {
@@ -112,7 +118,7 @@ export class LoansViewComponent implements OnInit {
 
   // Defines the buttons based on the status of the loan account
   setConditionalButtons() {
-    this.buttonConfig = new LoansAccountButtonConfiguration(this.status);
+    this.buttonConfig = new LoansAccountButtonConfiguration(this.status, this.loanSubStatus);
 
     if (this.status === 'Submitted and pending approval') {
       this.buttonConfig.addOption({
@@ -345,7 +351,30 @@ export class LoansViewComponent implements OnInit {
     if (this.loanDetailsData.chargedOff) {
       return 'loanStatusType.chargeoff';
     }
+    if (this.isContractTermination(this.loanSubStatus)) {
+      return 'loanSubStatusType.contractTermination';
+    }
+    if (this.loanDetailsData.inArrears) {
+      return 'loanStatusType.activeOverdue';
+    }
     return this.loanDetailsData.status.code;
+  }
+
+  loanStatusTooltip() {
+    if (this.loanDetailsData.chargedOff) {
+      return 'Chargeoff';
+    }
+    if (this.loanDetailsData.inArrears) {
+      return 'activeOverdue';
+    }
+    return this.loanDetailsData.status.code;
+  }
+
+  loanSubStatusTooltip() {
+    if (this.isContractTermination(this.loanSubStatus)) {
+      return 'contractTermination';
+    }
+    return '';
   }
 
   /**
@@ -374,5 +403,12 @@ export class LoansViewComponent implements OnInit {
     this.router
       .navigateByUrl(`/clients/${clientId}/loans-accounts`, { skipLocationChange: true })
       .then(() => this.router.navigate([url]));
+  }
+
+  private isContractTermination(substatus: OptionData): boolean {
+    if (substatus == null) {
+      return false;
+    }
+    return substatus.code === 'loanSubStatus.loanSubStatusType.contractTermination';
   }
 }

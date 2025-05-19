@@ -38,6 +38,7 @@ export class PrepayLoanComponent implements OnInit {
 
   prepayData: any;
   currency: Currency | null = null;
+  contractTermination: boolean;
 
   /**
    * @param {FormBuilder} formBuilder Form Builder.
@@ -62,10 +63,13 @@ export class PrepayLoanComponent implements OnInit {
    * and initialize with the required values
    */
   ngOnInit() {
+    this.prepayData = this.dataObject;
+    this.contractTermination = this.dataObject['actionName'] == 'Contract Termination';
     this.maxDate = this.settingsService.businessDate;
     this.createprepayLoanForm();
-    this.setPrepayLoanDetails();
-    this.prepayData = this.dataObject;
+    if (!this.contractTermination) {
+      this.setPrepayLoanDetails();
+    }
     if (this.dataObject.currency) {
       this.currency = this.dataObject.currency;
     }
@@ -75,19 +79,26 @@ export class PrepayLoanComponent implements OnInit {
    * Creates the prepay loan form.
    */
   createprepayLoanForm() {
-    this.prepayLoanForm = this.formBuilder.group({
-      transactionDate: [
-        new Date(),
-        Validators.required
-      ],
-      transactionAmount: [
-        '',
-        Validators.required
-      ],
-      externalId: [''],
-      paymentTypeId: [''],
-      note: ['']
-    });
+    if (this.contractTermination) {
+      this.prepayLoanForm = this.formBuilder.group({
+        externalId: [''],
+        note: ['']
+      });
+    } else {
+      this.prepayLoanForm = this.formBuilder.group({
+        transactionDate: [
+          new Date(),
+          Validators.required
+        ],
+        transactionAmount: [
+          '',
+          Validators.required
+        ],
+        externalId: [''],
+        paymentTypeId: [''],
+        note: ['']
+      });
+    }
   }
 
   /**
@@ -133,7 +144,7 @@ export class PrepayLoanComponent implements OnInit {
   /**
    * Submits the prepay loan form
    */
-  submit() {
+  submitRepayment() {
     const prepayLoanFormData = this.prepayLoanForm.value;
     const locale = this.settingsService.language.code;
     const dateFormat = this.settingsService.dateFormat;
@@ -150,5 +161,22 @@ export class PrepayLoanComponent implements OnInit {
     this.loanService.submitLoanActionButton(this.loanId, data, 'repayment').subscribe((response: any) => {
       this.router.navigate(['../../general'], { relativeTo: this.route });
     });
+  }
+
+  submitContractTermination() {
+    const data = {
+      ...this.prepayLoanForm.value
+    };
+    this.loanService.loanActionButtons(this.loanId, 'contractTermination', data).subscribe((response: any) => {
+      this.router.navigate(['../../general'], { relativeTo: this.route });
+    });
+  }
+
+  submit() {
+    if (this.contractTermination) {
+      this.submitContractTermination();
+    } else {
+      this.submitRepayment();
+    }
   }
 }
