@@ -32,7 +32,7 @@
 
   <div [hidden]="!existsClientsToFilter">
     <div *ngIf="isLoading">
-      <div class="loading"></div>
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </div>
     <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortChanged($event)">
       <!-- Name Column -->

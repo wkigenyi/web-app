@@ -126,11 +126,12 @@ export class ManageSchedulerJobsComponent implements OnInit, AfterViewInit {
    * Initializes the data source, paginator and sorter for manage scheduler jobs table.
    */
   setJobs() {
-    this.systemService.getJobs().subscribe((jobData: any) => {
-      this.dataSource = new MatTableDataSource(jobData);
+    this.systemService.getJobs().subscribe((jobData: any[]) => {
+      const sortedData = jobData.sort((a, b) => b.active - a.active || this.sortByName(a, b));
+      this.dataSource = new MatTableDataSource(sortedData);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-      this.jobsCounter = jobData.length;
+      this.jobsCounter = sortedData.length;
       this.selection.clear();
       this.dataSource.sortingDataAccessor = (item, property) => {
         switch (property) {
@@ -147,6 +148,18 @@ export class ManageSchedulerJobsComponent implements OnInit, AfterViewInit {
         }
       };
     });
+  }
+
+  sortByName(a: any, b: any): number {
+    // Sort on name
+    if (a.displayName < b.displayName) {
+      return -1;
+    }
+    if (a.displayName > b.displayName) {
+      return 1;
+    }
+    // Both idential, return 0
+    return 0;
   }
 
   getScheduler() {
@@ -302,5 +315,16 @@ export class ManageSchedulerJobsComponent implements OnInit, AfterViewInit {
         dialog.close();
       }
     });
+  }
+
+  jobWithError(job: any): boolean {
+    return !(job.lastRunHistory && job.lastRunHistory.status === 'success');
+  }
+
+  rowColor(job: any): string {
+    if (this.jobWithError(job)) {
+      return 'job-error';
+    }
+    return '';
   }
 }

@@ -1,3 +1,8 @@
+.container {
+  min-width: 84rem;
+  width: 84rem;
+}
+
 table {
   width: 100%;
 
@@ -24,6 +29,10 @@ table {
 
 .errorlog {
   color: #ffa726;
+}
+
+.job-error {
+  background-color: #f7dbb7;
 }
 
 .suspend {

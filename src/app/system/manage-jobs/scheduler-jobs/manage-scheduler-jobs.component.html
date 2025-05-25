@@ -24,7 +24,7 @@
     </mat-form-field>
   </div>
 
-  <div class="space-top layout-row gap-20percent">
+  <div class="space-top layout-row gap-10px">
     <button mat-raised-button color="primary" (click)="openRunSelectedJobsDialog()" [disabled]="!isAnyJobSelected()">
       <fa-icon icon="play" class="m-r-10"></fa-icon>
       {{ 'labels.buttons.Run Selected Jobs' | translate }}
@@ -135,7 +135,7 @@
             mat-icon-button
             class="errorlog"
             (click)="showErrorLog(job)"
-            *ngIf="!(job.lastRunHistory && job.lastRunHistory.status === 'success')"
+            *ngIf="jobWithError(job)"
             matTooltip="{{ 'labels.inputs.Error Log' | translate }}"
             matTooltipPosition="right"
           >
@@ -145,14 +145,14 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns" class="select-row"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" class="select-row" ngClass="{{ rowColor(row) }}"></tr>
     </table>
 
     <mat-paginator [pageSizeOptions]="[50, 100]" showFirstLastButtons></mat-paginator>
   </div>
 </div>
 
-<div class="container space-top layout-row gap-20percent">
+<div class="container space-top layout-row gap-10px">
   <button mat-raised-button color="primary" (click)="openRunSelectedJobsDialog()" [disabled]="!isAnyJobSelected()">
     <fa-icon icon="play" class="m-r-10"></fa-icon>
     {{ 'labels.buttons.Run Selected Jobs' | translate }}
