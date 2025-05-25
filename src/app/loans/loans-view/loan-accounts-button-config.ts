@@ -1,3 +1,5 @@
+import { OptionData } from 'app/shared/models/option-data.model';
+
 /** Recurring Deposits Account Buttons Configuration */
 export class LoansAccountButtonConfiguration {
   optionArray: {
@@ -16,8 +18,8 @@ export class LoansAccountButtonConfiguration {
     taskPermissionName?: string;
   }[];
 
-  constructor(status: string) {
-    this.setOptions(status);
+  constructor(status: string, substatus: OptionData) {
+    this.setOptions(status, substatus);
     this.setButtons(status);
   }
 
@@ -154,7 +156,7 @@ export class LoansAccountButtonConfiguration {
     }
   }
 
-  setOptions(status: string) {
+  setOptions(status: string, substatus: OptionData) {
     switch (status) {
       case 'Active':
         this.optionArray = [
@@ -199,6 +201,12 @@ export class LoansAccountButtonConfiguration {
             taskPermissionName: 'SALE_LOAN'
           }
         ];
+        if (!this.isContractTermination(substatus)) {
+          this.optionArray.push({
+            name: 'Contract Termination',
+            taskPermissionName: 'CONTRACT_TERMINATION_LOAN'
+          });
+        }
         this.optionPaymentArray = [
           {
             name: 'Goodwill Credit',
@@ -280,5 +288,12 @@ export class LoansAccountButtonConfiguration {
 
   addButton(option: { name: string; icon: string; taskPermissionName?: string }) {
     this.buttonsArray.push(option);
+  }
+
+  private isContractTermination(substatus: OptionData): boolean {
+    if (substatus == null) {
+      return false;
+    }
+    return substatus.code === 'loanSubStatus.loanSubStatusType.contractTermination';
   }
 }

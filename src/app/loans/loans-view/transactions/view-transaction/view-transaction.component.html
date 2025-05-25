@@ -22,7 +22,7 @@
         <div class="flex-100" [ngClass]="loanTransactionColor()"></div>
 
         <div class="flex-50 mat-body-strong">
-          {{ 'Transaction Id' | translate }}
+          {{ 'Transaction Id' | translateKey: 'catalogs' }}
         </div>
 
         <div class="flex-50">
@@ -30,7 +30,7 @@
         </div>
 
         <div class="flex-50 mat-body-strong" *ngIf="transactionData.toLoanTransactionRelation">
-          {{ 'Repayment Transaction' | translate }}
+          {{ 'Repayment Transaction' | translateKey: 'catalogs' }}
         </div>
 
         <div class="flex-50" *ngIf="transactionData.toLoanTransactionRelation">
@@ -40,15 +40,15 @@
         </div>
 
         <div class="flex-50 mat-body-strong">
-          {{ 'Type' | translate }}
+          {{ 'Type' | translateKey: 'catalogs' }}
         </div>
 
         <div class="flex-50">
-          {{ transactionData.type.value }}
+          {{ transactionData.type.value | translateKey: 'catalogs' }}
         </div>
 
         <div class="flex-50 mat-body-strong">
-          {{ 'Transaction Date' | translate }}
+          {{ 'Transaction Date' | translateKey: 'catalogs' }}
         </div>
 
         <div class="flex-50">
@@ -56,7 +56,7 @@
         </div>
 
         <div class="flex-50 mat-body-strong">
-          {{ 'Currency' | translate }}
+          {{ 'Currency' | translateKey: 'catalogs' }}
         </div>
 
         <div class="flex-50">
@@ -64,7 +64,7 @@
         </div>
 
         <div class="flex-50 mat-body-strong">
-          {{ 'Amount' | translate }}
+          {{ 'Amount' | translateKey: 'catalogs' }}
         </div>
 
         <div class="flex-50">
@@ -108,7 +108,7 @@
             <ng-container matColumnDef="amount">
               <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Amount' | translate }}</th>
               <td mat-cell *matCellDef="let transactionRel">
-                {{ transactionRel.amount | currency }} {{ transactionData.currency.code }}
+                {{ transactionRel.amount | currency: transactionData.currency.code : 'symbol-narrow' : '1.2-2' }}
               </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

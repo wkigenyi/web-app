@@ -22,9 +22,7 @@
                 <i
                   class="fa fa-stop"
                   matTooltip="{{ 'labels.status.' + loanDetailsData.status.value | translate }}"
-                  [ngClass]="
-                    loanDetailsData.inArrears ? 'status-active-overdue' : (iconLoanStatusColor() | statusLookup)
-                  "
+                  [ngClass]="iconLoanStatusColor() | statusLookup"
                 ></i>
                 <span class="m-r-5">{{ 'labels.heading.Loan Product' | translate }} :</span>
                 <span class="m-r-5"

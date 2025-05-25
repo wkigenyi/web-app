@@ -52,6 +52,7 @@ export class LoanAccountActionsComponent {
     'Interest Payment Waiver': boolean;
     'Add Interest Pause': boolean;
     'Capitalized Income': boolean;
+    'Contract Termination': boolean;
   } = {
     Close: false,
     'Undo Approval': false,
@@ -88,7 +89,8 @@ export class LoanAccountActionsComponent {
     'Re-Amortize': false,
     'Interest Payment Waiver': false,
     'Add Interest Pause': false,
-    'Capitalized Income': false
+    'Capitalized Income': false,
+    'Contract Termination': false
   };
 
   actionButtonData: any;
@@ -119,5 +121,7 @@ export class LoanAccountActionsComponent {
       }
       this.actions[this.actionName as keyof typeof this.actions] = true;
     });
+
+    this.actionButtonData['actionName'] = this.actionName;
   }
 }

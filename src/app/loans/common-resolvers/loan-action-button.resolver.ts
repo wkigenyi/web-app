@@ -75,6 +75,8 @@ export class LoanActionButtonResolver {
       return this.loansService.getLoanActionTemplate(loanId, 'charge-off');
     } else if (loanActionButton === 'Capitalized Income') {
       return this.loansService.getLoanActionTemplate(loanId, 'capitalizedIncome');
+    } else if (loanActionButton === 'Contract Termination') {
+      return this.loansService.getLoanActionTemplate(loanId, 'contractTermination');
     } else {
       return undefined;
     }

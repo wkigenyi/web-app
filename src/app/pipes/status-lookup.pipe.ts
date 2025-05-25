@@ -16,6 +16,8 @@ export class StatusLookupPipe implements PipeTransform {
       'loanStatusType.active': 'status-active',
       'loanStatusType.overpaid': 'status-overpaid',
       'loanStatusType.chargeoff': 'status-chargeoff',
+      'loanStatusType.activeOverdue': 'status-active-overdue',
+      'loanSubStatusType.contractTermination': 'subStatus-contract-termination',
       'savingsAccountStatusType.submitted.and.pending.approval': 'status-pending',
       'savingsAccountStatusType.approved': 'status-approved',
       'savingsAccountStatusType.active': 'status-active',
