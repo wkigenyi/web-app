@@ -99,7 +99,7 @@ export class GlobalConfigurationsTabComponent implements OnInit, AfterViewInit {
    */
   toggleStatus(configuration: any) {
     this.systemService
-      .updateConfiguration(configuration.id, { enabled: !configuration.enabled })
+      .updateConfiguration(configuration.id, { enabled: configuration.enabled })
       .subscribe((response: any) => {
         configuration.enabled = response.changes.enabled;
         if (configuration.name === SettingsService.businessDateConfigName) {

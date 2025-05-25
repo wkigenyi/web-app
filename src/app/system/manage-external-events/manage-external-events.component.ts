@@ -56,7 +56,7 @@ export class ManageExternalEventsComponent implements OnInit {
    * Enables/Disables respective event
    */
   toggleStatus(event: any) {
-    this.externalEventConfigurations[event.type] = !event.enabled;
+    this.externalEventConfigurations[event.type] = event.enabled;
     this.existAnyUpdate = true;
   }
 

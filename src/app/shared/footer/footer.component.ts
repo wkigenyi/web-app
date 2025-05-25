@@ -1,5 +1,5 @@
 /** Angular Imports */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Alert } from 'app/core/alert/alert.model';
 import { AlertService } from 'app/core/alert/alert.service';
 import { AuthenticationService } from 'app/core/authentication/authentication.service';
@@ -21,6 +21,8 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./footer.component.scss']
 })
 export class FooterComponent implements OnInit, OnDestroy {
+  @Input() styleClass: string = '';
+
   /** Mifos X version. */
   versions: any = {
     mifos: environment.version,

@@ -129,10 +129,12 @@ export class AuditTrailsComponent implements OnInit, AfterViewInit {
   /** Checker form control. */
   checker = new UntypedFormControl();
 
+  isLoading = false;
+
   /** Paginator for audit trails table. */
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   /** Sorter for audit trails table. */
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatSort) sort: MatSort;
 
   /**
    * Retrieves the audit trail search template data from `resolve`.
@@ -161,6 +163,7 @@ export class AuditTrailsComponent implements OnInit, AfterViewInit {
     this.setFilteredActions();
     this.setFilteredEntities();
     this.setFilteredCheckers();
+    this.dataSource = new AuditTrailsDataSource(this.systemService);
     this.getAuditTrails();
   }
 
@@ -264,7 +267,7 @@ export class AuditTrailsComponent implements OnInit, AfterViewInit {
       )
       .subscribe();
 
-    this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+    //this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
     merge(this.sort.sortChange, this.paginator.page)
       .pipe(tap(() => this.loadAuditTrailsPage()))
@@ -275,14 +278,14 @@ export class AuditTrailsComponent implements OnInit, AfterViewInit {
    * Initializes the data source for audit trails table and loads the first page.
    */
   getAuditTrails() {
-    this.dataSource = new AuditTrailsDataSource(this.systemService);
-    this.dataSource.getAuditTrails(
-      this.filterAuditTrailsBy,
-      this.sort.active,
-      this.sort.direction,
-      this.paginator.pageIndex,
-      this.paginator.pageSize
-    );
+    this.isLoading = true;
+    const isActive: string = this.sort ? this.sort.active : '';
+    const direction: string = this.sort ? this.sort.direction : '';
+    const pageIndex: number = this.paginator ? this.paginator.pageIndex : 0;
+    const pageSize: any = this.paginator ? this.paginator.pageSize : 20;
+
+    this.dataSource.getAuditTrails(this.filterAuditTrailsBy, isActive, direction, pageIndex, pageSize);
+    this.isLoading = false;
   }
 
   /**
@@ -292,13 +295,7 @@ export class AuditTrailsComponent implements OnInit, AfterViewInit {
     if (!this.sort.direction) {
       delete this.sort.active;
     }
-    this.dataSource.getAuditTrails(
-      this.filterAuditTrailsBy,
-      this.sort.active,
-      this.sort.direction,
-      this.paginator.pageIndex,
-      this.paginator.pageSize
-    );
+    this.getAuditTrails();
   }
 
   /**

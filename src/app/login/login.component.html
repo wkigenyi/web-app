@@ -43,7 +43,6 @@
     <div class="layout-row-reverse flex-auto">
       <mifosx-language-selector class="p-r-10 p-t-10"></mifosx-language-selector>
       <mifosx-theme-toggle class="p-r-10 p-t-10"></mifosx-theme-toggle>
-      <div class="flex-fill"></div>
       <mifosx-server-selector
         class="p-t-10"
         *ngIf="!environment.production && environment.allowServerSwitch"
@@ -56,9 +55,7 @@
     </div>
 
     <!-- Tenant Identifier Name -->
-    <div class="layout-row align-center-center flex-auto" *ngIf="displayTenantSelector()">
-      <mifosx-tenant-selector></mifosx-tenant-selector>
-    </div>
+    <mifosx-tenant-selector *ngIf="displayTenantSelector()"></mifosx-tenant-selector>
 
     <!--
       Type of Form:
@@ -67,35 +64,37 @@
         Two Factor Authentication
         Forgot Password (TODO: Decision to be taken on providing this feature.)
     -->
-    <div class="layout-row align-center-start flex-3-auto">
-      <mifosx-login-form *ngIf="!resetPassword && !twoFactorAuthenticationRequired"></mifosx-login-form>
+    <mifosx-login-form *ngIf="!resetPassword && !twoFactorAuthenticationRequired"></mifosx-login-form>
+
+    <div class="layout-row m-t-20">
       <mifosx-reset-password *ngIf="resetPassword"></mifosx-reset-password>
       <mifosx-two-factor-authentication *ngIf="twoFactorAuthenticationRequired"></mifosx-two-factor-authentication>
     </div>
-
-    <!-- Contact Information/Resources (hidden on smaller screens) -->
-    <mat-list class="information-list align-items-center custom-horizontal-list hide-lt-lg">
-      <mat-list-item
-        ><button mat-button [matMenuTriggerFor]="resourcesMenu">
-          {{ 'labels.links.Resources' | translate }}
-        </button></mat-list-item
-      >
-      <mat-list-item
-        ><button mat-button [matMenuTriggerFor]="communityMenu">
-          {{ 'labels.links.Community' | translate }}
-        </button></mat-list-item
-      >
-      <mat-list-item
-        ><button mat-button [matMenuTriggerFor]="contributeMenu">
-          {{ 'labels.links.Contribute' | translate }}
-        </button></mat-list-item
-      >
-    </mat-list>
+    <div class="layout-row m-t-20">
+      <!-- Contact Information/Resources (hidden on smaller screens) -->
+      <mat-list class="information-list align-items-center custom-horizontal-list hide-lt-lg">
+        <mat-list-item
+          ><button mat-button [matMenuTriggerFor]="resourcesMenu">
+            {{ 'labels.links.Resources' | translate }}
+          </button></mat-list-item
+        >
+        <mat-list-item
+          ><button mat-button [matMenuTriggerFor]="communityMenu">
+            {{ 'labels.links.Community' | translate }}
+          </button></mat-list-item
+        >
+        <mat-list-item
+          ><button mat-button [matMenuTriggerFor]="contributeMenu">
+            {{ 'labels.links.Contribute' | translate }}
+          </button></mat-list-item
+        >
+      </mat-list>
+    </div>
 
     <!-- Footer -->
-    <mifosx-footer></mifosx-footer>
+    <mifosx-footer [styleClass]="'m-t-90'"></mifosx-footer>
 
-    <div class="layout-row align-end m-b-20 m-r-10">
+    <div class="layout-row m-b-20 m-r-10" align="end">
       <a (click)="reloadSettings()"><fa-icon icon="refresh"></fa-icon></a>
     </div>
   </div>

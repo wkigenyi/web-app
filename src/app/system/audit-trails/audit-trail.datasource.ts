@@ -39,6 +39,8 @@ export class AuditTrailsDataSource implements DataSource<any> {
     pageIndex: number = 0,
     limit: number = 10
   ) {
+    console.log(pageIndex);
+    console.log(limit);
     this.auditTrailsSubject.next([]);
     this.systemService
       .getAuditTrails(filterBy, orderBy, sortOrder, pageIndex * limit, limit)
