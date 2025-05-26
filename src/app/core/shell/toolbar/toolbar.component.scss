@@ -73,3 +73,19 @@
 .toolbar-spacer {
   flex: 1 1 auto;
 }
+
+.white-text-language ::ng-deep mifosx-language-selector {
+  color: white !important;
+  /* stylelint-disable-next-line selector-max-universal */
+  * {
+    color: white !important;
+  }
+}
+
+.white-text-search ::ng-deep mifosx-search-tool {
+  color: white !important;
+  /* stylelint-disable-next-line selector-max-universal */
+  * {
+    color: white !important;
+  }
+}
