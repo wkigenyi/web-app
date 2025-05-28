@@ -115,3 +115,10 @@ export interface RepaymentSchedulePeriod {
   totalWrittenOffForPeriod?: number;
   totalInstallmentAmountForPeriod?: number;
 }
+
+export interface DisbursementData {
+  actualDisbursementDate: Date;
+  expectedDisbursementDate: Date;
+  principal: number;
+  id?: number;
+}

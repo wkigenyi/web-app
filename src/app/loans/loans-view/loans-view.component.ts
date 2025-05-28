@@ -67,6 +67,7 @@ export class LoansViewComponent implements OnInit {
         this.loanStatus = this.loanDetailsData.status;
         this.loanSubStatus = this.loanDetailsData.subStatus === undefined ? null : this.loanDetailsData.subStatus;
         this.currency = this.loanDetailsData.currency;
+        loansService.saveLoanDisbursementDetailsData(this.loanDetailsData.disbursementDetails);
         if (this.loanStatus.active) {
           this.loanDetailsData.transactions.forEach((lt: LoanTransaction) => {
             if (!lt.manuallyReversed) {

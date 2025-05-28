@@ -391,32 +391,28 @@
 
     <mat-divider class="flex-98"></mat-divider>
 
-    <div class="flex-fill">
+    <div class="flex-100 layout-row">
       <span class="flex-40"
         ><b>{{ 'labels.inputs.Recalculate Interest' | translate }}</b></span
       >
       <span class="flex-60">{{ loansAccountTermsData?.isInterestRecalculationEnabled | yesNo }}</span>
     </div>
 
-    <div class="flex-fill" *ngIf="loansAccountTermsData?.isInterestRecalculationEnabled">
+    <div class="flex-100 layout-row" *ngIf="loansAccountTermsData?.isInterestRecalculationEnabled">
       <span class="flex-40">{{ 'labels.inputs.Days in year' | translate }}</span>
       <span class="flex-60">{{ loansAccountTermsData.daysInYearType.value | translateKey: 'catalogs' }}</span>
     </div>
+    <div class="flex-100 layout-row" *ngIf="loansAccountTermsData?.isInterestRecalculationEnabled">
+      <span class="flex-40">{{ 'labels.inputs.Days in month' | translate }}</span>
+      <span class="flex-60">{{ loansAccountTermsData.daysInMonthType.value | translateKey: 'catalogs' }}</span>
+    </div>
+    <div class="flex-100 layout-row" *ngIf="loansAccountTermsData?.isInterestRecalculationEnabled">
+      <span class="flex-40">{{ 'labels.inputs.Advance payments adjustment type' | translate }}</span>
+      <span class="flex-60">{{ loansAccountTermsData.interestRecalculationData.rescheduleStrategyType.value }}</span>
+    </div>
 
     <ng-container *ngIf="loansAccountTermsData?.isInterestRecalculationEnabled">
-      <div class="flex-fill" *ngIf="loansAccountTermsData?.isInterestRecalculationEnabled">
-        <span class="flex-40">{{ 'labels.inputs.Advance payments adjustment type' | translate }}</span>
-        <span class="flex-60">{{ loansAccountTermsData.interestRecalculationData.rescheduleStrategyType.value }}</span>
-      </div>
-
-      <div class="flex-fill" *ngIf="loansAccountTermsData?.isInterestRecalculationEnabled">
-        <span class="flex-40">{{ 'labels.inputs.Days in month' | translate }}</span>
-        <span class="flex-60">{{ loansAccountTermsData.daysInMonthType.value | translateKey: 'catalogs' }}</span>
-      </div>
-    </ng-container>
-
-    <ng-container *ngIf="loansAccountTermsData?.isInterestRecalculationEnabled">
-      <div class="flex-fill">
+      <div class="flex-100 layout-row">
         <span class="flex-40">{{ 'labels.inputs.Interest recalculation compounding on' | translate }}</span>
         <span class="flex-60">{{
           loansAccountTermsData.interestRecalculationData.interestRecalculationCompoundingType.value
@@ -424,7 +420,7 @@
         }}</span>
       </div>
 
-      <div class="flex-fill">
+      <div class="flex-100 layout-row">
         <span class="flex-40">{{ 'labels.inputs.Frequency Interval for recalculation' | translate }}</span>
         <span class="flex-60">
           <span>{{ loansAccountTermsData.interestRecalculationData.recalculationRestFrequencyType.value }}</span>
@@ -458,7 +454,7 @@
     </ng-container>
 
     <div
-      class="flex-fill"
+      class="flex-100 layout-row"
       *ngIf="
         loansAccountTermsData?.isInterestRecalculationEnabled &&
         loansAccountTermsData.interestRecalculationData.recalculationRestFrequencyType.id !== 1
@@ -470,7 +466,7 @@
       }}</span>
     </div>
 
-    <div class="flex-fill">
+    <div class="flex-100 layout-row">
       <span class="flex-40"
         ><b>{{ 'labels.inputs.Enable income capitalization' | translate }}</b></span
       >
@@ -479,13 +475,15 @@
 
     <ng-container *ngIf="multiDisburseLoan">
       <mat-divider class="flex-98"></mat-divider>
-      <div class="flex-fill" *ngIf="allowAddDisbursementDetails()">
+      <div class="flex-100 layout-row" *ngIf="allowAddDisbursementDetails()">
         <h4 class="mat-h4 flex-98">{{ 'labels.heading.Loan Tranche Details' | translate }}</h4>
+      </div>
+      <div class="flex-100 layout-row">
         <mat-form-field class="flex-48">
           <mat-label>{{ 'labels.inputs.Maximum allowed outstanding balance' | translate }}</mat-label>
           <input matInput required formControlName="maxOutstandingLoanBalance" />
         </mat-form-field>
-        <span class="flex">
+        <span class="flex-48">
           <button
             type="button"
             mat-icon-button
@@ -498,7 +496,7 @@
           </button>
         </span>
       </div>
-      <div class="flex-fill" *ngIf="!allowAddDisbursementDetails()">
+      <div class="flex-100 layout-row" *ngIf="!allowAddDisbursementDetails()">
         <h4 class="mat-h4 flex-98">
           {{ 'labels.heading.Loan Tranche Details are not allowed for this Loan Product' | translate }}
         </h4>
@@ -506,7 +504,7 @@
 
       <table mat-table [dataSource]="disbursementDataSource" [hidden]="disbursementDataSource.length === 0">
         <ng-container matColumnDef="expectedDisbursementDate">
-          <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Eexpected Disbursement Date' | translate }}</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Expected Disbursement Date' | translate }}</th>
           <td mat-cell *matCellDef="let row">
             {{ row.expectedDisbursementDate | dateFormat }}
           </td>
