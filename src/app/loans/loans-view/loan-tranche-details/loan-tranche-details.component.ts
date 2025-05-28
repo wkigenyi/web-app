@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Dates } from 'app/core/utils/dates';
 import { LoansService } from 'app/loans/loans.service';
+import { DisbursementData } from 'app/loans/models/loan-account.model';
 import { SettingsService } from 'app/settings/settings.service';
 import { DeleteDialogComponent } from 'app/shared/delete-dialog/delete-dialog.component';
 import { FormDialogComponent } from 'app/shared/form-dialog/form-dialog.component';
@@ -35,7 +36,7 @@ export class LoanTrancheDetailsComponent implements OnInit {
   currentPrincipalAmount: number;
   minDate = new Date(2000, 0, 1);
   maxDate = new Date(2100, 0, 1);
-  disbursementDataSource: {}[] = [];
+  disbursementDataSource: DisbursementData[] = [];
   totalMultiDisbursed: number = null;
   disallowExpectedDisbursements = false;
   pristine = true;
@@ -46,7 +47,8 @@ export class LoanTrancheDetailsComponent implements OnInit {
    */
   constructor(
     private route: ActivatedRoute,
-    public dialog: MatDialog,
+    private router: Router,
+    private dialog: MatDialog,
     private loanServices: LoansService,
     private settingsService: SettingsService,
     private dateUtils: Dates
@@ -55,7 +57,6 @@ export class LoanTrancheDetailsComponent implements OnInit {
       this.loanId = data.loanDetailsData.id;
       this.loanDetails = data.loanDetailsData;
       this.disallowExpectedDisbursements = this.loanDetails.disallowExpectedDisbursements || false;
-      this.disbursementDataSource = data.loanDetailsData.disbursementDetails;
       this.currentPrincipalAmount = this.loanDetails.approvedPrincipal;
     });
   }
@@ -63,6 +64,12 @@ export class LoanTrancheDetailsComponent implements OnInit {
   ngOnInit() {
     this.maxDate = this.settingsService.maxFutureDate;
     this.status = this.loanDetails.status.value;
+    this.disbursementDataSource = this.loanServices.getLoanDisbursementDetailsData();
+    this.disbursementDataSource.forEach((data: DisbursementData) => {
+      if (!data.id) {
+        this.pristine = false;
+      }
+    });
   }
 
   showAddTrancheButtons() {
@@ -156,6 +163,7 @@ export class LoanTrancheDetailsComponent implements OnInit {
         const principal = response.data.value.principal * 1;
         if (this.totalMultiDisbursed + principal <= this.currentPrincipalAmount) {
           this.disbursementDataSource = this.disbursementDataSource.concat(response.data.value);
+          this.loanServices.saveLoanDisbursementDetailsData(this.disbursementDataSource);
           this.pristine = false;
         }
       }
@@ -226,7 +234,13 @@ export class LoanTrancheDetailsComponent implements OnInit {
       .editDisbursements(this.loanId, payload)
       .toPromise()
       .then((result) => {
+        this.reload();
         this.pristine = true;
       });
+  }
+
+  reload() {
+    const url: string = this.router.url;
+    this.router.navigateByUrl(`/clients`, { skipLocationChange: true }).then(() => this.router.navigate([url]));
   }
 }
