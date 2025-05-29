@@ -26,6 +26,7 @@ import { DatepickerBase } from 'app/shared/form-dialog/formfield/model/datepicke
 export class TransactionsTabComponent implements OnInit {
   /** Loan Details Data */
   transactionsData: LoanTransaction[] = [];
+  loanDetailsData: any;
   /** Form control to handle accural parameter */
   hideAccrualsParam: UntypedFormControl;
   hideReversedParam: UntypedFormControl;
@@ -89,13 +90,14 @@ export class TransactionsTabComponent implements OnInit {
     private alertService: AlertService
   ) {
     this.route.parent.parent.data.subscribe((data: { loanDetailsData: any }) => {
-      this.transactionsData = data.loanDetailsData.transactions;
+      this.loanDetailsData = data.loanDetailsData;
       this.status = data.loanDetailsData.status.value;
     });
     this.loanId = this.route.parent.parent.snapshot.params['loanId'];
   }
 
   ngOnInit() {
+    this.transactionsData = this.loanDetailsData.transactions;
     this.hideAccrualsParam = new UntypedFormControl(false);
     this.hideReversedParam = new UntypedFormControl(false);
     this.setLoanTransactions();
@@ -179,6 +181,7 @@ export class TransactionsTabComponent implements OnInit {
    * REAGE:29
    * REAMORTIZE:30
    * INTEREST REFUND:33
+   * CAPITALIZED INCOME:35
    * CONTRACT_TERMINATION:90
    */
   showTransactions(transactionsData: LoanTransaction) {
@@ -197,6 +200,7 @@ export class TransactionsTabComponent implements OnInit {
         30,
         31,
         33,
+        35,
         90
       ].includes(transactionsData.type.id)) {
       this.router.navigate([transactionsData.id], { relativeTo: this.route });
@@ -355,9 +359,7 @@ export class TransactionsTabComponent implements OnInit {
   private reload() {
     const clientId = this.route.parent.parent.snapshot.params['clientId'];
     const url: string = this.router.url;
-    this.router
-      .navigateByUrl(`/clients/${clientId}/loans-accounts`, { skipLocationChange: true })
-      .then(() => this.router.navigate([url]));
+    this.router.navigateByUrl(`/clients`, { skipLocationChange: true }).then(() => this.router.navigate([url]));
   }
 
   displaySubMenu(transaction: LoanTransaction): boolean {
@@ -373,65 +375,80 @@ export class TransactionsTabComponent implements OnInit {
       .getLoanTransactionActionTemplate(accountId, 'capitalizedIncomeAdjustment', `${transaction.id}`)
       .subscribe((response: any) => {
         const transactionDate = response.date || transaction.date;
-        const transactionAmount = response.amount || transaction.amount;
-        const formfields: FormfieldBase[] = [
-          new DatepickerBase({
-            controlName: 'transactionDate',
-            label: 'Date',
-            value: this.dateUtils.parseDate(transactionDate),
-            type: 'datetime-local',
-            required: true,
-            minDate: transaction.date,
-            order: 1
-          }),
-          new InputBase({
-            controlName: 'amount',
-            label: 'Amount',
-            value: transactionAmount,
-            type: 'number',
-            required: true,
-            max: transactionAmount,
-            min: 0.001,
-            order: 2
-          })
+        if (response.amount == 0) {
+          this.displayAlertMessage('Capitalized Income amount adjusted already adjusted', transaction.amount);
+        } else {
+          const transactionAmount = response.amount || transaction.amount;
+          const formfields: FormfieldBase[] = [
+            new DatepickerBase({
+              controlName: 'transactionDate',
+              label: 'Date',
+              value: this.dateUtils.parseDate(transactionDate),
+              type: 'datetime-local',
+              required: true,
+              minDate: transaction.date,
+              order: 1
+            }),
+            new InputBase({
+              controlName: 'amount',
+              label: 'Amount',
+              value: transactionAmount,
+              type: 'number',
+              required: true,
+              max: transactionAmount,
+              min: 0.001,
+              order: 2
+            })
 
-        ];
-        const data = {
-          title: `Adjustment ${transaction.type.value} Transaction`,
-          layout: { addButtonText: 'Adjustment' },
-          formfields: formfields
-        };
-        const chargebackDialogRef = this.dialog.open(FormDialogComponent, { data });
-        chargebackDialogRef.afterClosed().subscribe((response: { data: any }) => {
-          if (response.data) {
-            const dateFormat = this.settingsService.dateFormat;
+          ];
+          const data = {
+            title: `Adjustment ${transaction.type.value} Transaction`,
+            layout: { addButtonText: 'Adjustment' },
+            formfields: formfields
+          };
+          const chargebackDialogRef = this.dialog.open(FormDialogComponent, { data });
+          chargebackDialogRef.afterClosed().subscribe((response: { data: any }) => {
+            if (response.data) {
+              const dateFormat = this.settingsService.dateFormat;
 
-            if (response.data.value.amount <= transactionAmount) {
-              const locale = this.settingsService.language.code;
-              const payload = {
-                transactionDate: this.dateUtils.formatDate(response.data.value.transactionDate, dateFormat),
-                transactionAmount: response.data.value.amount,
-                locale,
-                dateFormat
-              };
-              this.loansService
-                .executeLoansAccountTransactionsCommand(
-                  accountId,
-                  'capitalizedIncomeAdjustment',
-                  payload,
-                  transaction.id
-                )
-                .subscribe(() => {
-                  this.router.navigate(['../'], { relativeTo: this.route });
-                });
-            } else {
-              this.alertService.alert({
-                type: 'BusinessRule',
-                message: 'Chargeback amount must be lower or equal to: ' + transaction.amount
-              });
+              if (response.data.value.amount <= transactionAmount) {
+                const locale = this.settingsService.language.code;
+                const payload = {
+                  transactionDate: this.dateUtils.formatDate(response.data.value.transactionDate, dateFormat),
+                  transactionAmount: response.data.value.amount,
+                  locale,
+                  dateFormat
+                };
+                this.loansService
+                  .executeLoansAccountTransactionsCommand(
+                    accountId,
+                    'capitalizedIncomeAdjustment',
+                    payload,
+                    transaction.id
+                  )
+                  .subscribe(() => {
+                    this.reload();
+                  });
+              } else {
+                this.displayAlertMessage(
+                  'Capitalized Income Adjustment amount must be lower or equal to',
+                  transactionAmount
+                );
+              }
             }
-          }
-        });
+          });
+        }
       });
+  }
+
+  private displayAlertMessage(label: string, amount: number): void {
+    let message: string = this.translateService.instant('errors.' + label);
+    if (amount) {
+      message = message + ': ' + amount;
+    }
+    this.alertService.alert({
+      type: 'BusinessRule',
+      message: message
+    });
   }
 }

@@ -65,7 +65,7 @@
         [ngClass]="loanTransactionColor(transaction)"
         (click)="showTransactions(transaction)"
       >
-        {{ transaction.type.value }}
+        {{ transaction.type.value | translateKey: 'catalogs' }}
       </td>
     </ng-container>
 
