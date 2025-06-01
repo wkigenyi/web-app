@@ -42,7 +42,7 @@ export class CenterActionsComponent {
     private router: Router
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    const name = this.route.snapshot.params['name'];
+    const name = this.route.snapshot.params['action'];
     this.actions[name] = true;
   }
 }
