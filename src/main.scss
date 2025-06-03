@@ -580,6 +580,10 @@
   gap: 10px;
 }
 
+.menu-right-section fa-icon {
+  z-index: 1000;
+}
+
 .menu-right-section {
   margin-left: auto;
   display: flex;
@@ -590,4 +594,20 @@
 .content {
   display: contents;
   flex: 1;
+}
+
+mifosx-notifications-page td {
+  text-align: center;
+  padding: 16px;
+  color: #999;
+}
+
+.red {
+  color: red;
+}
+
+.full-width-flex {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
 }

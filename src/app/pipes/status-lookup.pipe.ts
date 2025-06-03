@@ -48,6 +48,6 @@ export class StatusLookupPipe implements PipeTransform {
       'smsCampaignStatus.closed': 'status-closed',
       'purchasedSharesStatusType.applied': 'status-pending'
     };
-    return cssClassNameLookup[status];
+    return cssClassNameLookup[status as keyof typeof cssClassNameLookup] ?? 'status-unknown';
   }
 }

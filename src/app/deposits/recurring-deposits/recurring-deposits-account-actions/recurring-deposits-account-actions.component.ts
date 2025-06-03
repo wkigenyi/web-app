@@ -47,6 +47,8 @@ export class RecurringDepositsAccountActionsComponent {
       }
     });
     const name = this.route.snapshot.params['name'];
-    this.actions[name] = true;
+    if (name && name in this.actions) {
+      this.actions[name as keyof typeof this.actions] = true;
+    }
   }
 }

@@ -24,7 +24,9 @@ export class EditRepaymentScheduleComponent implements OnInit {
   /** Indicates If the Schedule has been validated */
   wasValidated = false;
   /** Stores the Repayment Schedule data */
-  repaymentScheduleDetails: any[] | null = null;
+  repaymentScheduleDetails: {
+    periods: { period?: number; dueDate: string; totalDueForPeriod?: number; changed?: boolean }[];
+  } | null = null;
   /** Stores the Installments changed */
   repaymentScheduleChanges: any = {};
 

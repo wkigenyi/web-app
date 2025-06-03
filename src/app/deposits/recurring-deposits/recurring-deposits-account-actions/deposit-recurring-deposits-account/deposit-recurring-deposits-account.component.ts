@@ -8,6 +8,7 @@ import { RecurringDepositsService } from '../../recurring-deposits.service';
 import { SettingsService } from 'app/settings/settings.service';
 import { Dates } from 'app/core/utils/dates';
 import { Currency } from 'app/shared/models/general.model';
+import { TransactionCommand, TransactionTypeFlags } from '../../../transaction.model';
 
 /**
  * Deposits Recurring Deposits Account Component
@@ -39,8 +40,8 @@ export class DepositRecurringDepositsAccountComponent implements OnInit {
 
   action: string;
   actionName: string;
-  transactionCommand: string;
-  transactionType: { deposit: boolean; withdrawal: boolean } = { deposit: false, withdrawal: false };
+  transactionCommand: TransactionCommand;
+  transactionType: TransactionTypeFlags = { deposit: false, withdrawal: false };
 
   /**
    * Retrieves action details transactions template data from `resolve`
@@ -66,13 +67,18 @@ export class DepositRecurringDepositsAccountComponent implements OnInit {
         data.recurringDepositsAccountActionData.outstandingChargeAmount > 0
       ) {
         this.outstandingChargeAmount = data.recurringDepositsAccountActionData.outstandingChargeAmount;
-        this.transactionAmount = this.transactionAmount + this.outstandingChargeAmount;
+        this.transactionAmount += this.outstandingChargeAmount;
       }
     });
     this.actionName = this.route.snapshot.params['name'];
     this.action = this.actionName.toLowerCase();
-    this.transactionCommand = this.action.toLowerCase();
-    this.transactionType[this.transactionCommand] = true;
+    if (this.action === 'deposit' || this.action === 'withdrawal') {
+      this.transactionCommand = this.action;
+      this.transactionType[this.transactionCommand] = true;
+    } else {
+      throw new Error(`Invalid transaction action: ${this.actionName}`);
+    }
+
     this.accountId = this.route.parent.snapshot.params['recurringDepositAccountId'];
   }
 

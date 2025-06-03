@@ -15,6 +15,12 @@ import { InputBase } from 'app/shared/form-dialog/formfield/model/input-base';
 import { Currency } from 'app/shared/models/general.model';
 import { CodeName, OptionData } from 'app/shared/models/option-data.model';
 
+interface DisbursementData {
+  id?: number;
+  principal: number;
+  expectedDisbursementDate: string | Date;
+}
+
 /**
  * Create Loans Account Terms Step
  */
@@ -62,7 +68,7 @@ export class LoansAccountTermsStepComponent implements OnInit, OnChanges {
   /** Client Active Loan Data */
   clientActiveLoanData: any;
   /** Multi Disbursement Data */
-  disbursementDataSource: {}[] = [];
+  disbursementDataSource: DisbursementData[] = [];
   /** Loan repayment strategies */
   transactionProcessingStrategyOptions: any = [];
   repaymentStrategyDisabled = false;

@@ -50,14 +50,12 @@
     <mat-label>{{ formfield.label }}</mat-label>
     <input
       matInput
-      [ngxMatDatetimePicker]="datetimePicker"
+      type="datetime-local"
       [min]="formfield.minDate"
       [max]="formfield.maxDate"
       [formControlName]="formfield.controlName"
       [required]="formfield.required"
     />
-    <mat-datepicker-toggle matSuffix [for]="datetimePicker"></mat-datepicker-toggle>
-    <ngx-mat-datetime-picker #datetimePicker [enableMeridian]="true"></ngx-mat-datetime-picker>
     <mat-error *ngIf="form.controls[formfield.controlName].hasError('required')">
       {{ formfield.label }} {{ 'labels.commons.is' | translate }}
       <strong>{{ 'labels.commons.required' | translate }}</strong>

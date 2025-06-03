@@ -161,7 +161,7 @@ export class BusinessRuleParametersComponent implements OnInit, OnChanges {
           formattedResponse[newKey] = value;
           break;
         case 'select':
-          formattedResponse[newKey] = value['id'];
+          formattedResponse[newKey] = (value as { id: string | number })['id'];
           break;
         case 'date':
           const dateFormat = this.settingsService.dateFormat;

@@ -68,7 +68,9 @@ export class SavingAccountActionsComponent {
         this.currency = data.savingsAccountActionData.currency;
       }
     });
-    const name = this.route.snapshot.params['name'];
-    this.actions[name] = true;
+    const name = this.route.snapshot.params['name'] as string;
+    if (name in this.actions) {
+      this.actions[name as keyof typeof this.actions] = true;
+    }
   }
 }

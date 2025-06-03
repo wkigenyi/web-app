@@ -15,6 +15,12 @@ import { SettingsService } from 'app/settings/settings.service';
 import { Dates } from 'app/core/utils/dates';
 import { TranslateService } from '@ngx-translate/core';
 
+interface OfficeNode {
+  id: number;
+  name: string;
+  loans: any[];
+}
+
 @Component({
   selector: 'mifosx-loan-approval',
   templateUrl: './loan-approval.component.html',
@@ -32,7 +38,7 @@ export class LoanApprovalComponent {
   /** Row Selection Data */
   selection: SelectionModel<any>;
   /** Map data */
-  idToNodeMap = {};
+  idToNodeMap: { [key: number]: OfficeNode } = {};
   /** Grouped Office Data */
   officesArray: any[];
   /** List of Requests */
@@ -79,15 +85,15 @@ export class LoanApprovalComponent {
     });
     this.loans.forEach((loanEle: any) => {
       if (loanEle.status.pendingApproval) {
-        let tempOffice = {};
+        let tempOffice: OfficeNode | undefined;
         if (loanEle.clientOfficeId) {
           tempOffice = this.idToNodeMap[loanEle.clientOfficeId];
-          tempOffice['loans'].push(loanEle);
-        } else {
-          if (loanEle.group) {
-            tempOffice = this.idToNodeMap[loanEle.group.officeId];
-            tempOffice['loans'].push(loanEle);
-          }
+        } else if (loanEle.group?.officeId) {
+          tempOffice = this.idToNodeMap[loanEle.group.officeId];
+        }
+
+        if (tempOffice) {
+          tempOffice.loans.push(loanEle);
         }
       }
     });

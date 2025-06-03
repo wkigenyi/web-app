@@ -15,6 +15,13 @@ import { SettingsService } from 'app/settings/settings.service';
 import { Dates } from 'app/core/utils/dates';
 import { TranslateService } from '@ngx-translate/core';
 
+interface RescheduleFormData {
+  dateFormat: string;
+  locale: string;
+  approvedOnDate?: string;
+  rejectedOnDate?: string;
+}
+
 @Component({
   selector: 'mifosx-reschedule-loan',
   templateUrl: './reschedule-loan.component.html',
@@ -107,14 +114,14 @@ export class RescheduleLoanComponent {
     const dateFormat = this.settingsService.dateFormat;
     const transactionDate = this.dateUtils.formatDate(this.settingsService.businessDate, dateFormat);
     const locale = this.settingsService.language.code;
-    const formData = {
+    const formData: RescheduleFormData = {
       dateFormat,
       locale
     };
     if (command === 'approve') {
-      formData['approvedOnDate'] = transactionDate;
+      formData.approvedOnDate = transactionDate;
     } else {
-      formData['rejectedOnDate'] = transactionDate;
+      formData.rejectedOnDate = transactionDate;
     }
     const listSelectedAccounts = this.selection.selected;
     this.batchRequests = [];

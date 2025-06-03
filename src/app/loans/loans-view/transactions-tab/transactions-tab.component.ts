@@ -386,7 +386,7 @@ export class TransactionsTabComponent implements OnInit {
               value: this.dateUtils.parseDate(transactionDate),
               type: 'datetime-local',
               required: true,
-              minDate: transaction.date,
+              minDate: this.dateUtils.parseDate(transaction.date),
               order: 1
             }),
             new InputBase({

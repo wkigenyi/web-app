@@ -5,6 +5,7 @@ import { SettingsService } from 'app/settings/settings.service';
 import { Dates } from 'app/core/utils/dates';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Currency, PaymentType } from 'app/shared/models/general.model';
+import { TransactionCommand, TransactionTypeFlags } from '../../../transaction.model';
 
 @Component({
   selector: 'mifosx-fixed-deposits-cash-transaction',
@@ -23,9 +24,9 @@ export class FixedDepositsCashTransactionComponent implements OnInit {
   /** Flag to enable payment details fields. */
   addPaymentDetailsFlag: Boolean = false;
   /** transaction type flag to render required UI */
-  transactionType: { deposit: boolean; withdrawal: boolean } = { deposit: false, withdrawal: false };
+  transactionType: TransactionTypeFlags = { deposit: false, withdrawal: false };
   /** transaction command for submit request */
-  transactionCommand: string;
+  transactionCommand: TransactionCommand;
   actionName: string;
   /** saving account's Id */
   accountId: string;
@@ -53,8 +54,14 @@ export class FixedDepositsCashTransactionComponent implements OnInit {
       this.paymentTypeOptions = data.fixedDepositsAccountActionData.paymentTypeOptions;
     });
     this.actionName = this.route.snapshot.params['name'];
-    this.transactionCommand = this.actionName.toLowerCase();
-    this.transactionType[this.transactionCommand] = true;
+    const lowerName = this.actionName.toLowerCase();
+    if (lowerName === 'deposit' || lowerName === 'withdrawal') {
+      this.transactionCommand = lowerName;
+      this.transactionType[this.transactionCommand] = true;
+    } else {
+      throw new Error(`Invalid transaction action: ${this.actionName}`);
+    }
+
     this.accountId = this.route.parent.snapshot.params['fixedDepositAccountId'];
   }
 

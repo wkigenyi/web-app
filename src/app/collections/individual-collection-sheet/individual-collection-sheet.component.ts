@@ -52,7 +52,10 @@ export class IndividualCollectionSheetComponent implements OnInit {
   /** checks and stores the local storage values */
   Success: boolean;
   /** Bulk Disbursement Transactions Data */
-  bulkDisbursementTransactionsData = {};
+  bulkDisbursementTransactionsData: {
+    bulkRepaymentTransactions?: any[];
+    bulkSavingsDueTransactions?: any[];
+  } = {};
   /** Bulk Repayment Transactions Data */
   bulkRepaymentTransactions: any[] = [];
   /** Bulk Savings Due Data */
@@ -261,7 +264,16 @@ export class IndividualCollectionSheetComponent implements OnInit {
       if (response.data) {
         if (type === 'loans') {
           const totalDue = this.getLoanTotalDueAmount(selectedData);
-          const loanTransaction = {
+          const loanTransaction: {
+            loanId: any;
+            transactionAmount: number;
+            paymentTypeId?: string;
+            accountNumber?: any;
+            checkNumber?: number;
+            routingCode?: string;
+            receiptNumber?: number;
+            bankNumber?: number;
+          } = {
             loanId: selectedData.loanId,
             transactionAmount: totalDue
           };
@@ -279,7 +291,17 @@ export class IndividualCollectionSheetComponent implements OnInit {
           if (isNaN(dueAmount)) {
             dueAmount = 0;
           }
-          const savingsTransaction = {
+          const savingsTransaction: {
+            savingsId: any;
+            transactionAmount: any;
+            depositAccountType: number;
+            accountNumber?: any;
+            checkNumber?: number;
+            routingCode?: string;
+            receiptNumber?: number;
+            bankNumber?: number;
+            paymentTypeId?: string;
+          } = {
             savingsId: selectedData.savingsId,
             transactionAmount: dueAmount,
             depositAccountType:

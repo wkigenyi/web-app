@@ -44,6 +44,8 @@ export class SharesAccountActionsComponent {
    */
   constructor(private route: ActivatedRoute) {
     const name = this.route.snapshot.params['name'];
-    this.actions[name] = true;
+    if (name && name in this.actions) {
+      this.actions[name as keyof typeof this.actions] = true;
+    }
   }
 }

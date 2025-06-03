@@ -24,6 +24,7 @@ export class ClientActionsComponent {
     'Accept Transfer': boolean;
     'Reject Transfer': boolean;
     Reactivate: boolean;
+    Activate: boolean;
     'Undo Rejection': boolean;
     'Add Charge': boolean;
     'Take Survey': boolean;
@@ -41,6 +42,7 @@ export class ClientActionsComponent {
     'Accept Transfer': false,
     'Reject Transfer': false,
     Reactivate: false,
+    Activate: false,
     'Undo Rejection': false,
     'Add Charge': false,
     'Take Survey': false,
@@ -57,7 +59,7 @@ export class ClientActionsComponent {
     private router: Router
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    const name = this.route.snapshot.params['name'];
+    const name = this.route.snapshot.params['name'] as keyof typeof this.actions;
     this.actions[name] = true;
   }
 }

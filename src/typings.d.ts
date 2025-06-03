@@ -11,6 +11,13 @@ interface NodeModule {
   id: string;
 }
 
+// Extend the global Window interface to include `env`
+interface Window {
+  env: {
+    [key: string]: any;
+  };
+}
+
 declare module 'chart.js';
 
 declare module '@ckeditor/ckeditor5-build-classic' {

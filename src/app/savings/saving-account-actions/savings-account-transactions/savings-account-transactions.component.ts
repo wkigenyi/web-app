@@ -66,7 +66,7 @@ export class SavingsAccountTransactionsComponent implements OnInit {
       }
     });
     this.transactionCommand = this.route.snapshot.params['name'].toLowerCase();
-    this.transactionType[this.transactionCommand] = true;
+    this.transactionType[this.transactionCommand as 'deposit' | 'withdrawal'] = true;
     this.savingAccountId = this.route.snapshot.params['savingAccountId'];
   }
 

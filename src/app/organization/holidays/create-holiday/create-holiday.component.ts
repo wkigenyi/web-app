@@ -37,7 +37,7 @@ export class CreateHolidayComponent implements OnInit {
   // Stores office data in a trie-like structure
   officesTrie: any;
   // Stores office data for access from DOM via Office ID
-  officesDict = {};
+  officesDict: { [key: string]: any } = {};
 
   // Angular Material Tree Configuration start ------------
 
@@ -100,7 +100,7 @@ export class CreateHolidayComponent implements OnInit {
     });
   }
   constructOfficeHierarchy() {
-    const trie = {};
+    const trie: Record<string, any> = {};
     // Iterates over all the offices
     this.officesData.forEach((office: any) => {
       this.officesDict[office.id] = office;
@@ -114,7 +114,7 @@ export class CreateHolidayComponent implements OnInit {
 
       // Temporary variable to store current object
 
-      let root = trie;
+      let root: Record<string, any> = trie;
 
       if (hierarchy.length === 0) {
         root[office.id] = {};

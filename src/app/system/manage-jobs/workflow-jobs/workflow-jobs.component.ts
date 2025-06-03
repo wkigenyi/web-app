@@ -9,7 +9,12 @@ import { FormDialogComponent } from 'app/shared/form-dialog/form-dialog.componen
 import { FormfieldBase } from 'app/shared/form-dialog/formfield/model/formfield-base';
 import { SelectBase } from 'app/shared/form-dialog/formfield/model/select-base';
 import { SystemService } from 'app/system/system.service';
-import { JobStep } from './workflow-diagram/workflow-diagram.component';
+
+export interface JobStep {
+  stepName: string;
+  stepDescription: string;
+  order: number;
+}
 
 @Component({
   selector: 'mifosx-workflow-jobs',
@@ -21,7 +26,7 @@ export class WorkflowJobsComponent implements OnInit {
 
   jobNameOptions: any = [];
   jobStepsData: any = [];
-  jobAvailableStepsData: any = [];
+  jobAvailableStepsData: JobStep[] = [];
   jobStepsDataBase: any = [];
   jobStepName: String = null;
 

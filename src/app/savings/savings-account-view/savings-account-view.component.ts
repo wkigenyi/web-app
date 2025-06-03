@@ -85,7 +85,7 @@ export class SavingsAccountViewComponent implements OnInit {
         taskPermissionName: 'CREATE_ACCOUNTTRANSFER'
       });
     }
-    if (this.savingsAccountData.externalId && environment.interbankTransfers === 'true') {
+    if (this.savingsAccountData.externalId && environment.interbankTransfers) {
       this.buttonConfig.addOption({
         name: 'Interbank Transfer',
         taskPermissionName: 'CREATE_ACCOUNTTRANSFER'

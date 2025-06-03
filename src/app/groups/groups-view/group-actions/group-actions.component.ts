@@ -44,6 +44,8 @@ export class GroupActionsComponent {
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     const action = this.route.snapshot.params['action'];
-    this.actions[action] = true;
+    if (action && action in this.actions) {
+      this.actions[action as keyof typeof this.actions] = true;
+    }
   }
 }

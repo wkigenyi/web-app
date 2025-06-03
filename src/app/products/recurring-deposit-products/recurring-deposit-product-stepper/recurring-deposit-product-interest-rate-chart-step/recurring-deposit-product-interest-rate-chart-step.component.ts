@@ -145,7 +145,7 @@ export class RecurringDepositProductInterestRateChartStepComponent implements On
         formArray.push(chartSlabInfo);
 
         // Iterate for every slab in chartSlab
-        const chartIncentiveControl = chartDetailControl.controls['chartSlabs']['controls'][j];
+        const chartIncentiveControl = (chartDetailControl.controls['chartSlabs'] as UntypedFormArray).controls[j];
 
         // Iterate to input all the incentive for particular chart slab
         this.chartsDetail[i].chartSlabs[j].incentives.forEach((chartIncentiveDetail: any) => {
@@ -175,7 +175,7 @@ export class RecurringDepositProductInterestRateChartStepComponent implements On
               Validators.required
             ]
           });
-          const newFormArray = chartIncentiveControl['controls']['incentives'] as UntypedFormArray;
+          const newFormArray = (chartIncentiveControl as UntypedFormGroup).controls['incentives'] as UntypedFormArray;
           newFormArray.push(incentiveInfo);
         });
       });
@@ -184,7 +184,14 @@ export class RecurringDepositProductInterestRateChartStepComponent implements On
 
   getChartsDetailsData() {
     this.chartDetailData.forEach((chartData: any) => {
-      const chart = {
+      const chart: {
+        id?: any;
+        endDate: string | Date;
+        fromDate: string | Date;
+        isPrimaryGroupingByAmount: any;
+        name: any;
+        chartSlabs: any[];
+      } = {
         endDate: chartData.endDate ? new Date(chartData.endDate) : '',
         fromDate: chartData.fromDate ? new Date(chartData.fromDate) : '',
         isPrimaryGroupingByAmount: chartData.isPrimaryGroupingByAmount,
@@ -212,7 +219,17 @@ export class RecurringDepositProductInterestRateChartStepComponent implements On
     }
 
     chartSlabData.forEach((eachChartSlabData: any) => {
-      const chartSlab = {
+      const chartSlab: {
+        id?: any;
+        periodType: any;
+        amountRangeFrom: any;
+        amountRangeTo: any;
+        annualInterestRate: any;
+        description: any;
+        fromPeriod: any;
+        toPeriod: any;
+        incentives: any[];
+      } = {
         periodType: eachChartSlabData.periodType.id,
         amountRangeFrom: eachChartSlabData.amountRangeFrom,
         amountRangeTo: eachChartSlabData.amountRangeTo,
