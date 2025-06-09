@@ -2,6 +2,7 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl } from '@angular/forms';
 import { SettingsService } from 'app/settings/settings.service';
+import { Currency } from 'app/shared/models/general.model';
 
 /** Custom Services */
 
@@ -32,6 +33,7 @@ export class RecurringDepositsAccountSettingsStepComponent implements OnInit, On
   preClosurePenalInterestOnTypeData: any;
   /** Tax Group */
   taxGroup: any;
+  currency: Currency | null = null;
 
   /**
    * @param {FormBuilder} formBuilder Form Builder
@@ -50,6 +52,7 @@ export class RecurringDepositsAccountSettingsStepComponent implements OnInit, On
       ? this.recurringDepositsAccountProductTemplate
       : this.recurringDepositsAccountTemplate;
     if (recurringDepositsAccount) {
+      this.currency = recurringDepositsAccount.currency;
       this.recurringDepositAccountSettingsForm.patchValue({
         isMandatoryDeposit: recurringDepositsAccount.isMandatoryDeposit,
         adjustAdvanceTowardsFuturePayments: recurringDepositsAccount.adjustAdvanceTowardsFuturePayments,
