@@ -196,7 +196,7 @@ export class TransactionsTabComponent implements OnInit {
    * INTEREST REFUND:33
    * CAPITALIZED INCOME:35
    * CAPITALIZED INCOME ADJUSTMENT:37
-   * CONTRACT_TERMINATION:90
+   * CONTRACT_TERMINATION:38
    */
   showTransaction(transactionsData: LoanTransaction): boolean {
     return [
@@ -216,7 +216,7 @@ export class TransactionsTabComponent implements OnInit {
       33,
       35,
       37,
-      90
+      38
     ].includes(transactionsData.type.id);
   }
 
@@ -228,7 +228,8 @@ export class TransactionsTabComponent implements OnInit {
       transaction.type.disbursement ||
       transaction.type.chargeoff ||
       this.isReAgoeOrReAmortize(transaction.type) ||
-      transaction.type.interestRefund
+      transaction.type.interestRefund ||
+      transaction.type.contractTermination
     );
   }
 
