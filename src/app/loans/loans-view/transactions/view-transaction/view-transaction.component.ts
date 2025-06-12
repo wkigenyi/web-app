@@ -163,35 +163,77 @@ export class ViewTransactionComponent implements OnInit {
    * Undo the loans transaction
    */
   undoTransaction() {
+    console.log(this.transactionData);
     const accountId = this.route.snapshot.params['loanId'];
-    const undoTransactionAccountDialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: {
-        heading: this.translateService.instant('labels.heading.Undo Transaction'),
-        dialogContext:
-          this.translateService.instant('labels.dialogContext.Are you sure you want undo the transaction') +
-          `${this.transactionData.id}`
-      }
-    });
-    undoTransactionAccountDialogRef.afterClosed().subscribe((response: { confirm: any }) => {
-      if (response.confirm) {
-        const locale = this.settingsService.language.code;
-        const dateFormat = this.settingsService.dateFormat;
-        const data = {
-          transactionDate: this.dateUtils.formatDate(
-            this.transactionData.date && new Date(this.transactionData.date),
-            dateFormat
-          ),
-          transactionAmount: 0,
-          dateFormat,
-          locale
-        };
-        this.loansService
-          .executeLoansAccountTransactionsCommand(accountId, 'undo', data, this.transactionData.id)
-          .subscribe(() => {
+
+    if (this.transactionType.contractTermination) {
+      const formfields: FormfieldBase[] = [
+        new InputBase({
+          controlName: 'note',
+          label: 'Note',
+          value: '',
+          type: 'text',
+          required: false,
+          order: 1
+        }),
+        new InputBase({
+          controlName: 'reversalExternalId',
+          label: 'externalId',
+          value: '',
+          type: 'text',
+          required: false,
+          order: 2
+        })
+
+      ];
+      const data = {
+        title: this.translateService.instant('labels.heading.Undo Transaction'),
+        layout: { addButtonText: 'Undo' },
+        formfields: formfields
+      };
+      const undoTransactionAccountDialogRef = this.dialog.open(FormDialogComponent, { data, width: '50rem' });
+      undoTransactionAccountDialogRef.afterClosed().subscribe((response: any) => {
+        if (response.data) {
+          const payload = {
+            note: response.data.value.note,
+            reversalExternalId: response.data.value.reversalExternalId
+          };
+
+          this.loansService.loanActionButtons(accountId, 'undoContractTermination', payload).subscribe(() => {
             this.router.navigate(['../'], { relativeTo: this.route });
           });
-      }
-    });
+        }
+      });
+    } else {
+      const undoTransactionAccountDialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        data: {
+          heading: this.translateService.instant('labels.heading.Undo Transaction'),
+          dialogContext:
+            this.translateService.instant('labels.dialogContext.Are you sure you want undo the transaction') +
+            `${this.transactionData.id}`
+        }
+      });
+      undoTransactionAccountDialogRef.afterClosed().subscribe((response: { confirm: any }) => {
+        if (response.confirm) {
+          const locale = this.settingsService.language.code;
+          const dateFormat = this.settingsService.dateFormat;
+          const data = {
+            transactionDate: this.dateUtils.formatDate(
+              this.transactionData.date && new Date(this.transactionData.date),
+              dateFormat
+            ),
+            transactionAmount: 0,
+            dateFormat,
+            locale
+          };
+          this.loansService
+            .executeLoansAccountTransactionsCommand(accountId, 'undo', data, this.transactionData.id)
+            .subscribe(() => {
+              this.router.navigate(['../'], { relativeTo: this.route });
+            });
+        }
+      });
+    }
   }
 
   chargebackTransaction() {

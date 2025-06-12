@@ -36,4 +36,5 @@ export interface LoanTransactionType {
   capitalizedIncomeAdjustment: boolean;
   capitalizedIncomeAmortization: boolean;
   capitalizedIncomeAmortizationAdjustment: boolean;
+  contractTermination: boolean;
 }
