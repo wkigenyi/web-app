@@ -36,7 +36,7 @@
       }
 
       .header {
-        background-color: mat.get-color-from-palette($primary, 500);
+        background-color: mat.m2-get-color-from-palette($primary, 500);
         padding: 1%;
       }
 
@@ -70,7 +70,7 @@
         }
 
         .signature {
-          background-color: mat.get-color-from-palette($primary, 500);
+          background-color: mat.m2-get-color-from-palette($primary, 500);
         }
       }
 

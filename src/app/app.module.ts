@@ -2,7 +2,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpBackend, HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpBackend, HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 /** Environment Configuration */
 
@@ -65,6 +65,11 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 @NgModule({
+  declarations: [
+    WebAppComponent,
+    NotFoundComponent
+  ],
+  bootstrap: [WebAppComponent],
   imports: [
     TranslateModule.forRoot({
       loader: {
@@ -82,7 +87,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     }),
     BrowserModule,
     BrowserAnimationsModule,
-    HttpClientModule,
     PortalModule,
     CoreModule,
     HomeModule,
@@ -108,11 +112,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppRoutingModule
 
   ],
-  declarations: [
-    WebAppComponent,
-    NotFoundComponent
-  ],
-  providers: [DatePipe],
-  bootstrap: [WebAppComponent]
+  providers: [
+    DatePipe,
+    provideHttpClient(withInterceptorsFromDi())]
 })
 export class AppModule {}

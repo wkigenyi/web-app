@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { SettingsService } from 'app/settings/settings.service';
-import * as moment from 'moment';
+import moment from 'moment';
 
 @Pipe({
   name: 'dateFormat'

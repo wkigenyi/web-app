@@ -1,6 +1,12 @@
 /** Angular Imports */
-import { NgModule, Optional, SkipSelf } from '@angular/core';
-import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
+import { NgModule, Optional, SkipSelf, Injector } from '@angular/core';
+import {
+  HTTP_INTERCEPTORS,
+  HttpClient,
+  HttpHandler,
+  provideHttpClient,
+  withInterceptorsFromDi
+} from '@angular/common/http';
 import { RouteReuseStrategy, RouterModule } from '@angular/router';
 
 /** Translation Imports */
@@ -8,7 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 /** Custom Services */
 import { AuthenticationService } from './authentication/authentication.service';
-import { HttpService } from './http/http.service';
+import { HttpService, HTTP_DYNAMIC_INTERCEPTORS } from './http/http.service';
 import { HttpCacheService } from './http/http-cache.service';
 import { ProgressBarService } from './progress-bar/progress-bar.service';
 
@@ -41,12 +47,6 @@ import { ContentComponent } from './shell/content/content.component';
  * Main app shell components and singleton services should be here.
  */
 @NgModule({
-  imports: [
-    SharedModule,
-    HttpClientModule,
-    TranslateModule,
-    RouterModule
-  ],
   declarations: [
     ShellComponent,
     SidenavComponent,
@@ -58,6 +58,11 @@ import { ContentComponent } from './shell/content/content.component';
     SharedModule // TO BE REMOVED: Once all components have replaced the core module import by shared module.
 
   ],
+  imports: [
+    SharedModule,
+    TranslateModule,
+    RouterModule
+  ],
   providers: [
     AuthenticationService,
     AuthenticationGuard,
@@ -68,12 +73,32 @@ import { ContentComponent } from './shell/content/content.component';
       multi: true
     },
     HttpCacheService,
-    ApiPrefixInterceptor,
-    ErrorHandlerInterceptor,
-    CacheInterceptor,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ApiPrefixInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorHandlerInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CacheInterceptor,
+      multi: true
+    },
     {
       provide: HttpClient,
-      useClass: HttpService
+      useClass: HttpService,
+      deps: [
+        HttpHandler,
+        Injector,
+        [
+          new Optional(),
+          HTTP_DYNAMIC_INTERCEPTORS
+        ]
+      ]
     },
     ProgressBarService,
     {
@@ -84,7 +109,8 @@ import { ContentComponent } from './shell/content/content.component';
     {
       provide: RouteReuseStrategy,
       useClass: RouteReusableStrategy
-    }
+    },
+    provideHttpClient(withInterceptorsFromDi())
   ]
 })
 export class CoreModule {
