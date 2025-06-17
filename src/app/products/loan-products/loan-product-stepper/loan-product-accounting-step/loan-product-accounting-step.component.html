@@ -181,7 +181,7 @@
       </mifosx-gl-account-selector>
 
       <mifosx-gl-account-selector
-        *ngIf="capitalizedIncome?.enableIncomeCapitalization"
+        *ngIf="deferredIncomeRecognition?.capitalizedIncome?.enableIncomeCapitalization"
         class="flex-48"
         [inputFormControl]="loanProductAccountingForm.controls.incomeFromCapitalizationAccountId"
         [glAccountList]="incomeAccountData"
@@ -244,7 +244,7 @@
       </mifosx-gl-account-selector>
 
       <mifosx-gl-account-selector
-        *ngIf="capitalizedIncome?.enableIncomeCapitalization"
+        *ngIf="deferredIncomeRecognition?.capitalizedIncome?.enableIncomeCapitalization"
         class="flex-48"
         [inputFormControl]="loanProductAccountingForm.controls.deferredIncomeLiabilityAccountId"
         [glAccountList]="liabilityAccountData"

@@ -875,10 +875,31 @@
       <span class="flex-47">{{ 'labels.inputs.Income type' | translate }}:</span>
       <span class="flex-53">{{ loanProduct.capitalizedIncomeType?.value | translateKey: 'catalogs' }}</span>
     </div>
+  </div>
 
-    <div fxFlexFill *ngIf="loanProduct.enableIncomeCapitalization">
-      <span fxFlex="47%">{{ 'labels.inputs.Income type' | translate }}:</span>
-      <span fxFlex="53%">{{ loanProduct.capitalizedIncomeType?.value | translateKey: 'catalogs' }}</span>
+  <div class="flex-100 layout-row-wrap responsive-column" *ngIf="isAdvancedPaymentAllocation">
+    <h3 class="mat-h3 flex-100">{{ 'labels.inputs.Buy down fees' | translate }}</h3>
+
+    <mat-divider [inset]="true"></mat-divider>
+
+    <div class="flex-100 layout-row">
+      <span class="flex-47">{{ 'labels.inputs.Enable Buy down fee' | translate }}:</span>
+      <span class="flex-53">{{ loanProduct.enableBuyDownFee | yesNo }}</span>
+    </div>
+
+    <div class="flex-100 layout-row" *ngIf="loanProduct.enableBuyDownFee">
+      <span class="flex-47">{{ 'labels.inputs.Buy down fee calculation type' | translate }}:</span>
+      <span class="flex-53">{{ loanProduct.buyDownFeeCalculationType?.value | translateKey: 'catalogs' }}</span>
+    </div>
+
+    <div class="flex-100 layout-row" *ngIf="loanProduct.enableBuyDownFee">
+      <span class="flex-47">{{ 'labels.inputs.Buy down fee strategy' | translate }}:</span>
+      <span class="flex-53">{{ loanProduct.buyDownFeeStrategy?.value | translateKey: 'catalogs' }}</span>
+    </div>
+
+    <div class="flex-100 layout-row" *ngIf="loanProduct.enableBuyDownFee">
+      <span class="flex-47">{{ 'labels.inputs.Buy down fee income type' | translate }}:</span>
+      <span class="flex-53">{{ loanProduct.buyDownFeeIncomeType?.value | translateKey: 'catalogs' }}</span>
     </div>
   </div>
 

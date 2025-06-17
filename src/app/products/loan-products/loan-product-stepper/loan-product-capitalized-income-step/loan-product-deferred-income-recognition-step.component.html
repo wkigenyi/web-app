@@ -1,4 +1,4 @@
-<form [formGroup]="loanIncomeCapitalizationForm">
+<form [formGroup]="loanDeferredIncomeRecognitionForm">
   <div class="layout-row-wrap gap-2percent layout-column-lt-md">
     <mat-checkbox class="flex-98" labelPosition="before" formControlName="enableIncomeCapitalization">
       {{ 'labels.inputs.Enable income capitalization' | translate }}
@@ -34,6 +34,39 @@
           [value]="capitalizedIncomeType.id"
         >
           {{ capitalizedIncomeType.value | translateKey: 'catalogs' }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="layout-row-wrap gap-2percent layout-column-lt-md">
+    <mat-checkbox class="flex-98" labelPosition="before" formControlName="enableBuyDownFee">
+      {{ 'labels.inputs.Enable Buy down fee' | translate }}
+    </mat-checkbox>
+
+    <mat-form-field class="flex-48" *ngIf="enableBuyDownFee">
+      <mat-label>{{ 'labels.inputs.Buy down fee calculation type' | translate }}</mat-label>
+      <mat-select formControlName="buyDownFeeCalculationType" required>
+        <mat-option
+          *ngFor="let buyDownFeeCalculationType of buyDownFeeCalculationTypeOptions"
+          [value]="buyDownFeeCalculationType.id"
+        >
+          {{ buyDownFeeCalculationType.value | translateKey: 'catalogs' }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="flex-48" *ngIf="enableBuyDownFee">
+      <mat-label>{{ 'labels.inputs.Buy down fee strategy' | translate }}</mat-label>
+      <mat-select formControlName="buyDownFeeStrategy" required>
+        <mat-option *ngFor="let buyDownFeeStrategy of buyDownFeeStrategyOptions" [value]="buyDownFeeStrategy.id">
+          {{ buyDownFeeStrategy.value | translateKey: 'catalogs' }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="flex-48" *ngIf="enableBuyDownFee">
+      <mat-label>{{ 'labels.inputs.Buy down fee income type' | translate }}</mat-label>
+      <mat-select formControlName="buyDownFeeIncomeType" required>
+        <mat-option *ngFor="let buyDownFeeIncomeType of buyDownFeeIncomeTypeOptions" [value]="buyDownFeeIncomeType.id">
+          {{ buyDownFeeIncomeType.value | translateKey: 'catalogs' }}
         </mat-option>
       </mat-select>
     </mat-form-field>

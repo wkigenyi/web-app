@@ -353,6 +353,23 @@ export class LoanProductSummaryComponent implements OnInit, OnChanges {
         );
         this.loanProduct.capitalizedIncomeType = optionValue;
       }
+      if (this.isAdvancedPaymentAllocation && this.loanProduct.enableBuyDownFee) {
+        optionValue = this.optionDataLookUp(
+          this.loanProduct.buyDownFeeCalculationType,
+          this.loanProductsTemplate.buyDownFeeCalculationTypeOptions
+        );
+        this.loanProduct.buyDownFeeCalculationType = optionValue;
+        optionValue = this.optionDataLookUp(
+          this.loanProduct.buyDownFeeStrategy,
+          this.loanProductsTemplate.buyDownFeeStrategyOptions
+        );
+        this.loanProduct.buyDownFeeStrategy = optionValue;
+        optionValue = this.optionDataLookUp(
+          this.loanProduct.buyDownFeeIncomeType,
+          this.loanProductsTemplate.buyDownFeeIncomeTypeOptions
+        );
+        this.loanProduct.buyDownFeeIncomeType = optionValue;
+      }
       optionValue = this.optionDataLookUp(
         this.loanProduct.interestRateFrequencyType,
         this.loanProductsTemplate.interestRateFrequencyTypeOptions
