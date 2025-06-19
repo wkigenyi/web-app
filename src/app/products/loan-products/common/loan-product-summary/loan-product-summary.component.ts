@@ -202,11 +202,16 @@ export class LoanProductSummaryComponent implements OnInit, OnChanges {
             this.loanProduct.incomeFromCapitalizationAccountId,
             incomeAccountData
           ),
+          incomeFromBuyDownAccount: this.glAccountLookUp(
+            this.loanProduct.incomeFromBuyDownAccountId,
+            incomeAccountData
+          ),
 
           writeOffAccount: this.glAccountLookUp(this.loanProduct.writeOffAccountId, expenseAccountData),
           goodwillCreditAccount: this.glAccountLookUp(this.loanProduct.goodwillCreditAccountId, expenseAccountData),
           chargeOffExpenseAccount: this.glAccountLookUp(this.loanProduct.writeOffAccountId, expenseAccountData),
           chargeOffFraudExpenseAccount: this.glAccountLookUp(this.loanProduct.writeOffAccountId, expenseAccountData),
+          buyDownExpenseAccount: this.glAccountLookUp(this.loanProduct.buyDownExpenseAccountId, expenseAccountData),
 
           overpaymentLiabilityAccount: this.glAccountLookUp(
             this.loanProduct.overpaymentLiabilityAccountId,
