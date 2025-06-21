@@ -183,6 +183,11 @@ export class LoansViewComponent implements OnInit {
         taskPermissionName: 'DISBURSE_LOAN'
       });
     } else if (this.status === 'Active') {
+      this.buttonConfig.addButton({
+        name: 'Buy Down Fee',
+        icon: 'plus',
+        taskPermissionName: 'BUY_DOWN_FEE_LOAN'
+      });
       if (this.loanDetailsData.enableIncomeCapitalization) {
         this.buttonConfig.addButton({
           name: 'Capitalized Income',

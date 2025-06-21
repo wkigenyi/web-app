@@ -145,13 +145,19 @@ export class MakeRepaymentComponent implements OnInit {
   }
 
   showDetails(): boolean {
-    return !this.isCapitalizedIncome();
+    return !this.isCapitalizedIncome() && !this.isBuyDownFee();
   }
 
   isCapitalizedIncome(): boolean {
     return [
       'capitalizedIncome',
       'capitalizedIncomeAdjustment'
+    ].includes(this.command);
+  }
+
+  isBuyDownFee(): boolean {
+    return [
+      'buyDownFee'
     ].includes(this.command);
   }
 

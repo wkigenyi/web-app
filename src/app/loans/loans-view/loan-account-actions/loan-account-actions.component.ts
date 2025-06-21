@@ -115,6 +115,7 @@ export class LoanAccountActionsComponent {
     'Add Interest Pause': boolean;
     'Capitalized Income': boolean;
     'Contract Termination': boolean;
+    'Buy Down Fee': boolean;
   } = {
     Close: false,
     'Undo Approval': false,
@@ -152,7 +153,8 @@ export class LoanAccountActionsComponent {
     'Interest Payment Waiver': false,
     'Add Interest Pause': false,
     'Capitalized Income': false,
-    'Contract Termination': false
+    'Contract Termination': false,
+    'Buy Down Fee': false
   };
 
   actionButtonData: any;
