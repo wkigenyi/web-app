@@ -148,7 +148,7 @@ export class LoanProductAccountingStepComponent implements OnInit, OnChanges {
         this.loanProductAccountingForm.patchValue({
           enableAccrualActivityPosting: this.loanProductsTemplate.enableAccrualActivityPosting
         });
-        if (this.capitalizedIncome.enableIncomeCapitalization) {
+        if (this.capitalizedIncome && this.capitalizedIncome.enableIncomeCapitalization) {
           this.loanProductAccountingForm.patchValue({
             deferredIncomeLiabilityAccountId: accountingMappings.deferredIncomeLiabilityAccount.id,
             incomeFromCapitalizationAccountId: accountingMappings.incomeFromCapitalizationAccount.id
@@ -165,7 +165,7 @@ export class LoanProductAccountingStepComponent implements OnInit, OnChanges {
           incomeFromPenaltyAccountId: accountingMappings.incomeFromPenaltyAccount.id,
           incomeFromRecoveryAccountId: accountingMappings.incomeFromRecoveryAccount.id,
           writeOffAccountId: accountingMappings.writeOffAccount.id,
-          goodwillCreditAccountId: accountingMappings.goodwillCreditAccount.id,
+          goodwillCreditAccountId: accountingMappings.goodwillCreditAccount?.id || null,
           overpaymentLiabilityAccountId: accountingMappings.overpaymentLiabilityAccount.id,
           chargeOffFraudExpenseAccountId: accountingMappings.chargeOffFraudExpenseAccount
             ? accountingMappings.chargeOffFraudExpenseAccount.id
@@ -591,7 +591,7 @@ export class LoanProductAccountingStepComponent implements OnInit, OnChanges {
 
   setCapitalizedIncomeControls() {
     if (this.isAccountingAccrualBased) {
-      if (this.capitalizedIncome.enableIncomeCapitalization) {
+      if (this.capitalizedIncome && this.capitalizedIncome.enableIncomeCapitalization) {
         this.loanProductAccountingForm.addControl(
           'deferredIncomeLiabilityAccountId',
           new UntypedFormControl('', Validators.required)

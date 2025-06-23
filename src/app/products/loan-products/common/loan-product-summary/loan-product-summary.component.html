@@ -780,11 +780,7 @@
 
     <mat-divider [inset]="true"></mat-divider>
 
-    <table
-      class="mat-elevation-z1 flex-fill"
-      mat-table
-      [dataSource]="loanProduct.charges | chargesPenaltyFilter: false"
-    >
+    <table class="mat-elevation-z1 flex-100" mat-table [dataSource]="loanProduct.charges | chargesPenaltyFilter: false">
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Name' | translate }}</th>
         <td mat-cell *matCellDef="let charge">
@@ -821,7 +817,7 @@
 
     <mat-divider [inset]="true"></mat-divider>
 
-    <table class="mat-elevation-z1 flex-fill" mat-table [dataSource]="loanProduct.charges | chargesPenaltyFilter: true">
+    <table class="mat-elevation-z1 flex-100" mat-table [dataSource]="loanProduct.charges | chargesPenaltyFilter: true">
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Name' | translate }}</th>
         <td mat-cell *matCellDef="let overdueCharge">
