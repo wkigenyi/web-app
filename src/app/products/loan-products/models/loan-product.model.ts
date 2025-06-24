@@ -71,6 +71,11 @@ export interface LoanProduct {
   capitalizedIncomeStrategy?: OptionData;
   capitalizedIncomeType?: OptionData;
 
+  enableBuyDownFee?: boolean;
+  buyDownFeeCalculationType?: OptionData;
+  buyDownFeeStrategy?: OptionData;
+  buyDownFeeIncomeType?: OptionData;
+
   canDefineInstallmentAmount: boolean;
   graceOnArrearsAgeing?: number;
   overdueDaysForNPA?: number;

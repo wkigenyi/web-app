@@ -16,7 +16,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { FormfieldBase } from 'app/shared/form-dialog/formfield/model/formfield-base';
 import { SelectBase } from 'app/shared/form-dialog/formfield/model/select-base';
 import { ChargeOffReasonToExpenseAccountMapping } from 'app/shared/models/general.model';
-import { CapitalizedIncome } from '../loan-product-payment-strategy-step/payment-allocation-model';
+import { DeferredIncomeRecognition } from '../loan-product-payment-strategy-step/payment-allocation-model';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { MatDivider } from '@angular/material/divider';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -71,7 +71,7 @@ export class LoanProductAccountingStepComponent implements OnInit, OnChanges {
   @Input() loanProductsTemplate: any;
   @Input() accountingRuleData: any;
   @Input() loanProductFormValid: boolean;
-  @Input() capitalizedIncome: CapitalizedIncome;
+  @Input() deferredIncomeRecognition: DeferredIncomeRecognition;
 
   loanProductAccountingForm: UntypedFormGroup;
 
@@ -115,7 +115,7 @@ export class LoanProductAccountingStepComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.setCapitalizedIncomeControls();
+    this.setDeferredIncomeRecognitionControls();
   }
 
   ngOnInit() {
@@ -136,7 +136,7 @@ export class LoanProductAccountingStepComponent implements OnInit, OnChanges {
     });
 
     const accountingMappings = this.loanProductsTemplate.accountingMappings;
-    this.setCapitalizedIncomeControls();
+    this.setDeferredIncomeRecognitionControls();
     switch (this.loanProductsTemplate.accountingRule.id) {
       case 3:
       case 4:
@@ -148,11 +148,13 @@ export class LoanProductAccountingStepComponent implements OnInit, OnChanges {
         this.loanProductAccountingForm.patchValue({
           enableAccrualActivityPosting: this.loanProductsTemplate.enableAccrualActivityPosting
         });
-        if (this.capitalizedIncome && this.capitalizedIncome.enableIncomeCapitalization) {
-          this.loanProductAccountingForm.patchValue({
-            deferredIncomeLiabilityAccountId: accountingMappings.deferredIncomeLiabilityAccount.id,
-            incomeFromCapitalizationAccountId: accountingMappings.incomeFromCapitalizationAccount.id
-          });
+        if (this.deferredIncomeRecognition) {
+          if (this.deferredIncomeRecognition.capitalizedIncome.enableIncomeCapitalization) {
+            this.loanProductAccountingForm.patchValue({
+              deferredIncomeLiabilityAccountId: accountingMappings.deferredIncomeLiabilityAccount.id,
+              incomeFromCapitalizationAccountId: accountingMappings.incomeFromCapitalizationAccount.id
+            });
+          }
         }
       /* falls through */
       case 2:
@@ -589,20 +591,22 @@ export class LoanProductAccountingStepComponent implements OnInit, OnChanges {
     return this.loanProductAccountingForm.value;
   }
 
-  setCapitalizedIncomeControls() {
+  setDeferredIncomeRecognitionControls() {
     if (this.isAccountingAccrualBased) {
-      if (this.capitalizedIncome && this.capitalizedIncome.enableIncomeCapitalization) {
-        this.loanProductAccountingForm.addControl(
-          'deferredIncomeLiabilityAccountId',
-          new UntypedFormControl('', Validators.required)
-        );
-        this.loanProductAccountingForm.addControl(
-          'incomeFromCapitalizationAccountId',
-          new UntypedFormControl('', Validators.required)
-        );
-      } else {
-        this.loanProductAccountingForm.removeControl('deferredIncomeLiabilityAccountId');
-        this.loanProductAccountingForm.removeControl('incomeFromCapitalizationAccountId');
+      if (this.deferredIncomeRecognition) {
+        if (this.deferredIncomeRecognition.capitalizedIncome.enableIncomeCapitalization) {
+          this.loanProductAccountingForm.addControl(
+            'deferredIncomeLiabilityAccountId',
+            new UntypedFormControl('', Validators.required)
+          );
+          this.loanProductAccountingForm.addControl(
+            'incomeFromCapitalizationAccountId',
+            new UntypedFormControl('', Validators.required)
+          );
+        } else {
+          this.loanProductAccountingForm.removeControl('deferredIncomeLiabilityAccountId');
+          this.loanProductAccountingForm.removeControl('incomeFromCapitalizationAccountId');
+        }
       }
     }
   }
