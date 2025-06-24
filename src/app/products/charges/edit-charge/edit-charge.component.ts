@@ -161,7 +161,7 @@ export class EditChargeComponent implements OnInit {
         this.addFeeFrequency = false;
         this.chargeForm.addControl(
           'incomeAccountId',
-          this.formBuilder.control(this.chargeData.incomeOrLiabilityAccount.id, Validators.required)
+          this.formBuilder.control(this.chargeData.incomeOrLiabilityAccount?.id, Validators.required)
         );
         break;
       }
