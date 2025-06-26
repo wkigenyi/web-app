@@ -121,8 +121,10 @@ export interface LoanProduct {
   // Accounting
   accountingRule: any;
   accountingMappings?: { [key: string]: AccountingMapping };
+  buyDownExpenseAccountId?: number;
   fundSourceAccountId?: number;
   goodwillCreditAccountId?: number;
+  incomeFromBuyDownAccountId?: number;
   incomeFromCapitalizationAccountId?: number;
   incomeFromChargeOffFeesAccountId?: number;
   incomeFromChargeOffInterestAccountId?: number;

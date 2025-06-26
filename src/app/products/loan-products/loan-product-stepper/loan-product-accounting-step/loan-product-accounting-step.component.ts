@@ -155,6 +155,12 @@ export class LoanProductAccountingStepComponent implements OnInit, OnChanges {
               incomeFromCapitalizationAccountId: accountingMappings.incomeFromCapitalizationAccount.id
             });
           }
+          if (this.deferredIncomeRecognition.buyDownFee.enableBuyDownFee) {
+            this.loanProductAccountingForm.patchValue({
+              buyDownExpenseAccountId: accountingMappings.buyDownExpenseAccount.id,
+              incomeFromBuyDownAccountId: accountingMappings.incomeFromBuyDownAccount.id
+            });
+          }
         }
       /* falls through */
       case 2:
@@ -606,6 +612,19 @@ export class LoanProductAccountingStepComponent implements OnInit, OnChanges {
         } else {
           this.loanProductAccountingForm.removeControl('deferredIncomeLiabilityAccountId');
           this.loanProductAccountingForm.removeControl('incomeFromCapitalizationAccountId');
+        }
+        if (this.deferredIncomeRecognition.buyDownFee.enableBuyDownFee) {
+          this.loanProductAccountingForm.addControl(
+            'buyDownExpenseAccountId',
+            new UntypedFormControl('', Validators.required)
+          );
+          this.loanProductAccountingForm.addControl(
+            'incomeFromBuyDownAccountId',
+            new UntypedFormControl('', Validators.required)
+          );
+        } else {
+          this.loanProductAccountingForm.removeControl('buyDownExpenseAccountId');
+          this.loanProductAccountingForm.removeControl('incomeFromBuyDownAccountId');
         }
       }
     }

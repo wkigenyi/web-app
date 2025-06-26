@@ -1042,6 +1042,14 @@
       [withTitle]="'47%'"
     >
     </mifosx-gl-account-display>
+    <mifosx-gl-account-display
+      class="flex-100"
+      *ngIf="accountingMappings.incomeFromBuyDownAccount"
+      [accountTitle]="'Income from Buy down fees'"
+      [glAccount]="accountingMappings.incomeFromBuyDownAccount"
+      [withTitle]="'47%'"
+    >
+    </mifosx-gl-account-display>
 
     <h4 class="mat-h4 flex-100">{{ 'labels.heading.Expenses' | translate }}</h4>
 
@@ -1073,6 +1081,14 @@
         *ngIf="accountingMappings.chargeOffFraudExpenseAccount"
         [accountTitle]="'ChargeOff Fraud Expense'"
         [glAccount]="accountingMappings.chargeOffFraudExpenseAccount"
+        [withTitle]="'47%'"
+      >
+      </mifosx-gl-account-display>
+      <mifosx-gl-account-display
+        class="flex-100"
+        *ngIf="accountingMappings.buyDownExpenseAccount"
+        [accountTitle]="'Buy down fee Expense'"
+        [glAccount]="accountingMappings.buyDownExpenseAccount"
         [withTitle]="'47%'"
       >
       </mifosx-gl-account-display>
