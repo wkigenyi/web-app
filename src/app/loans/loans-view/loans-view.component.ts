@@ -285,6 +285,14 @@ export class LoansViewComponent implements OnInit {
           taskPermissionName: 'UNDO_REAMORTIZE_LOAN'
         });
       }
+    } else if (this.status === 'Closed (obligations met)' || this.status === 'Overpaid') {
+      if (this.loanDetailsData.multiDisburseLoan) {
+        this.buttonConfig.addButton({
+          name: 'Disburse',
+          icon: 'hand-holding-usd',
+          taskPermissionName: 'DISBURSE_LOAN'
+        });
+      }
     }
   }
 
