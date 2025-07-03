@@ -204,6 +204,16 @@
               <span>{{ 'labels.menus.Capitalized Income Adjustment' | translate }}</span>
             </button>
           </span>
+          <span *ngIf="isBuyDownFee(transaction.type) && !transaction.manuallyReversed">
+            <button
+              mat-menu-item
+              *mifosxHasPermission="'BUY_DOWN_FEE_LOAN'"
+              (click)="buyDownFeeAdjustmentTransaction(transaction, $event)"
+            >
+              <mat-icon><fa-icon icon="coins" size="sm"></fa-icon></mat-icon>
+              <span>{{ 'labels.menus.Buy Down Fee Adjustment' | translate }}</span>
+            </button>
+          </span>
           <span *ngIf="viewJournalEntry(transaction.type)">
             <button
               mat-menu-item
