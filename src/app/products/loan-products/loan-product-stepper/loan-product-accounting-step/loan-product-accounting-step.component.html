@@ -264,7 +264,10 @@
       </mifosx-gl-account-selector>
 
       <mifosx-gl-account-selector
-        *ngIf="deferredIncomeRecognition?.capitalizedIncome?.enableIncomeCapitalization"
+        *ngIf="
+          deferredIncomeRecognition?.capitalizedIncome?.enableIncomeCapitalization ||
+          deferredIncomeRecognition?.buyDownFee?.enableBuyDownFee
+        "
         class="flex-48"
         [inputFormControl]="loanProductAccountingForm.controls.deferredIncomeLiabilityAccountId"
         [glAccountList]="liabilityAccountData"
