@@ -421,10 +421,6 @@ export class TransactionsTabComponent implements OnInit {
     );
   }
 
-  private isBuyDownFee(transactionType: LoanTransactionType): boolean {
-    return transactionType.buyDownFee || transactionType.code === 'loanTransactionType.buyDownFee';
-  }
-
   private isReAgoeOrReAmortize(transactionType: LoanTransactionType): boolean {
     return this.isReAmortize(transactionType) || this.isReAge(transactionType);
   }
@@ -448,70 +444,6 @@ export class TransactionsTabComponent implements OnInit {
       return false;
     }
     return true;
-  }
-
-  buyDownFeeAdjustmentTransaction(transaction: LoanTransaction) {
-    const accountId = `${this.loanId}`;
-    this.loansService
-      .getLoanTransactionActionTemplate(accountId, 'buyDownFeeAdjustment', `${transaction.id}`)
-      .subscribe((response: any) => {
-        const transactionDate = response.date || transaction.date;
-        if (response.amount == 0) {
-          this.displayAlertMessage('Buy Down Fee amount adjusted already adjusted', transaction.amount);
-        } else {
-          const transactionAmount = response.amount || transaction.amount;
-          const formfields: FormfieldBase[] = [
-            new DatepickerBase({
-              controlName: 'transactionDate',
-              label: 'Date',
-              value: this.dateUtils.parseDate(transactionDate),
-              type: 'datetime-local',
-              required: true,
-              minDate: this.dateUtils.parseDate(transaction.date),
-              order: 1
-            }),
-            new InputBase({
-              controlName: 'amount',
-              label: 'Amount',
-              value: transactionAmount,
-              type: 'number',
-              required: true,
-              max: transactionAmount,
-              min: 0.001,
-              order: 2
-            })
-
-          ];
-          const data = {
-            title: `Adjustment ${transaction.type.value} Transaction`,
-            layout: { addButtonText: 'Adjustment' },
-            formfields: formfields
-          };
-          const chargebackDialogRef = this.dialog.open(FormDialogComponent, { data });
-          chargebackDialogRef.afterClosed().subscribe((response: { data: any }) => {
-            if (response.data) {
-              const dateFormat = this.settingsService.dateFormat;
-
-              if (response.data.value.amount <= transactionAmount) {
-                const locale = this.settingsService.language.code;
-                const payload = {
-                  transactionDate: this.dateUtils.formatDate(response.data.value.transactionDate, dateFormat),
-                  transactionAmount: response.data.value.amount,
-                  locale,
-                  dateFormat
-                };
-                this.loansService
-                  .executeLoansAccountTransactionsCommand(accountId, 'buyDownFeeAdjustment', payload, transaction.id)
-                  .subscribe(() => {
-                    this.reload();
-                  });
-              } else {
-                this.displayAlertMessage('Buy Down Fee Adjustment amount must be lower or equal to', transactionAmount);
-              }
-            }
-          });
-        }
-      });
   }
 
   capitalizedIncomeAdjustmentTransaction(transaction: LoanTransaction) {
