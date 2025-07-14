@@ -71,8 +71,6 @@ export class MakeRepaymentComponent implements OnInit {
    */
   ngOnInit() {
     this.command = this.dataObject.type.code.split('.')[1];
-    console.log(this.command);
-    console.log(this.dataObject.type);
     this.maxDate = this.settingsService.businessDate;
     this.createRepaymentLoanForm();
     this.setRepaymentLoanDetails();
