@@ -433,6 +433,96 @@ export class TransactionsTabComponent implements OnInit {
     return !(this.isReAmortize(transactionType) || this.isReAge(transactionType));
   }
 
+  canCreateInterestRefund(transaction: LoanTransaction): boolean {
+    const type = transaction?.type?.code?.toLowerCase() || '';
+    const isRefundType = type.includes('payoutrefund') || type.includes('merchantissuedrefund');
+    if (!isRefundType) return false;
+    if (transaction.manuallyReversed) return false;
+    if (
+      transaction.transactionRelations &&
+      transaction.transactionRelations.some((r) => r.relationType === 'INTEREST_REFUND')
+    )
+      return false;
+    return true;
+  }
+
+  openInterestRefundDialog(transaction: LoanTransaction) {
+    const loanId = this.loanId;
+    this.loansService
+      .getLoanTransactionActionTemplate(String(loanId), 'interest-refund', String(transaction.id))
+      .subscribe((template: any) => {
+        const paymentTypeField = new FormfieldBase({
+          controlType: 'select',
+          controlName: 'paymentTypeId',
+          label: this.translateService.instant('labels.inputs.Payment Type'),
+          value: template.paymentTypeId || '',
+          required: true,
+          order: 2
+        });
+        (paymentTypeField as any).options = {
+          data: template.paymentTypeOptions || [],
+          value: 'id',
+          label: 'name'
+        };
+        const formfields: FormfieldBase[] = [
+          new InputBase({
+            controlName: 'amount',
+            label: this.translateService.instant('labels.inputs.Amount'),
+            value: template.amount,
+            type: 'number',
+            required: true,
+            readonly: true,
+            order: 1
+          }),
+          paymentTypeField,
+          new InputBase({
+            controlName: 'externalId',
+            label: this.translateService.instant('labels.inputs.External Id'),
+            value: '',
+            type: 'text',
+            required: false,
+            order: 3
+          }),
+          new InputBase({
+            controlName: 'note',
+            label: this.translateService.instant('labels.inputs.Note'),
+            value: '',
+            type: 'text',
+            required: false,
+            order: 4
+          })
+
+        ];
+        const data = {
+          title: this.translateService.instant('labels.buttons.Create Interest Refund'),
+          layout: { addButtonText: this.translateService.instant('labels.buttons.Create Interest Refund') },
+          formfields: formfields
+        };
+        const dialogRef = this.dialog.open(FormDialogComponent, { data });
+        dialogRef.afterClosed().subscribe((response: { data: any }) => {
+          if (response?.data) {
+            const { amount, transactionDate, ...rest } = response.data.value;
+            const payload = {
+              ...rest,
+              transactionAmount: amount,
+              locale: this.settingsService.language.code,
+              dateFormat: this.settingsService.dateFormat
+            };
+            this.loansService
+              .executeLoansAccountTransactionsCommand(
+                String(loanId),
+                'interest-refund',
+                payload,
+                String(transaction.id)
+              )
+              .subscribe(() => {
+                this.reload();
+              });
+          }
+        });
+      });
+  }
+
   private reload() {
     const clientId = this.route.parent.parent.snapshot.params['clientId'];
     const url: string = this.router.url;
