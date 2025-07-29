@@ -104,6 +104,10 @@ export class LoansService {
     return this.http.get(`/loans/${loanId}/deferredincome`);
   }
 
+  getBuyDownFeeData(loanId: string): Observable<any> {
+    return this.http.get(`/loans/${loanId}/buydownfees`);
+  }
+
   /**
    * Returns the loan template data with specific condition
    * @param loanId Loan Id
