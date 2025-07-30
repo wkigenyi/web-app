@@ -105,7 +105,7 @@ export class LoansService {
   }
 
   getBuyDownFeeData(loanId: string): Observable<any> {
-    return this.http.get(`/loans/${loanId}/buydownfees`);
+    return this.http.get(`/loans/${loanId}/buydown-fees`);
   }
 
   /**
