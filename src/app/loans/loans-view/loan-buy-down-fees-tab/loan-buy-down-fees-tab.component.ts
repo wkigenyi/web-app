@@ -16,7 +16,7 @@ import { FormatNumberPipe } from '@pipes/format-number.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { LoansService } from '../../loans.service';
 import { BuyDownFeeAmortizationDetails } from '../../models/loan-account.model';
-import { DatePipe } from '@angular/common';
+import { DateFormatPipe } from '@pipes/date-format.pipe';
 
 @Component({
   selector: 'mifosx-loan-buy-down-fees-tab',
@@ -35,7 +35,7 @@ import { DatePipe } from '@angular/common';
     MatRowDef,
     MatRow,
     FormatNumberPipe,
-    DatePipe
+    DateFormatPipe
   ]
 })
 export class LoanBuyDownFeesTabComponent implements OnInit {
