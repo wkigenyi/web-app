@@ -16,8 +16,8 @@ import {
   MatRowDef,
   MatRow
 } from '@angular/material/table';
-import { UntypedFormGroup, UntypedFormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /** Services Import */
 import { CollectionsService } from '../collections.service';
@@ -35,6 +35,7 @@ import { SettingsService } from 'app/settings/settings.service';
 import { Dates } from 'app/core/utils/dates';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { OrganizationService } from 'app/organization/organization.service';
 
 /**
  * Individual Collection Sheet
@@ -136,6 +137,7 @@ export class IndividualCollectionSheetComponent implements OnInit {
   constructor(
     private formBuilder: UntypedFormBuilder,
     private collectionsService: CollectionsService,
+    private organizationService: OrganizationService,
     private route: ActivatedRoute,
     private dateUtils: Dates,
     public dialog: MatDialog,
@@ -182,7 +184,7 @@ export class IndividualCollectionSheetComponent implements OnInit {
    */
   buildDependencies() {
     this.collectionSheetForm.get('officeId').valueChanges.subscribe((value: any) => {
-      this.collectionsService.getStaffs(value).subscribe((response: any) => {
+      this.organizationService.getStaffs(value).subscribe((response: any) => {
         this.loanOfficerData = response;
       });
     });
