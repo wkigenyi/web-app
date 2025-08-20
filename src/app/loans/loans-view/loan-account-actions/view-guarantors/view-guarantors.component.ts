@@ -86,6 +86,19 @@ export class ViewGuarantorsComponent implements OnInit {
 
   ngOnInit() {
     this.guarantorDetails = this.dataObject.guarantors;
+
+    // Get delinquency data for available disbursement amount with over applied
+    this.loansService.getLoanDelinquencyDataForTemplate(this.loanId).subscribe((delinquencyData: any) => {
+      // Check if the field is at root level
+      if (delinquencyData.availableDisbursementAmountWithOverApplied !== undefined) {
+        this.dataObject.availableDisbursementAmountWithOverApplied =
+          delinquencyData.availableDisbursementAmountWithOverApplied;
+      }
+      // Also check if it's in delinquent object
+      if (delinquencyData.delinquent) {
+        this.dataObject.delinquent = delinquencyData.delinquent;
+      }
+    });
   }
 
   toggleGuarantorsDetailsOverview() {
