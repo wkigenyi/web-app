@@ -81,7 +81,7 @@ export class LoanProductDeferredIncomeRecognitionStepComponent implements OnInit
 
   ngOnInit(): void {
     this.enableIncomeCapitalization = this.deferredIncomeRecognition.capitalizedIncome
-      ? this.deferredIncomeRecognition.capitalizedIncome.enableIncomeCapitalization
+      ? this.deferredIncomeRecognition.capitalizedIncome?.enableIncomeCapitalization
       : false;
     this.enableBuyDownFee = this.deferredIncomeRecognition.buyDownFee
       ? this.deferredIncomeRecognition.buyDownFee.enableBuyDownFee
@@ -90,9 +90,9 @@ export class LoanProductDeferredIncomeRecognitionStepComponent implements OnInit
       this.loanDeferredIncomeRecognitionForm.patchValue({
         enableIncomeCapitalization: this.enableIncomeCapitalization,
         capitalizedIncomeCalculationType:
-          this.deferredIncomeRecognition.capitalizedIncome.capitalizedIncomeCalculationType,
-        capitalizedIncomeStrategy: this.deferredIncomeRecognition.capitalizedIncome.capitalizedIncomeStrategy,
-        capitalizedIncomeType: this.deferredIncomeRecognition.capitalizedIncome.capitalizedIncomeType
+          this.deferredIncomeRecognition.capitalizedIncome?.capitalizedIncomeCalculationType,
+        capitalizedIncomeStrategy: this.deferredIncomeRecognition.capitalizedIncome?.capitalizedIncomeStrategy,
+        capitalizedIncomeType: this.deferredIncomeRecognition.capitalizedIncome?.capitalizedIncomeType
       });
     }
     if (this.enableBuyDownFee) {
