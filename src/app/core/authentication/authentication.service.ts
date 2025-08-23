@@ -105,12 +105,15 @@ export class AuthenticationService {
       httpParams = httpParams.set('grant_type', 'password');
       let headers = new HttpHeaders();
       headers = headers.set('Content-Type', 'application/x-www-form-urlencoded');
-      return this.http.post(`${environment.oauth.serverUrl}/token`, httpParams.toString(), { headers: headers }).pipe(
-        map((tokenResponse: OAuth2Token) => {
-          this.getUserDetails(tokenResponse);
-          return of(true);
-        })
-      );
+      return this.http
+        .disableApiPrefix()
+        .post(`${environment.oauth.serverUrl}/token`, httpParams.toString(), { headers: headers })
+        .pipe(
+          map((tokenResponse: OAuth2Token) => {
+            this.getUserDetails(tokenResponse);
+            return of(true);
+          })
+        );
     } else {
       return this.http
         .post('/authentication', { username: loginContext.username, password: loginContext.password })
@@ -134,6 +137,7 @@ export class AuthenticationService {
     let headers = new HttpHeaders();
     headers = headers.set('Authorization', 'bearer ' + tokenResponse.access_token);
     this.http
+      .disableApiPrefix()
       .get(`${environment.serverUrl}/userdetails`, { headers: headers })
       .subscribe((credentials: Credentials) => {
         this.onLoginSuccess(credentials);
@@ -170,6 +174,7 @@ export class AuthenticationService {
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/x-www-form-urlencoded');
     return this.http
+      .disableApiPrefix()
       .post(`${environment.oauth.serverUrl}/token`, httpParams.toString(), { headers: headers })
       .subscribe((tokenResponse: OAuth2Token) => {
         this.storage.setItem(this.oAuthTokenDetailsStorageKey, JSON.stringify(tokenResponse));
@@ -236,6 +241,7 @@ export class AuthenticationService {
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/x-www-form-urlencoded');
     return this.http
+      .disableApiPrefix()
       .post(`${environment.oauth.serverUrl}/logout`, httpParams.toString(), { headers: headers })
       .subscribe();
   }
@@ -310,14 +316,6 @@ export class AuthenticationService {
       this.storage.removeItem(this.oAuthTokenDetailsStorageKey);
       this.storage.removeItem(this.twoFactorAuthenticationTokenStorageKey);
     }
-  }
-
-  public saveZitadelCredentials(credentials: Credentials): void {
-    this.setCredentials(credentials);
-  }
-
-  public saveZitadeloAuthTokenDetailsStorageKey(tokenResponse: OAuth2Token): void {
-    this.storage.setItem(this.oAuthTokenDetailsStorageKey, JSON.stringify(tokenResponse));
   }
 
   /**

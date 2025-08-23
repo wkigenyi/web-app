@@ -41,10 +41,6 @@ import { NotificationsTrayComponent as NotificationsTrayComponent_1 } from '../.
 import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 
-/** Environment Configuration and Zitadel*/
-import { environment } from '../../../../environments/environment';
-import { AuthService } from 'app/zitadel/auth.service';
-
 /**
  * Toolbar component.
  */
@@ -87,17 +83,6 @@ export class ToolbarComponent implements OnInit, AfterViewInit, AfterContentChec
   /** Sets the initial state of sidenav as collapsed. Not collapsed if false. */
   sidenavCollapsed = true;
 
-  /** Zitadel oidcServerEnabled */
-  public environment = environment;
-  oidcServerEnabled = !(
-    (window as any)?.env?.oidcServerEnabled === false ||
-    (window as any)?.env?.oidcServerEnabled === 'false' ||
-    (window as any)?.env?.oidcServerEnabled === 0 ||
-    (window as any)?.env?.oidcServerEnabled === '0' ||
-    (window as any)?.env?.oidcServerEnabled === null ||
-    (window as any)?.env?.oidcServerEnabled === undefined
-  );
-
   /** Instance of sidenav. */
   @Input() sidenav: MatSidenav;
   /** Sidenav collapse event. */
@@ -118,8 +103,7 @@ export class ToolbarComponent implements OnInit, AfterViewInit, AfterContentChec
     private popoverService: PopoverService,
     private configurationWizardService: ConfigurationWizardService,
     private dialog: MatDialog,
-    private changeDetector: ChangeDetectorRef,
-    private authService: AuthService
+    private changeDetector: ChangeDetectorRef
   ) {}
 
   /**
@@ -156,11 +140,10 @@ export class ToolbarComponent implements OnInit, AfterViewInit, AfterContentChec
    * Logs out the authenticated user and redirects to login page.
    */
   logout() {
-    if (this.oidcServerEnabled) {
-      this.authenticationService.logout().subscribe(() => this.router.navigate(['/login'], { replaceUrl: true }));
-    } else {
-      this.authService.logout();
-    }
+    this.authenticationService.logout().subscribe(() => {
+      this.notificationsTray.destroy();
+      this.router.navigate(['/login'], { replaceUrl: true });
+    });
   }
 
   /**

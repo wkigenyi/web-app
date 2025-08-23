@@ -64,15 +64,7 @@ export const environment = {
   vNextApiVersion: window.env?.vNextApiVersion || '/v1.0',
   interbankTransfers: window.env?.interbankTransfers || false,
 
-  minPasswordLength: loadedEnv.minPasswordLength || 12,
-
-  OIDC: {
-    oidcServerEnabled: window['env']['oidcServerEnabled'] || false,
-    oidcBaseUrl: window['env']['oidcBaseUrl'] || '',
-    oidcClientId: window['env']['oidcClientId'] || '',
-    oidcApiUrl: window['env']['oidcApiUrl'] || '',
-    oidcFrontUrl: window['env']['oidcFrontUrl'] || ''
-  }
+  minPasswordLength: loadedEnv.minPasswordLength || 12
 };
 
 // Server URL
