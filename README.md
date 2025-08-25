@@ -31,7 +31,7 @@ Before installing the web app, you need to set up the Fineract backend server:
 
 1. **Choose ONE of these backend options:**
    - **Option A: Use existing remote server**
-     - Use the sandbox (MariaDB) at https://sandbox.mifos.community  ** System is restored every 6 hours **
+     - Use the sandbox (MariaDB) at https://sandbox.mifos.community ** System is restored every 6 hours **
      - Use the demo (MariaDB) at https://demo.mifos.community
      - Use the demo (Keycloak) at https://oauth.mifos.community
      - Use the demo (2FA) at https://2fa.mifos.community
