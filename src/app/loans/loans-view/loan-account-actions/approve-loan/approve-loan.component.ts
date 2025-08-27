@@ -1,7 +1,7 @@
 /** Angular Imports. */
-import { Component, OnInit, Input } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Dates } from 'app/core/utils/dates';
 
 /** Custom Services. */
@@ -12,7 +12,6 @@ import { InputAmountComponent } from '../../../../shared/input-amount/input-amou
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { FormatNumberPipe } from '../../../../pipes/format-number.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
-import { MatIcon } from '@angular/material/icon';
 
 /**
  * Approve Loan component.
@@ -25,8 +24,7 @@ import { MatIcon } from '@angular/material/icon';
     ...STANDALONE_SHARED_IMPORTS,
     InputAmountComponent,
     CdkTextareaAutosize,
-    FormatNumberPipe,
-    MatIcon
+    FormatNumberPipe
   ]
 })
 export class ApproveLoanComponent implements OnInit {
