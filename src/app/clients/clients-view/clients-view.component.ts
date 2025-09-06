@@ -92,17 +92,17 @@ export class ClientsViewComponent implements OnInit {
   ngOnInit() {
     this.clientsService.getClientProfileImage(this.clientViewData.id).subscribe({
       next: (base64Image: any) => {
-        this.clientImage = this._sanitizer.bypassSecurityTrustResourceUrl(base64Image);
-      },
-      error: (error: any) => {
-        // 404 is expected when client has no profile image - not an error
-        if (error.status === 404) {
-          this.clientImage = null;
+        // If base64Image is null, client has no profile image
+        if (base64Image) {
+          this.clientImage = this._sanitizer.bypassSecurityTrustResourceUrl(base64Image);
         } else {
-          // Log other unexpected errors
-          console.error('Error loading client profile image:', error);
           this.clientImage = null;
         }
+      },
+      error: (error: any) => {
+        // Handle any unexpected errors
+        console.error('Error loading client profile image:', error);
+        this.clientImage = null;
       }
     });
   }

@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 /** rxjs Imports */
-import { Observable } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 /**
  * Clients service.
@@ -171,7 +172,23 @@ export class ClientsService {
 
   getClientProfileImage(clientId: string) {
     const httpParams = new HttpParams().set('maxHeight', '150');
-    return this.http.get(`/clients/${clientId}/images`, { params: httpParams, responseType: 'text' });
+    // Keep it simple since our interceptor will handle the 404 errors
+    return this.http
+      .get(`/clients/${clientId}/images`, {
+        params: httpParams,
+        responseType: 'text'
+      })
+      .pipe(
+        // Handle the error here and return null when no image is found (404)
+        catchError((error) => {
+          if (error.status === 404) {
+            // Client has no profile image - return null without propagating error
+            return of(null);
+          }
+          // For other errors, rethrow the error
+          return throwError(() => error);
+        })
+      );
   }
 
   uploadClientProfileImage(clientId: string, image: File) {
