@@ -200,6 +200,10 @@ export class ViewTransactionComponent implements OnInit {
     return true;
   }
 
+  isWriteOff(transactionType: LoanTransactionType): boolean {
+    return transactionType.writeOff || transactionType.code === 'loanTransactionType.writeOff';
+  }
+
   /**
    * Undo the loans transaction
    */
@@ -267,8 +271,10 @@ export class ViewTransactionComponent implements OnInit {
             dateFormat,
             locale
           };
+          const command = this.isWriteOff(this.transactionType) ? 'undowriteoff' : 'undo';
+          const transactionId = command === 'undowriteoff' ? null : this.transactionData.id;
           this.loansService
-            .executeLoansAccountTransactionsCommand(accountId, 'undo', data, this.transactionData.id)
+            .executeLoansAccountTransactionsCommand(accountId, command, data, transactionId)
             .subscribe(() => {
               this.router.navigate(['../'], { relativeTo: this.route });
             });
