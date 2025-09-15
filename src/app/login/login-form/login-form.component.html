@@ -33,7 +33,7 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-checkbox formControlName="remember" class="m-t-10 flex-align-center">{{
+    <mat-checkbox *ngIf="enableRememberMe" formControlName="remember" class="m-t-10 flex-align-center">{{
       'labels.inputs.Remember me' | translate
     }}</mat-checkbox>
 
