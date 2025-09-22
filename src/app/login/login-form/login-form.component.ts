@@ -31,7 +31,6 @@ import { environment } from '../../../environments/environment';
     MatPrefix,
     FaIconComponent,
     MatIconButton,
-    MatCheckbox,
     MatProgressBar,
     MatProgressSpinner
   ]
