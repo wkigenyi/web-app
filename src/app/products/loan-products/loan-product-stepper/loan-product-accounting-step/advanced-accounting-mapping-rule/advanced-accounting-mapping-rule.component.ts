@@ -21,6 +21,7 @@ import { DeleteDialogComponent } from 'app/shared/delete-dialog/delete-dialog.co
 import { FormDialogComponent } from 'app/shared/form-dialog/form-dialog.component';
 import { FormfieldBase } from 'app/shared/form-dialog/formfield/model/formfield-base';
 import { SelectBase } from 'app/shared/form-dialog/formfield/model/select-base';
+import { GLAccount } from 'app/shared/models/general.model';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 
 @Component({
@@ -316,16 +317,19 @@ export class AdvancedAccountingMappingRuleComponent implements OnInit {
     });
   }
 
-  getGlAccountData(valueId: number): any {
-    const glAccountData = [
+  getGlAccountData(valueId: number): GLAccount | null {
+    const glAccountDatas = [
       this.incomeAccountData,
       this.expenseAccountData,
       this.assetAccountData,
       this.liabilityAccountData
     ];
-    return glAccountData.find((i: any) => {
-      return i.id === valueId;
-    });
+    for (const glAccountData of glAccountDatas) {
+      const glAccount = glAccountData.find((i: GLAccount) => i.id === valueId);
+      if (glAccount) {
+        return glAccount;
+      }
+    }
     return null;
   }
 }
