@@ -96,11 +96,25 @@ export class AdvancedAccountingMappingRuleComponent implements OnInit {
     const dialogRef = this.dialog.open(FormDialogComponent, { data });
     dialogRef.afterClosed().subscribe((response: any) => {
       if (response.data) {
-        const addData: AccountingMappingDTO = {
-          value: this.getValueData(response.data.value.valueId),
-          glAccount: this.getGlAccountData(response.data.value.glAccountId)
-        };
-        this.tableData.push(addData);
+        if ([
+            'ChargeOffReasonExpense',
+            'WriteOffReasonToExpense'
+          ].includes(this.formType)) {
+          const addData: AccountingMappingDTO = {
+            value: this.getValueData(response.data.value.chargeOffReasonCodeValueId),
+            glAccount: this.getGlAccountData(response.data.value.expenseAccountId)
+          };
+          this.addTableData(addData);
+        } else if ([
+            'BuydownFeeClassificationToIncome',
+            'CapitalizedIncomeClassificationToIncome'
+          ].includes(this.formType)) {
+          const addData: AccountingMappingDTO = {
+            value: this.getValueData(response.data.value.valueId),
+            glAccount: this.getGlAccountData(response.data.value.glAccountId)
+          };
+          this.addTableData(addData);
+        }
         this.sendParentData();
 
         if (this.formType == 'ChargeOffReasonExpense') {
@@ -110,13 +124,21 @@ export class AdvancedAccountingMappingRuleComponent implements OnInit {
     });
   }
 
+  addTableData(addedData: AccountingMappingDTO): void {
+    let newData = [
+      ...this.tableData,
+      addedData
+    ];
+    this.tableData = newData;
+  }
+
   delete(index: number) {
     const dialogRef = this.dialog.open(DeleteDialogComponent, {
       data: { deleteContext: this.translateService.instant('labels.text.this') }
     });
     dialogRef.afterClosed().subscribe((response: any) => {
       if (response.delete) {
-        this.tableData.splice(index, 1);
+        this.tableData = this.tableData.filter((_, i) => i !== index);
         this.sendParentData();
       }
     });
@@ -158,6 +180,11 @@ export class AdvancedAccountingMappingRuleComponent implements OnInit {
         return {
           title: 'Capitalized Income classifications to Income accounts',
           formfields: this.getClassificationIncomeFormfields(values)
+        };
+      case 'WriteOffReasonToExpense':
+        return {
+          title: 'Map Write-off reasons to Expense accounts',
+          formfields: this.getChargeOffReasonExpenseFormfields(values)
         };
     }
   }
@@ -290,8 +317,15 @@ export class AdvancedAccountingMappingRuleComponent implements OnInit {
   }
 
   getGlAccountData(valueId: number): any {
-    return this.incomeAccountData.find((i: any) => {
+    const glAccountData = [
+      this.incomeAccountData,
+      this.expenseAccountData,
+      this.assetAccountData,
+      this.liabilityAccountData
+    ];
+    return glAccountData.find((i: any) => {
       return i.id === valueId;
     });
+    return null;
   }
 }
