@@ -71,8 +71,7 @@ export class LoanReagingComponent implements OnInit {
         Validators.required
       ],
       reAgeInterestHandling: [
-        this.reAgeInterestHandlingOptions[0],
-        Validators.required
+        this.reAgeInterestHandlingOptions[0]
       ],
       note: '',
       externalId: '',
