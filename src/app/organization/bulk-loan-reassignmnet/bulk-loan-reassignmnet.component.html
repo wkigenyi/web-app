@@ -106,7 +106,9 @@
 
                   <tr *ngFor="let loans of groups.loans">
                     <td>
-                      <mat-checkbox>{{ loans.productName }}({{ loans.accountNo }})</mat-checkbox>
+                      <mat-checkbox (change)="getLoans($event, loans.id)"
+                        >{{ loans.productName }}({{ loans.accountNo }})</mat-checkbox
+                      >
                     </td>
                   </tr>
                 </table>
