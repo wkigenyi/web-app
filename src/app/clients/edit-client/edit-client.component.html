@@ -28,12 +28,26 @@
 
           <mat-form-field class="flex-24">
             <mat-label>{{ 'labels.inputs.Account No' | translate }}</mat-label>
-            <input matInput formControlName="accountNo" />
+            <input
+              matInput
+              formControlName="accountNo"
+              placeholder="Account No"
+              title="Account No"
+              [placeholder]="'labels.inputs.Account No' | translate"
+              [title]="'labels.inputs.Account No' | translate"
+            />
           </mat-form-field>
 
           <mat-form-field class="flex-24">
             <mat-label>{{ 'labels.inputs.External Id' | translate }}</mat-label>
-            <input matInput formControlName="externalId" />
+            <input
+              matInput
+              formControlName="externalId"
+              placeholder="External Id"
+              title="External Id"
+              [placeholder]="'labels.inputs.External Id' | translate"
+              [title]="'labels.inputs.External Id' | translate"
+            />
           </mat-form-field>
         </div>
 
@@ -43,7 +57,15 @@
             <mat-label>{{
               'labels.inputs.' + getDateLabel(legalFormId, ['Name', 'Entity Name']) | translate
             }}</mat-label>
-            <input matInput required formControlName="fullname" />
+            <input
+              matInput
+              required
+              formControlName="fullname"
+              placeholder="Full Name"
+              title="Full Name"
+              [placeholder]="'labels.inputs.' + getDateLabel(legalFormId, ['Name', 'Entity Name']) | translate"
+              [title]="'labels.inputs.' + getDateLabel(legalFormId, ['Name', 'Entity Name']) | translate"
+            />
             <mat-error *ngIf="editClientForm.controls.fullname.hasError('required')">
               {{ 'labels.inputs.Client name' | translate }} {{ 'labels.commons.is' | translate }}
               <strong>{{ 'labels.commons.required' | translate }}</strong>
@@ -52,7 +74,15 @@
 
           <mat-form-field *ngIf="editClientForm.contains('firstname')" class="flex-32">
             <mat-label>{{ 'labels.inputs.First Name' | translate }}</mat-label>
-            <input matInput required formControlName="firstname" />
+            <input
+              matInput
+              required
+              formControlName="firstname"
+              placeholder="First Name"
+              title="First Name"
+              [placeholder]="'labels.inputs.First Name' | translate"
+              [title]="'labels.inputs.First Name' | translate"
+            />
             <mat-error *ngIf="editClientForm.controls.firstname.hasError('required')">
               {{ 'labels.inputs.Client first name' | translate }} {{ 'labels.commons.is' | translate }}
               <strong>{{ 'labels.commons.required' | translate }}</strong>
@@ -61,12 +91,27 @@
 
           <mat-form-field *ngIf="editClientForm.contains('middlename')" class="flex-32">
             <mat-label>{{ 'labels.inputs.Middle Name' | translate }}</mat-label>
-            <input matInput formControlName="middlename" />
+            <input
+              matInput
+              formControlName="middlename"
+              placeholder="Middle Name"
+              title="Middle Name"
+              [placeholder]="'labels.inputs.Middle Name' | translate"
+              [title]="'labels.inputs.Middle Name' | translate"
+            />
           </mat-form-field>
 
           <mat-form-field *ngIf="editClientForm.contains('lastname')" class="flex-32">
             <mat-label>{{ 'labels.inputs.Last Name' | translate }}</mat-label>
-            <input matInput required formControlName="lastname" />
+            <input
+              matInput
+              required
+              formControlName="lastname"
+              placeholder="Last Name"
+              title="Last Name"
+              [placeholder]="'labels.inputs.Last Name' | translate"
+              [title]="'labels.inputs.Last Name' | translate"
+            />
             <mat-error *ngIf="editClientForm.controls.lastname.hasError('required')">
               {{ 'labels.inputs.Client last name' | translate }} {{ 'labels.commons.is' | translate }}
               <strong>{{ 'labels.commons.required' | translate }}</strong>
@@ -82,7 +127,20 @@
             <mat-label>{{
               'labels.inputs.' + getDateLabel(legalFormId, ['Date of Birth', 'Incorporation Date']) | translate
             }}</mat-label>
-            <input matInput [max]="maxDate" [matDatepicker]="dateOfBirthDatePicker" formControlName="dateOfBirth" />
+            <input
+              matInput
+              [max]="maxDate"
+              [matDatepicker]="dateOfBirthDatePicker"
+              formControlName="dateOfBirth"
+              placeholder="Date of Birth"
+              title="Date of Birth"
+              [placeholder]="
+                'labels.inputs.' + getDateLabel(legalFormId, ['Date of Birth', 'Incorporation Date']) | translate
+              "
+              [title]="
+                'labels.inputs.' + getDateLabel(legalFormId, ['Date of Birth', 'Incorporation Date']) | translate
+              "
+            />
             <mat-datepicker-toggle matSuffix [for]="dateOfBirthDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #dateOfBirthDatePicker></mat-datepicker>
           </mat-form-field>
@@ -144,6 +202,10 @@
           <mat-form-field class="flex-48" (click)="incorpValidityTillDateDatePicker.open()">
             <mat-label>{{ 'labels.inputs.Incorporation Validity Till Date' | translate }}</mat-label>
             <input
+              placeholder="Incorporation Validity Till Date"
+              title="Incorporation Validity Till Date"
+              [placeholder]="'labels.inputs.Incorporation Validity Till Date' | translate"
+              [title]="'labels.inputs.Incorporation Validity Till Date' | translate"
               matInput
               [min]="minDate"
               [max]="maxDate"
@@ -156,12 +218,28 @@
 
           <mat-form-field class="flex-48">
             <mat-label>{{ 'labels.inputs.Incorporation No' | translate }}</mat-label>
-            <input matInput formControlName="incorpNumber" />
+            <input
+              matInput
+              formControlName="incorpNumber"
+              placeholder="Incorporation No"
+              title="Incorporation No"
+              [placeholder]="'labels.inputs.Incorporation No' | translate"
+              [title]="'labels.inputs.Incorporation No' | translate"
+            />
           </mat-form-field>
 
           <mat-form-field class="flex-98">
             <mat-label>{{ 'labels.inputs.Remarks' | translate }}</mat-label>
-            <textarea matInput formControlName="remarks" cdkTextareaAutosize cdkAutosizeMinRows="2"></textarea>
+            <textarea
+              matInput
+              formControlName="remarks"
+              cdkTextareaAutosize
+              cdkAutosizeMinRows="2"
+              placeholder="Remarks"
+              title="Remarks"
+              [placeholder]="'labels.inputs.Remarks' | translate"
+              [title]="'labels.inputs.Remarks' | translate"
+            ></textarea>
           </mat-form-field>
         </div>
 
@@ -169,12 +247,27 @@
         <div class="responsive-row">
           <mat-form-field class="flex-48">
             <mat-label>{{ 'labels.inputs.Mobile No' | translate }}</mat-label>
-            <input matInput type="text" formControlName="mobileNo" />
+            <input
+              matInput
+              type="text"
+              formControlName="mobileNo"
+              placeholder="Mobile No"
+              title="Mobile No"
+              [placeholder]="'labels.inputs.Mobile No' | translate"
+              [title]="'labels.inputs.Mobile No' | translate"
+            />
           </mat-form-field>
 
           <mat-form-field class="flex-48">
             <mat-label>{{ 'labels.inputs.Email Address' | translate }}</mat-label>
-            <input matInput formControlName="emailAddress" />
+            <input
+              matInput
+              formControlName="emailAddress"
+              placeholder="Email Address"
+              title="Email Address"
+              [placeholder]="'labels.inputs.Email Address' | translate"
+              [title]="'labels.inputs.Email Address' | translate"
+            />
             <mat-error *ngIf="editClientForm.controls.emailAddress.errors?.email"> Email not valid </mat-error>
           </mat-form-field>
         </div>
@@ -208,6 +301,10 @@
           <mat-form-field class="flex-48" (click)="submittedOnDatePicker.open()">
             <mat-label>{{ 'labels.inputs.Submitted On' | translate }}</mat-label>
             <input
+              placeholder="Submitted On"
+              title="Submitted On"
+              [placeholder]="'labels.inputs.Submitted On' | translate"
+              [title]="'labels.inputs.Submitted On' | translate"
               matInput
               [min]="minDate"
               [max]="maxDate"
@@ -226,6 +323,10 @@
           <mat-form-field class="flex-48" (click)="activatedOnDatePicker.open()">
             <mat-label>{{ 'labels.inputs.Activated On' | translate }}</mat-label>
             <input
+              placeholder="Activated On"
+              title="Activated On"
+              [placeholder]="'labels.inputs.Activated On' | translate"
+              [title]="'labels.inputs.Activated On' | translate"
               matInput
               [min]="editClientForm.value.submittedOnDate"
               [max]="maxDate"
@@ -239,17 +340,10 @@
       </mat-card-content>
 
       <mat-card-actions class="button-container">
-        <button type="button" mat-raised-button [routerLink]="['../general']" class="custom-button">
+        <button type="button" mat-raised-button [routerLink]="['../general']">
           {{ 'labels.buttons.Cancel' | translate }}
         </button>
-        <button
-          type="submit"
-          mat-raised-button
-          color="primary"
-          [disabled]="!editClientForm.valid"
-          (click)="submit()"
-          class="custom-button"
-        >
+        <button type="submit" mat-raised-button color="primary" [disabled]="!editClientForm.valid" (click)="submit()">
           {{ 'labels.buttons.Submit' | translate }}
         </button>
       </mat-card-actions>
