@@ -1,11 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { Dates } from 'app/core/utils/dates';
 import { LoansService } from 'app/loans/loans.service';
+import { RepaymentSchedule } from 'app/loans/models/loan-account.model';
 import { SettingsService } from 'app/settings/settings.service';
 import { OptionData } from 'app/shared/models/option-data.model';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { ReAgePreviewDialogComponent } from './re-age-preview-dialog/re-age-preview-dialog.component';
 
 @Component({
   selector: 'mifosx-loan-reaging',
@@ -31,13 +34,16 @@ export class LoanReagingComponent implements OnInit {
   /** Maximum Date allowed. */
   maxDate = new Date();
 
+  currencyCode: string = '';
+
   constructor(
     private formBuilder: UntypedFormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private settingsService: SettingsService,
     private loanService: LoansService,
-    private dateUtils: Dates
+    private dateUtils: Dates,
+    private dialog: MatDialog
   ) {
     this.loanId = this.route.snapshot.params['loanId'];
   }
@@ -48,6 +54,11 @@ export class LoanReagingComponent implements OnInit {
     this.reAgeReasonOptions = this.dataObject.reAgeReasonOptions;
     this.reAgeInterestHandlingOptions = this.dataObject.reAgeInterestHandlingOptions;
     this.periodFrequencyOptions = this.dataObject.periodFrequencyOptions;
+
+    const loanDetailsData = this.route.parent?.parent?.snapshot.data['loanDetailsData'];
+    if (loanDetailsData?.currency?.code) {
+      this.currencyCode = loanDetailsData.currency.code;
+    }
 
     this.createReagingLoanForm();
   }
@@ -79,21 +90,67 @@ export class LoanReagingComponent implements OnInit {
     });
   }
 
-  submit(): void {
-    const reagingLoanFormData = this.reagingLoanForm.value;
+  private prepareReagingData() {
+    const reagingLoanFormData = { ...this.reagingLoanForm.value };
     const locale = this.settingsService.language.code;
     const dateFormat = this.settingsService.dateFormat;
     const startDate: Date = this.reagingLoanForm.value.startDate;
     if (reagingLoanFormData.startDate instanceof Date) {
       reagingLoanFormData.startDate = this.dateUtils.formatDate(startDate, dateFormat);
     }
-    const data = {
+    if (reagingLoanFormData.reAgeInterestHandling && typeof reagingLoanFormData.reAgeInterestHandling === 'object') {
+      reagingLoanFormData.reAgeInterestHandling = reagingLoanFormData.reAgeInterestHandling.id;
+    }
+    return {
       ...reagingLoanFormData,
       dateFormat,
       locale
     };
-    this.loanService.submitLoanActionButton(this.loanId, data, 'reAge').subscribe((response: any) => {
-      this.router.navigate(['../../transactions'], { relativeTo: this.route });
+  }
+
+  preview(): void {
+    if (this.reagingLoanForm.invalid) {
+      return;
+    }
+    const data = this.prepareReagingData();
+
+    this.loanService.getReAgePreview(this.loanId, data).subscribe({
+      next: (response: RepaymentSchedule) => {
+        const currencyCode = response.currency?.code || this.currencyCode;
+
+        if (!currencyCode) {
+          console.error('Currency code is not available in API response or loan details');
+          return;
+        }
+
+        this.dialog.open(ReAgePreviewDialogComponent, {
+          data: {
+            repaymentSchedule: response,
+            currencyCode: currencyCode
+          },
+          width: '95%',
+          maxWidth: '1400px',
+          height: '90vh'
+        });
+      },
+      error: (error) => {
+        console.error('Error loading re-age preview:', error);
+      }
+    });
+  }
+
+  submit(): void {
+    if (this.reagingLoanForm.invalid) {
+      return;
+    }
+    const data = this.prepareReagingData();
+    this.loanService.submitLoanActionButton(this.loanId, data, 'reAge').subscribe({
+      next: (response: any) => {
+        this.router.navigate(['../../transactions'], { relativeTo: this.route });
+      },
+      error: (error) => {
+        console.error('Error submitting re-age:', error);
+      }
     });
   }
 }
