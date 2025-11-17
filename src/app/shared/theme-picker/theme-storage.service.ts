@@ -1,5 +1,4 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { safeParseObject } from 'app/core/utils/json';
 import { Theme } from './theme.model';
 import { ThemeManagerService } from './theme-manager.service';
 
@@ -20,7 +19,7 @@ export class ThemeStorageService {
   }
 
   getTheme(): Theme {
-    return safeParseObject<Theme | null>(localStorage.getItem(this.themeStorageKey), null);
+    return JSON.parse(localStorage.getItem(this.themeStorageKey));
   }
 
   clearTheme() {

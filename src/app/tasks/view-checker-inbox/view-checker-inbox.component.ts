@@ -15,7 +15,6 @@ import { MatDivider } from '@angular/material/divider';
 import { NgIf, NgFor, KeyValuePipe } from '@angular/common';
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
-import { safeParseObject } from 'app/core/utils/json';
 
 @Component({
   selector: 'mifosx-view-checker-inbox',
@@ -53,7 +52,7 @@ export class ViewCheckerInboxComponent {
   ) {
     this.route.data.subscribe((data: { checkerInboxDetail: any }) => {
       this.checkerInboxDetail = data.checkerInboxDetail;
-      this.jsondata = safeParseObject<any>(this.checkerInboxDetail.commandAsJson, {});
+      this.jsondata = JSON.parse(this.checkerInboxDetail.commandAsJson);
       this.displayJSONData = !_.isEmpty(this.jsondata);
     });
   }
