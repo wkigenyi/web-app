@@ -79,8 +79,12 @@ export class BulkLoanReassignmnetComponent implements OnInit {
    */
   setBulkLoanForm() {
     this.bulkLoanForm = this.formBuilder.group({
+      officeId: [
+        '',
+        Validators.required
+      ],
       assignmentDate: [
-        new Date(),
+        this.settingsService.businessDate,
         Validators.required
       ],
       toLoanOfficerId: [
