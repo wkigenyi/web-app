@@ -1,8 +1,18 @@
 <div class="container mat-elevation-z8">
   <mat-card>
-    <form [formGroup]="reagingLoanForm" (ngSubmit)="submit()">
+    <form [formGroup]="reagingLoanForm" (ngSubmit)="submit()" *ngIf="loanTransactionData !== null">
       <mat-card-content>
         <div class="layout-column">
+          <mifosx-input-amount
+            [currency]="loanTransactionData.currency"
+            [isRequired]="false"
+            [inputFormControl]="reagingLoanForm.controls.transactionAmount"
+            [inputLabel]="'Transaction Amount'"
+            [minVal]="0.01"
+            [maxVal]="loanTransactionData.amount"
+          >
+          </mifosx-input-amount>
+
           <mat-form-field>
             <mat-label>{{ 'labels.inputs.Number of Installments' | translate }}</mat-label>
             <input type="number" matInput required formControlName="numberOfInstallments" />
