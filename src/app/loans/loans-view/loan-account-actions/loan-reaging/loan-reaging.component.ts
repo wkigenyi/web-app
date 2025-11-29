@@ -9,13 +9,16 @@ import { SettingsService } from 'app/settings/settings.service';
 import { OptionData } from 'app/shared/models/option-data.model';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { ReAgePreviewDialogComponent } from './re-age-preview-dialog/re-age-preview-dialog.component';
+import { InputAmountComponent } from 'app/shared/input-amount/input-amount.component';
+import { LoanTransactionTemplate } from 'app/loans/models/loan-transaction-type.model';
 
 @Component({
   selector: 'mifosx-loan-reaging',
   templateUrl: './loan-reaging.component.html',
   styleUrls: ['./loan-reaging.component.scss'],
   imports: [
-    ...STANDALONE_SHARED_IMPORTS
+    ...STANDALONE_SHARED_IMPORTS,
+    InputAmountComponent
   ]
 })
 export class LoanReagingComponent implements OnInit {
@@ -34,7 +37,7 @@ export class LoanReagingComponent implements OnInit {
   /** Maximum Date allowed. */
   maxDate = new Date();
 
-  currencyCode: string = '';
+  loanTransactionData: LoanTransactionTemplate | null = null;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -49,17 +52,13 @@ export class LoanReagingComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loanTransactionData = this.dataObject;
+
     this.maxDate = this.settingsService.maxFutureDate;
 
     this.reAgeReasonOptions = this.dataObject.reAgeReasonOptions;
     this.reAgeInterestHandlingOptions = this.dataObject.reAgeInterestHandlingOptions;
     this.periodFrequencyOptions = this.dataObject.periodFrequencyOptions;
-
-    const loanDetailsData = this.route.parent?.parent?.snapshot.data['loanDetailsData'];
-    if (loanDetailsData?.currency?.code) {
-      this.currencyCode = loanDetailsData.currency.code;
-    }
-
     this.createReagingLoanForm();
   }
 
@@ -83,6 +82,10 @@ export class LoanReagingComponent implements OnInit {
       ],
       reAgeInterestHandling: [
         this.reAgeInterestHandlingOptions[0]
+      ],
+      transactionAmount: [
+        this.loanTransactionData.amount,
+        [Validators.max(this.loanTransactionData.amount)]
       ],
       note: '',
       externalId: '',
@@ -116,7 +119,7 @@ export class LoanReagingComponent implements OnInit {
 
     this.loanService.getReAgePreview(this.loanId, data).subscribe({
       next: (response: RepaymentSchedule) => {
-        const currencyCode = response.currency?.code || this.currencyCode;
+        const currencyCode = response.currency?.code || this.loanTransactionData.currency.code;
 
         if (!currencyCode) {
           console.error('Currency code is not available in API response or loan details');
