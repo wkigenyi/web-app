@@ -18,6 +18,9 @@
 /* You can add global styles to this file, and also import other style files */
 @use 'assets/styles/helper';
 
+// Error Handler Service Styles
+@use 'app/core/error-handler/error-handler.component';
+
 .scrollbar-styling {
   scrollbar-width: thin;
   scrollbar-color: #889 #f1f1f1;
