@@ -51,7 +51,14 @@
 
               <mat-form-field class="flex-43">
                 <mat-label>{{ 'labels.inputs.Debit Amount' | translate }}</mat-label>
-                <input type="number" matInput required formControlName="amount" />
+                <input
+                  type="number"
+                  matInput
+                  required
+                  formControlName="amount"
+                  min="1"
+                  (input)="onAmountInput($event)"
+                />
                 <mat-error *ngIf="debits.at(i).controls.amount.hasError('required')">
                   {{ 'labels.inputs.Debit Amount' | translate }} {{ 'labels.commons.is' | translate }}
                   <strong>{{ 'labels.commons.required' | translate }}</strong>
@@ -92,7 +99,14 @@
 
               <mat-form-field class="flex-43">
                 <mat-label>{{ 'labels.inputs.Credit Amount' | translate }}</mat-label>
-                <input type="number" matInput required formControlName="amount" />
+                <input
+                  type="number"
+                  matInput
+                  required
+                  formControlName="amount"
+                  min="1"
+                  (input)="onAmountInput($event)"
+                />
                 <mat-error *ngIf="credits.at(i).controls.amount.hasError('required')">
                   {{ 'labels.inputs.Credit Amount' | translate }} {{ 'labels.commons.is' | translate }}
                   <strong>{{ 'labels.commons.required' | translate }}</strong>
