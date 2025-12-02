@@ -34,6 +34,11 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
   ]
 })
 export class CreateJournalEntryComponent implements OnInit, AfterViewInit {
+  onCreditAmountInput(event: any) {
+    if (event.target.value < 1) {
+      event.target.value = 1;
+    }
+  }
   /** Minimum transaction date allowed. */
   minDate = new Date(2000, 0, 1);
   /** Maximum transaction date allowed. */
@@ -140,7 +145,9 @@ export class CreateJournalEntryComponent implements OnInit, AfterViewInit {
       ],
       amount: [
         '',
-        Validators.required
+        [
+          Validators.required,
+          Validators.min(1)]
       ]
     });
   }
