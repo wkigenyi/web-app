@@ -87,6 +87,11 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
         type: 'Internal Server Error',
         message: 'Internal Server Error. Please try again later.'
       });
+    } else if (status === 501) {
+      this.alertService.alert({
+        type: this.translate.instant('error.resource.notImplemented.type'),
+        message: this.translate.instant('error.resource.notImplemented.message')
+      });
     } else {
       this.alertService.alert({ type: 'Unknown Error', message: 'Unknown Error. Please try again later.' });
     }
