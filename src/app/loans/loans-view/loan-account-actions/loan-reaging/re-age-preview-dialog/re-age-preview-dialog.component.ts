@@ -1,11 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogRef,
-  MatDialogTitle,
-  MatDialogContent,
-  MatDialogActions
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { MatButton } from '@angular/material/button';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { RepaymentSchedule } from 'app/loans/models/loan-account.model';
@@ -22,7 +16,6 @@ export interface ReAgePreviewDialogData {
   styleUrls: ['./re-age-preview-dialog.component.scss'],
   imports: [
     ...STANDALONE_SHARED_IMPORTS,
-    MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
     MatButton,

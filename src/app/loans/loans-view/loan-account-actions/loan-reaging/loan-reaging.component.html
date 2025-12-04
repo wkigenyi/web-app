@@ -3,16 +3,6 @@
     <form [formGroup]="reagingLoanForm" (ngSubmit)="submit()" *ngIf="loanTransactionData !== null">
       <mat-card-content>
         <div class="layout-column">
-          <mifosx-input-amount
-            [currency]="loanTransactionData.currency"
-            [isRequired]="false"
-            [inputFormControl]="reagingLoanForm.controls.transactionAmount"
-            [inputLabel]="'Transaction Amount'"
-            [minVal]="0.01"
-            [maxVal]="loanTransactionData.amount"
-          >
-          </mifosx-input-amount>
-
           <mat-form-field>
             <mat-label>{{ 'labels.inputs.Number of Installments' | translate }}</mat-label>
             <input type="number" matInput required formControlName="numberOfInstallments" />
@@ -80,6 +70,30 @@
             <mat-label>{{ 'labels.inputs.Note' | translate }}</mat-label>
             <input matInput formControlName="note" />
           </mat-form-field>
+
+          <div class="flex-fill">
+            <span
+              class="expandcollapsebutton m-l-10 m-t-5 m-b-5 flex-75"
+              (click)="addTransactionAmount = !addTransactionAmount"
+            >
+              <mat-slide-toggle>
+                <div>
+                  <span class="m-l-10">{{ 'labels.inputs.Transaction Amount' | translate }}</span>
+                </div>
+              </mat-slide-toggle>
+            </span>
+          </div>
+
+          <mifosx-input-amount
+            *ngIf="addTransactionAmount"
+            [currency]="loanTransactionData.currency"
+            [isRequired]="false"
+            [inputFormControl]="reagingLoanForm.controls.transactionAmount"
+            [inputLabel]="'Transaction Amount'"
+            [minVal]="0.01"
+            [maxVal]="loanTransactionData.amount"
+          >
+          </mifosx-input-amount>
         </div>
 
         <mat-card-actions class="layout-row align-center gap-5px responsive-column">
