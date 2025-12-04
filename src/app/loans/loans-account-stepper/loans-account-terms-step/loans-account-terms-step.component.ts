@@ -255,6 +255,12 @@ export class LoansAccountTermsStepComponent implements OnInit, OnChanges {
         this.loansAccountTermsForm.addControl('enableDownPayment', new UntypedFormControl(enableDownPayment));
       }
 
+      if (this.isFullTermTrancheEditable()) {
+        const allowFullTermForTranche =
+          this.loansAccountTermsData.allowFullTermForTranche ?? this.loanProduct?.allowFullTermForTranche ?? false;
+        this.loansAccountTermsForm.patchValue({ allowFullTermForTranche });
+      }
+
       const allowAttributeOverrides = this.loansAccountTermsData.product.allowAttributeOverrides;
       if (!allowAttributeOverrides.repaymentEvery) {
         this.loansAccountTermsForm.controls.repaymentEvery.disable();
@@ -517,7 +523,8 @@ export class LoansAccountTermsStepComponent implements OnInit, OnChanges {
       multiDisburseLoan: [false],
       interestRateFrequencyType: [''],
       balloonRepaymentAmount: [''],
-      interestRecognitionOnDisbursementDate: [false]
+      interestRecognitionOnDisbursementDate: [false],
+      allowFullTermForTranche: [false]
     });
   }
 
@@ -699,5 +706,13 @@ export class LoansAccountTermsStepComponent implements OnInit, OnChanges {
     return {
       collateral: this.collateralDataSource
     };
+  }
+
+  /**
+   * Check if full term tranche option should be editable at loan level.
+   * Only available if the loan product has it enabled and is PROGRESSIVE schedule type.
+   */
+  isFullTermTrancheEditable(): boolean {
+    return this.isProgressive && this.loanProduct?.allowFullTermForTranche === true;
   }
 }
