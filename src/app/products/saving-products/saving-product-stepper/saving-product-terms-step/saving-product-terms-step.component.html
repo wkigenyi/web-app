@@ -8,10 +8,15 @@
         matTooltip="{{ 'tooltips.The default interest rate set' | translate }}"
         formControlName="nominalAnnualInterestRate"
         required
+        min="0"
+        step="0.01"
       />
-      <mat-error>
+      <mat-error *ngIf="savingProductTermsForm.get('nominalAnnualInterestRate').hasError('required')">
         {{ 'labels.inputs.Nominal Annual Interest' | translate }} {{ 'labels.commons.is' | translate }}
         <strong>{{ 'labels.commons.required' | translate }}</strong>
+      </mat-error>
+      <mat-error *ngIf="savingProductTermsForm.get('nominalAnnualInterestRate').hasError('min')">
+        {{ 'labels.inputs.Nominal Annual Interest' | translate }} must be zero or greater
       </mat-error>
     </mat-form-field>
 
