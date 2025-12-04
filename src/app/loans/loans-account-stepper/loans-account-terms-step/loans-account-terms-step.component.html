@@ -487,6 +487,15 @@
       <div class="flex-100 layout-row" *ngIf="allowAddDisbursementDetails()">
         <h4 class="mat-h4 flex-98">{{ 'labels.heading.Loan Tranche Details' | translate }}</h4>
       </div>
+      <mat-checkbox
+        *ngIf="isFullTermTrancheEditable()"
+        class="flex-48 margin-v"
+        labelPosition="before"
+        formControlName="allowFullTermForTranche"
+        matTooltip="{{ 'tooltips.Allow full term length for each tranche disbursement' | translate }}"
+      >
+        {{ 'labels.inputs.Allow full term for each tranche' | translate }}
+      </mat-checkbox>
       <div class="flex-100 layout-row">
         <mat-form-field class="flex-48">
           <mat-label>{{ 'labels.inputs.Maximum allowed outstanding balance' | translate }}</mat-label>

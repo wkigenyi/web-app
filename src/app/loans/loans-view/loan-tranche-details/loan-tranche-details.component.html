@@ -4,6 +4,11 @@
     <span class="flex-60">{{ loanDetails.maxOutstandingLoanBalance | formatNumber }}</span>
   </div>
 
+  <div class="flex-fill" *ngIf="loanDetails.allowFullTermForTranche">
+    <span class="flex-40">{{ 'labels.inputs.Allow full term for each tranche' | translate }}:</span>
+    <span class="flex-60">{{ loanDetails.allowFullTermForTranche | yesNo }}</span>
+  </div>
+
   <h3>{{ 'labels.heading.Loan Tranche Details' | translate }}</h3>
 
   <div class="layout-row margin-t layout-xs-column layout-align-end gap-2percent">
