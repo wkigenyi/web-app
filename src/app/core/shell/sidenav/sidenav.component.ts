@@ -169,8 +169,8 @@ export class SidenavComponent implements OnInit, AfterViewInit {
         this.pushActivity('/accounting');
       } else if (activity.includes('/reports')) {
         this.pushActivity('/reports');
-      } else if (activity.includes('/users')) {
-        this.pushActivity('/users');
+      } else if (activity.includes('/appusers')) {
+        this.pushActivity('/appusers');
       } else if (activity.includes('/organization')) {
         this.pushActivity('/organization');
       } else if (activity.includes('/system')) {
