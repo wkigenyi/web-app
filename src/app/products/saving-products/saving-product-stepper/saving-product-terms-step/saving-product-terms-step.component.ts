@@ -52,7 +52,9 @@ export class SavingProductTermsStepComponent implements OnInit {
     this.savingProductTermsForm = this.formBuilder.group({
       nominalAnnualInterestRate: [
         '',
-        Validators.required
+        [
+          Validators.required,
+          Validators.min(0)]
       ],
       interestCompoundingPeriodType: [
         '',
