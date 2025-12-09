@@ -53,19 +53,54 @@ export class ShareProductSettingsStepComponent implements OnInit {
   }
 
   createShareProductSettingsForm() {
-    this.shareProductSettingsForm = this.formBuilder.group({
-      minimumShares: [''],
-      nominalShares: [
-        '',
-        Validators.required
-      ],
-      maximumShares: [''],
-      minimumActivePeriodForDividends: [''],
-      minimumactiveperiodFrequencyType: [''],
-      lockinPeriodFrequency: [''],
-      lockinPeriodFrequencyType: [''],
-      allowDividendCalculationForInactiveClients: [false]
-    });
+    this.shareProductSettingsForm = this.formBuilder.group(
+      {
+        minimumShares: [
+          '',
+          [
+            Validators.required,
+            Validators.min(1),
+            Validators.pattern(/^[0-9]+$/)
+          ]
+        ],
+        nominalShares: [
+          '',
+          [
+            Validators.required,
+            Validators.min(1),
+            Validators.pattern(/^[0-9]+$/)
+          ]
+        ],
+        maximumShares: [
+          '',
+          [
+            Validators.required,
+            Validators.min(1),
+            Validators.pattern(/^[0-9]+$/)
+          ]
+        ],
+        minimumActivePeriodForDividends: [''],
+        minimumactiveperiodFrequencyType: [''],
+        lockinPeriodFrequency: [''],
+        lockinPeriodFrequencyType: [''],
+        allowDividendCalculationForInactiveClients: [false]
+      },
+      {
+        validators: this.validateSharesOrder
+      }
+    );
+  }
+
+  private validateSharesOrder(group: UntypedFormGroup): { [key: string]: any } | null {
+    const min = Number(group.get('minimumShares')?.value);
+    const nominal = Number(group.get('nominalShares')?.value);
+    const max = Number(group.get('maximumShares')?.value);
+    if (min && nominal && max) {
+      if (min > nominal || nominal > max) {
+        return { sharesOrder: true };
+      }
+    }
+    return null;
   }
 
   get shareProductSettings() {
