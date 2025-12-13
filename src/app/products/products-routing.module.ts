@@ -219,7 +219,7 @@ const routes: Routes = [
             {
               path: 'create',
               component: CreateSavingProductComponent,
-              data: { title: 'Create Saving Product', breadcrumb: 'Create' },
+              data: { title: 'Create Savings Product', breadcrumb: 'Create' },
               resolve: {
                 savingProductsTemplate: SavingProductsTemplateResolver
               }
