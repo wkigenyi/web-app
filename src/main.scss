@@ -570,11 +570,14 @@
 .menu-explanation {
   font-size: 14px;
   margin: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .menu-list-item-content {
   display: flex;
   width: 100%;
+  overflow: hidden;
 }
 
 .menu-left-section {
@@ -582,6 +585,9 @@
   align-items: center;
   width: 100%;
   gap: 10px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
 }
 
 .menu-right-section fa-icon {
@@ -593,6 +599,19 @@
   display: flex;
   gap: 4px;
   margin-right: 10px;
+  flex-shrink: 0;
+}
+
+mat-nav-list {
+  overflow: hidden;
+
+  mat-list-item {
+    overflow: hidden;
+
+    .mat-list-item-content {
+      overflow: hidden;
+    }
+  }
 }
 
 .content {
