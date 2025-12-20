@@ -120,7 +120,7 @@
           <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons></mat-paginator>
         }
         @if (savingsDataSource) {
-          <h2 class="mat-h2">{{ 'labels.inputs.Due Savings Collections' | translate }}</h2>
+          <h2 class="mat-h2">{{ 'labels.heading.Due Savings Collections' | translate }}</h2>
           <table class="mat-elevation-z1" mat-table [dataSource]="savingsDataSource" matSort>
             <ng-container matColumnDef="depositAccount">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>
