@@ -282,4 +282,50 @@ body.dark-theme {
   .select-row:hover {
     background-color: rgb(255 255 255 / 8%) !important;
   }
+
+  // Notes section dark theme styling
+  mifosx-entity-notes-tab {
+    .tab-container {
+      h3 {
+        color: white;
+      }
+    }
+
+    .note-card {
+      background-color: #303135;
+      border-color: #424242;
+      color: white;
+
+      &:hover {
+        box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
+        border-color: #555;
+      }
+    }
+
+    .note-content {
+      color: white;
+    }
+
+    .note-footer {
+      border-top-color: #424242;
+    }
+
+    .note-meta {
+      color: rgb(255 255 255 / 70%);
+    }
+
+    .created-by {
+      color: #0098ff;
+    }
+
+    .created-date {
+      color: rgb(255 255 255 / 60%);
+    }
+
+    .empty-state {
+      background-color: #303135;
+      color: rgb(255 255 255 / 70%);
+      border-color: #424242;
+    }
+  }
 }
