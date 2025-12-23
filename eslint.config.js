@@ -9,7 +9,11 @@ module.exports = [
   {
     ignores: [
       'projects/**/*',
-      'dist/**/*'
+      'dist/**/*',
+      '.angular/**/*',
+      'node_modules/**/*',
+      'playwright-report/**/*',
+      'test-results/**/*'
     ]
   },
 
