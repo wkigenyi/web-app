@@ -28,7 +28,11 @@
     "env": "node version.js",
     "postinstall": "node version.js",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "playwright": "playwright test",
+    "playwright:ui": "playwright test --ui",
+    "playwright:headed": "playwright test --headed",
+    "playwright:debug": "playwright test --debug"
   },
   "dependencies": {
     "@angular/animations": "20.3.15",
@@ -81,6 +85,7 @@
     "@angular/compiler-cli": "20.3.15",
     "@angular/language-service": "20.3.15",
     "@cypress/schematic": "^2.5.2",
+    "@playwright/test": "^1.57.0",
     "@types/d3-dispatch": "^3.0.1",
     "@types/d3-drag": "^3.0.1",
     "@types/d3-scale": "^3.2.2",
