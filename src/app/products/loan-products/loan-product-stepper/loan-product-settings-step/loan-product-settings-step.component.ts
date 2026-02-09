@@ -169,20 +169,28 @@ export class LoanProductSettingsStepComponent implements OnInit {
     this.processingStrategyService.initialize(this.isAdvancedTransactionProcessingStrategy);
     this.validateAdvancedPaymentStrategyControls();
 
-    if (
-      this.loanProductsTemplate.dueDaysForRepaymentEvent != null &&
-      this.loanProductsTemplate.overDueDaysForRepaymentEvent != null
-    ) {
-      this.loanProductSettingsForm.patchValue({
-        useDueForRepaymentsConfigurations: false,
-        dueDaysForRepaymentEvent: this.loanProductsTemplate.dueDaysForRepaymentEvent,
-        overDueDaysForRepaymentEvent: this.loanProductsTemplate.overDueDaysForRepaymentEvent
-      });
+    if (this.toEdit) {
+      if (
+        this.loanProductsTemplate.dueDaysForRepaymentEvent != null &&
+        this.loanProductsTemplate.overDueDaysForRepaymentEvent != null
+      ) {
+        this.loanProductSettingsForm.patchValue({
+          useDueForRepaymentsConfigurations: false,
+          dueDaysForRepaymentEvent: this.loanProductsTemplate.dueDaysForRepaymentEvent,
+          overDueDaysForRepaymentEvent: this.loanProductsTemplate.overDueDaysForRepaymentEvent
+        });
+      } else {
+        this.loanProductSettingsForm.patchValue({
+          useDueForRepaymentsConfigurations: true,
+          dueDaysForRepaymentEvent: '',
+          overDueDaysForRepaymentEvent: ''
+        });
+      }
     } else {
       this.loanProductSettingsForm.patchValue({
-        useDueForRepaymentsConfigurations: true,
-        dueDaysForRepaymentEvent: null,
-        overDueDaysForRepaymentEvent: null
+        useDueForRepaymentsConfigurations: false,
+        dueDaysForRepaymentEvent: '',
+        overDueDaysForRepaymentEvent: ''
       });
     }
 
