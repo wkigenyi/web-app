@@ -55,7 +55,6 @@ export class CreateRangeComponent implements OnInit {
       maximumAgeDays: [
         '',
         [
-          Validators.required,
           Validators.pattern('^(0*[1-9][0-9]*)$'),
           Validators.max(10000)
         ]
