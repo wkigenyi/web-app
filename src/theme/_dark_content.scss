@@ -159,6 +159,15 @@
   mat-checkbox {
     color: white;
   }
+
+  .true fa-icon,
+  .false fa-icon,
+  .ispenalty fa-icon,
+  .nopenalty fa-icon,
+  .enabled fa-icon,
+  .disabled fa-icon {
+    color: inherit !important;
+  }
 }
 
 body.dark-theme {
