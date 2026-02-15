@@ -709,6 +709,12 @@ mifosx-notifications-page td {
   color: red;
 }
 
+// ===== Global Delete/Trash Icon Styling =====
+// Ensures delete icons are always red, including in dark theme
+.fa-trash {
+  color: #f44336 !important;
+}
+
 .full-width-flex {
   display: flex;
   justify-content: flex-start;
