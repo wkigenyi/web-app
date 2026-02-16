@@ -710,9 +710,13 @@ mifosx-notifications-page td {
 }
 
 // ===== Global Delete/Trash Icon Styling =====
-// Ensures delete icons are always red, including in dark theme
+// Makes standalone delete icons red, but keeps them white inside warn (red) buttons
 .fa-trash {
   color: #f44336 !important;
+}
+
+.mat-mdc-raised-button.mat-warn .fa-trash {
+  color: inherit !important;
 }
 
 .full-width-flex {
