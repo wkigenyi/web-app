@@ -40,7 +40,7 @@
   text-align: center;
   position: sticky;
   right: 0;
-  background: #fff;
+  background: var(--card-background, #fff);
   z-index: 1;
 }
 
@@ -73,4 +73,8 @@ th.mat-mdc-header-cell:not(.actions-column, :first-child),
 td.mat-mdc-cell:not(.actions-column, :first-child) {
   width: 80px;
   min-width: 80px;
+}
+
+:host-context(.dark-theme) {
+  --card-background: #2d2d2d;
 }
