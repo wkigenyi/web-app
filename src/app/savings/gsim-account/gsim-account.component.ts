@@ -95,6 +95,8 @@ export class GsimAccountComponent implements OnInit {
 
   groupsData: GroupData | null = null;
 
+  groupId: string;
+
   /** Paginator for charge overview table. */
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
@@ -104,6 +106,11 @@ export class GsimAccountComponent implements OnInit {
    * @param {MatDialog} dialog Dialog reference.
    */
   constructor() {
+    // Get groupId from route params
+    this.route.parent?.parent?.params.subscribe((params) => {
+      this.groupId = params['groupId'];
+    });
+
     this.route.data.subscribe((data: { gsimData: any; savingAccountData: any; groupsData: any }) => {
       this.gsimOverviewData = data.gsimData[0].childGSIMAccounts;
       this.savingAccountData = data.savingAccountData;
