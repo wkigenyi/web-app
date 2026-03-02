@@ -26,6 +26,8 @@ import { ExternalIdentifierComponent } from '../../../shared/external-identifier
 import { DateFormatPipe } from '../../../pipes/date-format.pipe';
 import { FormatNumberPipe } from '../../../pipes/format-number.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanProductService } from 'app/products/loan-products/services/loan-product.service';
+import { LoanProductBaseComponent } from 'app/products/loan-products/common/loan-product-base.component';
 
 @Component({
   selector: 'mifosx-general-tab',
@@ -49,7 +51,7 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     FormatNumberPipe
   ]
 })
-export class GeneralTabComponent implements OnInit {
+export class GeneralTabComponent extends LoanProductBaseComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   /** Currency Code */
@@ -89,6 +91,11 @@ export class GeneralTabComponent implements OnInit {
   detailsDataSource: MatTableDataSource<any>;
 
   constructor() {
+    super();
+    const productType = this.route.snapshot.queryParamMap.get('productType') || null;
+    if (productType) {
+      this.loanProductService.initialize(productType);
+    }
     this.route.parent.data.subscribe((data: { loanDetailsData: any }) => {
       this.loanDetails = data.loanDetailsData;
       this.currencyCode = this.loanDetails.currency.code;
@@ -181,13 +188,16 @@ export class GeneralTabComponent implements OnInit {
   setloanDetailsTableData() {
     this.loanDetailsTableData = [
       {
+        key: 'Product Type'
+      },
+      {
+        key: 'Product Name'
+      },
+      {
+        key: 'Status'
+      },
+      {
         key: 'Disbursement Date'
-      },
-      {
-        key: 'Loan Purpose'
-      },
-      {
-        key: 'Loan Officer'
       },
       {
         key: 'Currency'
@@ -214,11 +224,25 @@ export class GeneralTabComponent implements OnInit {
         value: this.loanDetails.writeOffReason
       });
     }
+    if (this.loanProductService.isLoanProduct) {
+      this.loanDetailsTableData.push({
+        key: 'Loan Officer'
+      });
+    }
     this.detailsDataSource = new MatTableDataSource(this.loanDetailsTableData);
   }
 
   setloanNonDetailsTableData() {
     this.loanDetailsTableData = [
+      {
+        key: 'Product Type'
+      },
+      {
+        key: 'Product Name'
+      },
+      {
+        key: 'Status'
+      },
       {
         key: 'Disbursement Date'
       },
@@ -226,12 +250,17 @@ export class GeneralTabComponent implements OnInit {
         key: 'Currency'
       },
       {
-        key: 'Loan Officer'
-      },
-      {
         key: 'External Id'
       }
     ];
+    if (this.loanProductService.isLoanProduct) {
+      this.loanDetailsTableData.push({
+        key: 'Loan Officer'
+      });
+      this.loanDetailsTableData.push({
+        key: 'Loan Purpose'
+      });
+    }
     this.detailsDataSource = new MatTableDataSource(this.loanDetailsTableData);
   }
 
@@ -257,4 +286,10 @@ export class GeneralTabComponent implements OnInit {
     }
     return true;
   };
+
+  loanProductType(): string {
+    return this.loanDetails.loanType
+      ? LoanProductService.productTypeLabel('loan')
+      : LoanProductService.productTypeLabel('working-capital');
+  }
 }

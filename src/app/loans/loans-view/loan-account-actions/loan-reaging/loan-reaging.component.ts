@@ -6,20 +6,18 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Dates } from 'app/core/utils/dates';
-import { LoansService } from 'app/loans/loans.service';
 import { RepaymentSchedule } from 'app/loans/models/loan-account.model';
-import { SettingsService } from 'app/settings/settings.service';
 import { OptionData } from 'app/shared/models/option-data.model';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { ReAgePreviewDialogComponent } from './re-age-preview-dialog/re-age-preview-dialog.component';
 import { InputAmountComponent } from 'app/shared/input-amount/input-amount.component';
 import { LoanTransactionTemplate } from 'app/loans/models/loan-transaction-type.model';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.component';
 
 @Component({
   selector: 'mifosx-loan-reaging',
@@ -31,18 +29,11 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
     MatSlideToggle
   ]
 })
-export class LoanReagingComponent implements OnInit {
+export class LoanReagingComponent extends LoanAccountActionsBaseComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private settingsService = inject(SettingsService);
-  private loanService = inject(LoansService);
   private dateUtils = inject(Dates);
   private dialog = inject(MatDialog);
 
-  @Input() dataObject: any;
-  /** Loan Id */
-  loanId: string;
   /** Repayment Loan Form */
   reagingLoanForm: UntypedFormGroup;
 
@@ -59,7 +50,7 @@ export class LoanReagingComponent implements OnInit {
   addTransactionAmount = false;
 
   constructor() {
-    this.loanId = this.route.snapshot.params['loanId'];
+    super();
   }
 
   ngOnInit(): void {
@@ -169,7 +160,7 @@ export class LoanReagingComponent implements OnInit {
     }
     this.loanService.submitLoanActionButton(this.loanId, data, 'reAge').subscribe({
       next: (response: any) => {
-        this.router.navigate(['../../transactions'], { relativeTo: this.route });
+        this.gotoLoanView('transactions');
       },
       error: (error) => {
         console.error('Error submitting re-age:', error);

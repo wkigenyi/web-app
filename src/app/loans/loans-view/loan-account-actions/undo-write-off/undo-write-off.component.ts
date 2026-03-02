@@ -8,7 +8,7 @@
 
 /** Angular Imports */
 import { Component, OnInit, Input, inject } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 /** Custom Services */
@@ -18,6 +18,7 @@ import { AlertService } from 'app/core/alert/alert.service';
 import { Dates } from 'app/core/utils/dates';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.component';
 
 /**
  * Loan Undo Write-off Action
@@ -31,18 +32,11 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     CdkTextareaAutosize
   ]
 })
-export class UndoWriteOffComponent implements OnInit {
+export class UndoWriteOffComponent extends LoanAccountActionsBaseComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
-  private loanService = inject(LoansService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private dateUtils = inject(Dates);
-  private settingsService = inject(SettingsService);
   private alertService = inject(AlertService);
 
-  @Input() dataObject: any;
-  /** Loan Id */
-  loanId: string;
   /** Minimum Date allowed. */
   minDate = new Date(2000, 0, 1);
   /** Maximum Date allowed. */
@@ -50,15 +44,8 @@ export class UndoWriteOffComponent implements OnInit {
   /** Undo Write-off Loan Form */
   undoWriteOffLoanForm: UntypedFormGroup;
 
-  /**
-   * @param {FormBuilder} formBuilder Form Builder.
-   * @param {LoansService} loanService Loan Service.
-   * @param {ActivatedRoute} route Activated Route.
-   * @param {Router} router Router for navigation.
-   * @param {SettingsService} settingsService Settings Service
-   */
   constructor() {
-    this.loanId = this.route.snapshot.params['loanId'];
+    super();
   }
 
   /**
@@ -95,7 +82,7 @@ export class UndoWriteOffComponent implements OnInit {
 
     this.loanService.submitLoanActionButton(this.loanId, data, 'undowriteoff').subscribe({
       next: (response: any) => {
-        this.router.navigate(['../../general'], { relativeTo: this.route });
+        this.gotoLoanDefaultView();
       },
       error: (error) => {
         console.error('Undo write-off failed:', error);

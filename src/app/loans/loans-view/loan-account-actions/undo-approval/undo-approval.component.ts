@@ -8,12 +8,11 @@
 
 /** Angular Imports. */
 import { Component, OnInit, inject } from '@angular/core';
-import { UntypedFormControl, UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { UntypedFormControl, UntypedFormBuilder } from '@angular/forms';
 
 /** Custom Services. */
-import { LoansService } from 'app/loans/loans.service';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.component';
 /**
  * Undo Loan component.
  */
@@ -25,14 +24,15 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     ...STANDALONE_SHARED_IMPORTS
   ]
 })
-export class UndoApprovalComponent implements OnInit {
-  private loanService = inject(LoansService);
+export class UndoApprovalComponent extends LoanAccountActionsBaseComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
 
   /** Form Controller. */
   note: UntypedFormControl;
+
+  constructor() {
+    super();
+  }
 
   ngOnInit() {
     this.note = this.formBuilder.control('');
@@ -42,9 +42,10 @@ export class UndoApprovalComponent implements OnInit {
    * Submits undo approval form.
    */
   submit() {
-    const loanId = this.route.snapshot.params['loanId'];
-    this.loanService.loanActionButtons(loanId, 'undoapproval', { note: this.note.value }).subscribe((response: any) => {
-      this.router.navigate(['../../general'], { relativeTo: this.route });
-    });
+    this.loanService
+      .loanActionButtons(this.loanId, 'undoapproval', { note: this.note.value })
+      .subscribe((response: any) => {
+        this.gotoLoanDefaultView();
+      });
   }
 }

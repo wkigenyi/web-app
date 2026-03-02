@@ -21,7 +21,6 @@ import {
   MatRowDef,
   MatRow
 } from '@angular/material/table';
-import { LongTextComponent } from '../../../shared/long-text/long-text.component';
 import { CurrencyPipe } from '@angular/common';
 import { ExternalIdentifierComponent } from '../../../shared/external-identifier/external-identifier.component';
 import { MatDivider } from '@angular/material/divider';
@@ -33,6 +32,9 @@ import { FormatNumberPipe } from '../../../pipes/format-number.pipe';
 import { YesnoPipe } from '../../../pipes/yesno.pipe';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanProductBaseComponent } from 'app/products/loan-products/common/loan-product-base.component';
+import { LoanProductBasicDetails } from 'app/loans/models/loan-product.model';
+import { LongTextComponent } from 'app/shared/long-text/long-text.component';
 
 /**
  * Create Loans Account Preview Step
@@ -43,7 +45,6 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
   styleUrls: ['./loans-account-preview-step.component.scss'],
   imports: [
     ...STANDALONE_SHARED_IMPORTS,
-    LongTextComponent,
     ExternalIdentifierComponent,
     MatDivider,
     MatTable,
@@ -63,18 +64,20 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     DateFormatPipe,
     FormatNumberPipe,
     YesnoPipe,
-    TranslatePipe
+    TranslatePipe,
+    LongTextComponent
   ]
 })
-export class LoansAccountPreviewStepComponent implements OnChanges {
+export class LoansAccountPreviewStepComponent extends LoanProductBaseComponent implements OnChanges {
   /** Loans Account Template */
-  @Input() loansAccountTemplate: any = [];
+  @Input() loansAccountTemplate: any;
   /** Loans Account Product Template */
   @Input() loansAccountProductTemplate: any;
   /** Loans Account Data */
   @Input() loansAccount: any;
   /** active Client Members in case of GLIM Account */
   @Input() activeClientMembers?: any;
+  @Input() loanProductsBasicDetails: LoanProductBasicDetails[];
 
   /** Submit Loans Account */
   @Output() submitEvent = new EventEmitter();
@@ -109,7 +112,9 @@ export class LoansAccountPreviewStepComponent implements OnChanges {
   dataSource: any;
   productEnableDownPayment = false;
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.productEnableDownPayment = this.loansAccountProductTemplate.product.enableDownPayment;
@@ -127,5 +132,19 @@ export class LoansAccountPreviewStepComponent implements OnChanges {
         .filter((member: any) => member.selected)
         .reduce((acc: number, member: any) => acc + (member.principal ?? 0), 0);
     }
+  }
+
+  loanProductName(id: number): string {
+    const productType: string = this.loanProductService.productType.value;
+    const product = this.loanProductsBasicDetails.find((p) => p.productType === productType && p.id === id);
+    return product?.name ?? '';
+  }
+
+  loanProductType(): string {
+    return this.loanProductService.loanProductTypeLabel;
+  }
+
+  camalize(word: string) {
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
   }
 }

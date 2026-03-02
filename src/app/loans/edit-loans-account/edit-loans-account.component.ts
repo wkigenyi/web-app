@@ -7,7 +7,7 @@
  */
 
 import { Component, ViewChild, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { LoansService } from '../loans.service';
 import { LoansAccountDetailsStepComponent } from '../loans-account-stepper/loans-account-details-step/loans-account-details-step.component';
 import { LoansAccountTermsStepComponent } from '../loans-account-stepper/loans-account-terms-step/loans-account-terms-step.component';
@@ -21,6 +21,8 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { LoansAccountScheduleStepComponent } from '../loans-account-stepper/loans-account-schedule-step/loans-account-schedule-step.component';
 import { LoansAccountPreviewStepComponent } from '../loans-account-stepper/loans-account-preview-step/loans-account-preview-step.component';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanProductBasicDetails } from '../models/loan-product.model';
+import { LoanProductBaseComponent } from 'app/products/loan-products/common/loan-product-base.component';
 
 /**
  * Edit Loans
@@ -43,9 +45,8 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     LoansAccountPreviewStepComponent
   ]
 })
-export class EditLoansAccountComponent {
+export class EditLoansAccountComponent extends LoanProductBaseComponent {
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private dateUtils = inject(Dates);
   private loansService = inject(LoansService);
   private settingsService = inject(SettingsService);
@@ -66,18 +67,23 @@ export class EditLoansAccountComponent {
   /** Currency Code */
   currencyCode: string;
 
-  /**
-   * Sets loans account edit form.
-   * @param {route} ActivatedRoute Activated Route.
-   * @param {router} Router Router.
-   * @param {Dates} dateUtils Date Utils
-   * @param {loansService} LoansService Loans Service
-   * @param {SettingsService} settingsService Settings Service
-   */
+  productId: number | null = null;
+  productDetails: any;
+
+  loanProductsBasicDetails: LoanProductBasicDetails[] | null = null;
+  productType: string | null = null;
+
   constructor() {
-    this.route.data.subscribe((data: { loansAccountAndTemplate: any }) => {
-      this.loansAccountAndTemplate = data.loansAccountAndTemplate;
-    });
+    super();
+    this.loanProductService.initialize(LoanProductBaseComponent.resolveProductTypeDefault(this.route, 'loan'));
+
+    this.route.data.subscribe(
+      (data: { loansAccountAndTemplate: any; loanProductsBasicDetails: LoanProductBasicDetails[] }) => {
+        this.loansAccountAndTemplate = data.loansAccountAndTemplate;
+        this.loansAccountProductTemplate = data.loansAccountAndTemplate;
+        this.loanProductsBasicDetails = data.loanProductsBasicDetails;
+      }
+    );
     this.loanId = this.route.snapshot.params['loanId'];
   }
 
@@ -86,7 +92,8 @@ export class EditLoansAccountComponent {
    * @param {any} $event API response
    */
   setTemplate($event: any) {
-    this.loansAccountProductTemplate = $event;
+    const templateData: any = $event;
+    this.loansAccountProductTemplate = templateData.loanData ? templateData.loanData : templateData;
     this.currencyCode = this.loansAccountProductTemplate.currency.code;
     if (this.loansAccountProductTemplate.loanProductId) {
       this.loansService
@@ -95,6 +102,11 @@ export class EditLoansAccountComponent {
           this.collateralOptions = response.loanCollateralOptions;
         });
     }
+  }
+
+  setProductType($event: any): void {
+    this.productType = $event;
+    this.loanProductService.initialize(this.productType);
   }
 
   /** Get Loans Account Details Form Data */
@@ -109,31 +121,52 @@ export class EditLoansAccountComponent {
 
   /** Checks wheter all the forms in different steps are valid and not pristine */
   get loansAccountFormValidAndNotPristine() {
-    return (
-      this.loansAccountDetailsForm.valid &&
-      this.loansAccountTermsForm.valid &&
-      (!this.loansAccountDetailsForm.pristine ||
-        !this.loansAccountTermsForm.pristine ||
-        !this.loansAccountTermsStep.pristine ||
-        !this.loansAccountChargesStep.pristine)
-    );
+    if (this.loanProductService.isLoanProduct) {
+      return (
+        this.loansAccountDetailsForm.valid &&
+        this.loansAccountTermsForm.valid &&
+        (!this.loansAccountDetailsForm.pristine ||
+          !this.loansAccountTermsForm.pristine ||
+          !this.loansAccountTermsStep.pristine ||
+          !this.loansAccountChargesStep?.pristine)
+      );
+    } else if (this.loanProductService.isWorkingCapital) {
+      return false;
+    }
   }
 
   /** Retrieves Data of all forms except Currency to submit the data */
   get loansAccount() {
-    return {
-      ...this.loansAccountDetailsStep.loansAccountDetails,
-      ...this.loansAccountTermsStep.loansAccountTerms,
-      ...this.loansAccountChargesStep.loansAccountCharges,
-      ...this.loansAccountTermsStep.loanCollateral,
-      ...this.loansAccountTermsStep.disbursementData
-    };
+    if (this.loanProductService.isLoanProduct) {
+      return {
+        ...this.loansAccountDetailsStep.loansAccountDetails,
+        ...this.loansAccountTermsStep.loansAccountTerms,
+        ...this.loansAccountChargesStep?.loansAccountCharges,
+        ...this.loansAccountTermsStep.loanCollateral,
+        ...this.loansAccountTermsStep.disbursementData
+      };
+    } else if (this.loanProductService.isWorkingCapital) {
+      return {
+        ...this.loansAccountDetailsStep.loansAccountDetails,
+        ...this.loansAccountTermsStep.loansAccountTerms
+      };
+    }
+    console.warn('Unexpected product type in loansAccount getter');
+    return {};
+  }
+
+  submit(): void {
+    if (this.loanProductService.isLoanProduct) {
+      this.submitLoanProduct();
+    } else if (this.loanProductService.isWorkingCapital) {
+      this.submitWorkingCapitalProduct();
+    }
   }
 
   /**
    * Submits Data to create loan account
    */
-  submit() {
+  submitLoanProduct() {
     const locale = this.settingsService.language.code;
     const dateFormat = this.settingsService.dateFormat;
     const loanType = 'individual';
@@ -209,7 +242,14 @@ export class EditLoansAccountComponent {
     delete loansAccountData.allowPartialPeriodInterestCalculation;
 
     this.loansService.updateLoansAccount(this.loanId, loansAccountData).subscribe((response: any) => {
-      this.router.navigate(['../'], { relativeTo: this.route });
+      this.router.navigate(['../'], {
+        queryParams: {
+          productType: this.loanProductService.productType.value
+        },
+        relativeTo: this.route
+      });
     });
   }
+
+  submitWorkingCapitalProduct(): void {}
 }

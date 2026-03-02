@@ -7,24 +7,16 @@
  */
 
 /** Angular Imports */
-import { Component, OnInit, Input, AfterViewInit, inject } from '@angular/core';
-import {
-  UntypedFormGroup,
-  UntypedFormBuilder,
-  Validators,
-  UntypedFormControl,
-  ReactiveFormsModule
-} from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Component, OnInit, AfterViewInit, inject } from '@angular/core';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl } from '@angular/forms';
 
 /** Custom Services */
-import { LoansService } from 'app/loans/loans.service';
 import { ClientsService } from 'app/clients/clients.service';
-import { SettingsService } from 'app/settings/settings.service';
 import { Dates } from 'app/core/utils/dates';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { MatAutocompleteTrigger, MatAutocomplete, MatOption } from '@angular/material/autocomplete';
+import { MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.component';
 
 /**
  * Create Guarantor Action
@@ -40,20 +32,13 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     MatAutocomplete
   ]
 })
-export class CreateGuarantorComponent implements OnInit, AfterViewInit {
+export class CreateGuarantorComponent extends LoanAccountActionsBaseComponent implements OnInit, AfterViewInit {
   private formBuilder = inject(UntypedFormBuilder);
-  private loanService = inject(LoansService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private dateUtils = inject(Dates);
   private clientsService = inject(ClientsService);
-  private settingsService = inject(SettingsService);
 
-  @Input() dataObject: any;
   /** New Guarantor Form */
   newGuarantorForm: UntypedFormGroup;
-  /** Loan ID */
-  loanId: string;
   /** Relation Types */
   relationTypes: any;
   /** Show Client Details Form */
@@ -75,7 +60,7 @@ export class CreateGuarantorComponent implements OnInit, AfterViewInit {
    * @param {SettingsService} settingsService Settings Service
    */
   constructor() {
-    this.loanId = this.route.snapshot.params['loanId'];
+    super();
   }
 
   ngOnInit() {
@@ -210,7 +195,7 @@ export class CreateGuarantorComponent implements OnInit, AfterViewInit {
     });
 
     this.loanService.createNewGuarantor(this.loanId, data).subscribe((response: any) => {
-      this.router.navigate(['../../general'], { relativeTo: this.route });
+      this.gotoLoanDefaultView();
     });
   }
 }

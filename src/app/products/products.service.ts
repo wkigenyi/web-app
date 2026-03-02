@@ -33,6 +33,13 @@ export class ProductsService {
     return this.http.get(`/${productType}`);
   }
 
+  /**
+   * @returns {Observable<any>} Loan Products basis details data.
+   */
+  getLoanProductsBasicDetails(): Observable<any> {
+    return this.http.get('/loanproducts/basic-details');
+  }
+
   createLoanProduct(productType: string, loanProduct: any): Observable<any> {
     return this.http.post(`/${productType}`, loanProduct);
   }

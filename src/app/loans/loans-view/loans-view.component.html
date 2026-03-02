@@ -31,46 +31,52 @@
                   <table class="account-overview">
                     <tbody>
                       <tr>
-                        <td>{{ 'labels.inputs.Loan Account Status' | translate }}:</td>
+                        <td>{{ 'labels.inputs.Account No' | translate }}:</td>
                         <td>
                           <i
                             class="fa fa-stop m-r-5"
                             matTooltip="{{ 'labels.status.' + loanDetailsData.status.value | translate }}"
                             [ngClass]="iconLoanStatusColor() | statusLookup"
                           ></i>
-                          {{ 'labels.status.' + loanDetailsData.status.value | translate }}
+                          <mifosx-account-number
+                            [accountNo]="loanDetailsData.accountNo"
+                            display="left"
+                          ></mifosx-account-number>
                         </td>
                       </tr>
                       <tr>
                         <td>{{ 'labels.inputs.Product Name' | translate }}:</td>
                         <td>
-                          <mifosx-long-text [textValue]="loanDetailsData.loanProductName"></mifosx-long-text>
+                          <mifosx-long-text
+                            [chars]="50"
+                            [textValue]="loanDetailsData.loanProductName"
+                          ></mifosx-long-text>
                         </td>
                       </tr>
                       <tr>
-                        <td>{{ 'labels.inputs.Loan Id' | translate }}:</td>
+                        <td>{{ 'labels.text.' + entityType | translate }} {{ 'labels.inputs.name' | translate }}:</td>
                         <td>
-                          <mifosx-account-number [accountNo]="loanDetailsData.accountNo"></mifosx-account-number>
+                          @if (loanProductService.isLoanProduct) {
+                            {{ loanDetailsData.clientName || loanDetailsData.group?.name }}
+                            ({{ loanDetailsData.clientAccountNo || loanDetailsData.group?.accountNo }})
+                          }
+                          @if (loanProductService.isWorkingCapital) {
+                            {{ loanDetailsData.client.displayName || loanDetailsData.group?.name }}
+                            ({{ loanDetailsData.client.accountNo || loanDetailsData.group?.accountNo }})
+                          }
                         </td>
                       </tr>
                       @if (loanDetailsData.externalId) {
                         <tr>
-                          <td>{{ 'labels.inputs.External Loan ID' | translate }}:</td>
+                          <td>{{ 'labels.inputs.External Id' | translate }}:</td>
                           <td>
                             <mifosx-external-identifier
                               [externalId]="loanDetailsData.externalId"
-                              [completed]="true"
+                              [completed]="false"
                             ></mifosx-external-identifier>
                           </td>
                         </tr>
                       }
-                      <tr>
-                        <td>{{ 'labels.inputs.Client Name' | translate }}:</td>
-                        <td>
-                          {{ loanDetailsData.clientName || loanDetailsData.group.name }}
-                          ({{ loanDetailsData.clientAccountNo || loanDetailsData.group.accountNo }})
-                        </td>
-                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -234,6 +240,9 @@
         <a
           mat-tab-link
           [routerLink]="['./general']"
+          [queryParams]="{
+            productType: loanProductService.productType.value
+          }"
           routerLinkActive
           #general="routerLinkActive"
           [active]="general.isActive"
@@ -243,6 +252,9 @@
         <a
           mat-tab-link
           [routerLink]="['./dashboard']"
+          [queryParams]="{
+            productType: loanProductService.productType.value
+          }"
           routerLinkActive
           #dashboard="routerLinkActive"
           [active]="dashboard.isActive"
@@ -252,26 +264,35 @@
         <a
           mat-tab-link
           [routerLink]="['./accountdetail']"
+          [queryParams]="{
+            productType: loanProductService.productType.value
+          }"
           routerLinkActive
           #accountdetail="routerLinkActive"
           [active]="accountdetail.isActive"
         >
           {{ 'labels.inputs.Account Details' | translate }}
         </a>
-        @if (loanDetailsData.originalSchedule) {
+        @if (loanProductService.isLoanProduct && loanDetailsData.originalSchedule) {
           <a
             mat-tab-link
             [routerLink]="['./original-schedule']"
+            [queryParams]="{
+              productType: loanProductService.productType.value
+            }"
             routerLinkActive
-            #originalSchedule="routerLinkActive"
-            [active]="originalSchedule.isActive"
+            #general="routerLinkActive"
+            [active]="general.isActive"
           >
-            {{ 'labels.inputs.Original Schedule' | translate }}
+            {{ 'labels.inputs.General' | translate }}
           </a>
         }
         <a
           mat-tab-link
           [routerLink]="['./repayment-schedule']"
+          [queryParams]="{
+            productType: loanProductService.productType.value
+          }"
           routerLinkActive
           #repaymentSchedule="routerLinkActive"
           [active]="repaymentSchedule.isActive"
@@ -282,28 +303,37 @@
           <a
             mat-tab-link
             [routerLink]="['./transactions']"
+            [queryParams]="{
+              productType: loanProductService.productType.value
+            }"
             routerLinkActive
-            #transactions="routerLinkActive"
-            [active]="transactions.isActive"
+            #dashboard="routerLinkActive"
+            [active]="dashboard.isActive"
           >
             {{ 'labels.inputs.Transactions' | translate }}
           </a>
         }
-        @if (loanDetailsData.enableIncomeCapitalization) {
+        @if (loanProductService.isLoanProduct && loanDetailsData.enableIncomeCapitalization) {
           <a
             mat-tab-link
             [routerLink]="['./deferred-income']"
+            [queryParams]="{
+              productType: loanProductService.productType.value
+            }"
             routerLinkActive
-            #deferredIncome="routerLinkActive"
-            [active]="deferredIncome.isActive"
+            #accountdetail="routerLinkActive"
+            [active]="accountdetail.isActive"
           >
-            {{ 'labels.inputs.Deferred income' | translate }}
+            {{ 'labels.inputs.Account Details' | translate }}
           </a>
         }
-        @if (loanDetailsData.enableBuyDownFee) {
+        @if (loanProductService.isLoanProduct && loanDetailsData.enableBuyDownFee) {
           <a
             mat-tab-link
             [routerLink]="['./buy-down-fees']"
+            [queryParams]="{
+              productType: loanProductService.productType.value
+            }"
             routerLinkActive
             #buyDownFees="routerLinkActive"
             [active]="buyDownFees.isActive"
@@ -315,6 +345,9 @@
           <a
             mat-tab-link
             [routerLink]="['./delinquencytags']"
+            [queryParams]="{
+              productType: loanProductService.productType.value
+            }"
             routerLinkActive
             #delinquencytags="routerLinkActive"
             [active]="delinquencytags.isActive"
@@ -325,16 +358,22 @@
         <a
           mat-tab-link
           [routerLink]="['./originators']"
+          [queryParams]="{
+            productType: loanProductService.productType.value
+          }"
           routerLinkActive
           #originators="routerLinkActive"
           [active]="originators.isActive"
         >
           {{ 'labels.inputs.Originators' | translate }}
         </a>
-        @if (loanDetailsData.collateral) {
+        @if (loanProductService.isLoanProduct && loanDetailsData.collateral) {
           <a
             mat-tab-link
             [routerLink]="['./loan-collateral']"
+            [queryParams]="{
+              productType: loanProductService.productType.value
+            }"
             routerLinkActive
             #loanCollateralDetails="routerLinkActive"
             [active]="loanCollateralDetails.isActive"
@@ -342,10 +381,13 @@
             {{ 'labels.inputs.Loan Collateral Details' | translate }}
           </a>
         }
-        @if (loanDetailsData.multiDisburseLoan) {
+        @if (loanProductService.isLoanProduct && loanDetailsData.multiDisburseLoan) {
           <a
             mat-tab-link
             [routerLink]="['./loan-tranche-details']"
+            [queryParams]="{
+              productType: loanProductService.productType.value
+            }"
             routerLinkActive
             #loanTrancheDetails="routerLinkActive"
             [active]="loanTrancheDetails.isActive"
@@ -353,10 +395,13 @@
             {{ 'labels.inputs.Loan Tranche Details' | translate }}
           </a>
         }
-        @if (loanDetailsData.loanTermVariations) {
+        @if (loanProductService.isLoanProduct && loanDetailsData.loanTermVariations) {
           <a
             mat-tab-link
             [routerLink]="['./term-variations']"
+            [queryParams]="{
+              productType: loanProductService.productType.value
+            }"
             routerLinkActive
             #termVariations="routerLinkActive"
             [active]="termVariations.isActive"
@@ -364,10 +409,13 @@
             {{ 'labels.inputs.Term Variations' | translate }}
           </a>
         }
-        @if (loanDetailsData.overdueCharges.length > 0) {
+        @if (loanProductService.isLoanProduct && loanDetailsData.overdueCharges.length > 0) {
           <a
             mat-tab-link
             [routerLink]="['./overdue-charges']"
+            [queryParams]="{
+              productType: loanProductService.productType.value
+            }"
             routerLinkActive
             #overduecharges="routerLinkActive"
             [active]="overduecharges.isActive"
@@ -375,10 +423,13 @@
             {{ 'labels.inputs.Overdue Charges' | translate }}
           </a>
         }
-        @if (loanDetailsData.isLoanProductLinkedToFloatingRate) {
+        @if (loanProductService.isLoanProduct && loanDetailsData.isLoanProductLinkedToFloatingRate) {
           <a
             mat-tab-link
             [routerLink]="['./floating-interest-rates']"
+            [queryParams]="{
+              productType: loanProductService.productType.value
+            }"
             routerLinkActive
             #floatingInterestRates="routerLinkActive"
             [active]="floatingInterestRates.isActive"
@@ -386,10 +437,13 @@
             {{ 'labels.inputs.Floating Interest Rates' | translate }}
           </a>
         }
-        @if (loanDetailsData.charges) {
+        @if (loanProductService.isLoanProduct && loanDetailsData.charges) {
           <a
             mat-tab-link
             [routerLink]="['./charges']"
+            [queryParams]="{
+              productType: loanProductService.productType.value
+            }"
             routerLinkActive
             #charges="routerLinkActive"
             [active]="charges.isActive"
@@ -397,10 +451,16 @@
             {{ 'labels.inputs.Charges' | translate }}
           </a>
         }
-        @if (loanDetailsData.status.active || loanDetailsData.status.closed || loanDetailsData.status.overpaid) {
+        @if (
+          loanProductService.isLoanProduct &&
+          (loanDetailsData.status.active || loanDetailsData.status.closed || loanDetailsData.status.overpaid)
+        ) {
           <a
             mat-tab-link
             [routerLink]="['./loan-reschedules']"
+            [queryParams]="{
+              productType: loanProductService.productType.value
+            }"
             routerLinkActive
             #loanReschedules="routerLinkActive"
             [active]="loanReschedules.isActive"
@@ -411,6 +471,9 @@
         <a
           mat-tab-link
           [routerLink]="['./loan-documents']"
+          [queryParams]="{
+            productType: loanProductService.productType.value
+          }"
           routerLinkActive
           #loanDocuments="routerLinkActive"
           [active]="loanDocuments.isActive"
@@ -421,16 +484,22 @@
           mat-tab-link
           *mifosxHasPermission="'READ_LOANNOTE'"
           [routerLink]="['./notes']"
+          [queryParams]="{
+            productType: loanProductService.productType.value
+          }"
           routerLinkActive
           #notes="routerLinkActive"
           [active]="notes.isActive"
         >
           {{ 'labels.inputs.Notes' | translate }}
         </a>
-        @if (loanDetailsData.clientId) {
+        @if (loanProductService.isLoanProduct && loanDetailsData.clientId) {
           <a
             mat-tab-link
             [routerLink]="['./standing-instruction']"
+            [queryParams]="{
+              productType: loanProductService.productType.value
+            }"
             routerLinkActive
             #standingInstruction="routerLinkActive"
             [active]="standingInstruction.isActive"
@@ -438,10 +507,13 @@
             {{ 'labels.inputs.Standing Instruction' | translate }}
           </a>
         }
-        @if (loanDetailsData.status.active) {
+        @if (loanProductService.isLoanProduct && loanDetailsData.status.active) {
           <a
             mat-tab-link
             [routerLink]="['./external-asset-owner']"
+            [queryParams]="{
+              productType: loanProductService.productType.value
+            }"
             routerLinkActive
             #externalAssetOwner="routerLinkActive"
             [active]="externalAssetOwner.isActive"
@@ -449,7 +521,7 @@
             {{ 'labels.inputs.External Asset Owner' | translate }}
           </a>
         }
-        @if (datatablesReady) {
+        @if (loanProductService.isLoanProduct && datatablesReady) {
           @for (loanDatatable of loanDatatables; track loanDatatable) {
             <a
               mat-tab-link

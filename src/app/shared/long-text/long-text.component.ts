@@ -47,10 +47,10 @@ export class LongTextComponent implements OnInit {
   }
 
   showValue() {
-    if (this.printChars == 30) {
+    if (this.printChars < 1000) {
       this.printChars = 1000;
     } else {
-      this.printChars = 30;
+      this.printChars = this.chars;
     }
   }
 

@@ -9,17 +9,15 @@
 /** Angular Imports. */
 import { Component, OnInit, inject } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Dates } from 'app/core/utils/dates';
 
 /** Custom Services. */
-import { LoansService } from 'app/loans/loans.service';
-import { SettingsService } from 'app/settings/settings.service';
 import { Currency } from 'app/shared/models/general.model';
 import { InputAmountComponent } from '../../../../shared/input-amount/input-amount.component';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { FormatNumberPipe } from '../../../../pipes/format-number.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.component';
 
 /**
  * Approve Loan component.
@@ -35,13 +33,9 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     FormatNumberPipe
   ]
 })
-export class ApproveLoanComponent implements OnInit {
+export class ApproveLoanComponent extends LoanAccountActionsBaseComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
-  private route = inject(ActivatedRoute);
   private dateUtils = inject(Dates);
-  private loanService = inject(LoansService);
-  private router = inject(Router);
-  private settingsService = inject(SettingsService);
 
   /** Approve Loan form. */
   approveLoanForm: UntypedFormGroup;
@@ -51,20 +45,14 @@ export class ApproveLoanComponent implements OnInit {
   associationData: any;
   /** Minimum Date allowed. */
   minDate = new Date(2000, 0, 1);
-  /** Loan Id */
-  loanId: any;
   currency: Currency;
 
   /**
-   * Retrieve data from `Resolver`.
    * @param formBuilder Form Builder.
-   * @param route Activated Route.
    * @param dateUtils Date Utils.
-   * @param loanService Loan Service.
-   * @param router Router.
-   * @param {SettingsService} settingsService Settings Service
    */
   constructor() {
+    super();
     this.route.data.subscribe((data: { actionButtonData: any }) => {
       this.loanData = data.actionButtonData;
       this.currency = data.actionButtonData.currency;
@@ -133,8 +121,11 @@ export class ApproveLoanComponent implements OnInit {
       dateFormat,
       locale
     };
-    this.loanService.loanActionButtons(this.loanId, 'approve', data).subscribe((response: any) => {
-      this.router.navigate(['../../general'], { relativeTo: this.route });
-    });
+
+    if (this.isLoanProduct) {
+      this.loanService.loanActionButtons(this.loanId, 'approve', data).subscribe((response: any) => {
+        this.gotoLoanDefaultView();
+      });
+    }
   }
 }

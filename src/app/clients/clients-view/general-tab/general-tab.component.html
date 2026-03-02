@@ -153,6 +153,12 @@
           <mifosx-account-number accountNo="{{ element.accountNo }}"></mifosx-account-number>
         </td>
       </ng-container>
+      <ng-container matColumnDef="Product Type">
+        <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Product Type' | translate }}</th>
+        <td mat-cell *matCellDef="let element">
+          {{ loanProductTypeLabel(element.productType) | translate }}
+        </td>
+      </ng-container>
       <ng-container matColumnDef="Loan Account">
         <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Loan Product' | translate }}</th>
         <td mat-cell *matCellDef="let element">
@@ -180,29 +186,19 @@
       <ng-container matColumnDef="Type">
         <th mat-header-cell class="center" *matHeaderCellDef>{{ 'labels.inputs.Type' | translate }}</th>
         <td mat-cell class="center" *matCellDef="let element">
-          <i
-            class="fa fa-large"
-            [ngClass]="element.loanType.value === 'Individual' ? 'fa-user' : 'fa-group'"
-            matTooltip="{{ element.loanType.value }}"
-            matTooltipPosition="above"
-          ></i>
+          @if (element.productType === 'loan') {
+            <i
+              class="fa fa-large"
+              [ngClass]="element.loanType.value === 'Individual' ? 'fa-user' : 'fa-group'"
+              matTooltip="{{ element.loanType.value }}"
+              matTooltipPosition="above"
+            ></i>
+          }
         </td>
       </ng-container>
       <ng-container matColumnDef="Actions">
         <th mat-header-cell class="center" *matHeaderCellDef>{{ 'labels.inputs.Actions' | translate }}</th>
         <td mat-cell class="center" *matCellDef="let element">
-          <!-- Print Icon -->
-          <button
-            class="account-action-button"
-            mat-raised-button
-            color="accent"
-            matTooltip="{{ 'tooltips.Print Loan Application' | translate }}"
-            matTooltipPosition="above"
-            aria-label="{{ 'tooltips.Print Loan Application' | translate }}"
-            (click)="openLoanApplicationReport($event, element.id)"
-          >
-            <i class="fa fa-print"></i>
-          </button>
           @if (element.status.active) {
             <button
               class="account-action-button"
@@ -279,6 +275,7 @@
         mat-row
         *matRowDef="let row; columns: openLoansColumns"
         [routerLink]="['../', 'loans-accounts', row.id, 'general']"
+        [queryParams]="{ productType: row.productType }"
         class="select-row"
       ></tr>
       <tr
@@ -305,6 +302,12 @@
         <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Loan Product' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           <mifosx-long-text textValue="{{ element.productName }}" chars="35"></mifosx-long-text>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Product Type">
+        <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Product Type' | translate }}</th>
+        <td mat-cell *matCellDef="let element">
+          {{ loanProductTypeLabel(element.productType) | translate }}
         </td>
       </ng-container>
       <ng-container matColumnDef="Original Loan">
@@ -340,19 +343,7 @@
       </ng-container>
       <ng-container matColumnDef="Actions">
         <th mat-header-cell class="center" *matHeaderCellDef>{{ 'labels.inputs.Actions' | translate }}</th>
-        <td mat-cell class="center" *matCellDef="let element">
-          <!-- Print Icon -->
-          <button
-            class="account-action-button"
-            mat-raised-button
-            color="accent"
-            matTooltip="{{ 'tooltips.Print Loan Application' | translate }}"
-            matTooltipPosition="above"
-            (click)="openLoanApplicationReport($event, element.id)"
-          >
-            <i class="fa fa-print"></i>
-          </button>
-        </td>
+        <td mat-cell class="center" *matCellDef="let element"></td>
       </ng-container>
 
       <ng-container matColumnDef="no-data">
@@ -368,6 +359,7 @@
         mat-row
         *matRowDef="let row; columns: closedLoansColumns"
         [routerLink]="['../', 'loans-accounts', row.id, 'general']"
+        [queryParams]="{ productType: row.productType }"
         class="select-row"
       ></tr>
       <tr

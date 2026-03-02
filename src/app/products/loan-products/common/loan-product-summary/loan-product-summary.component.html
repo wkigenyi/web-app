@@ -879,10 +879,6 @@
       @if (loanProductService.isWorkingCapital) {
         <div>
           <div class="flex-fill layout-row">
-            <span class="flex-40">{{ 'labels.inputs.Flat Percentage Amount' | translate }}:</span>
-            <span class="flex-60">{{ loanProduct.allowAttributeOverrides.flatPercentageAmount | yesNo }}</span>
-          </div>
-          <div class="flex-fill layout-row">
             <span class="flex-40">{{ 'labels.inputs.Delinquency Bucket Classification' | translate }}:</span>
             <span class="flex-60">{{
               loanProduct.allowAttributeOverrides.delinquencyBucketClassification | yesNo

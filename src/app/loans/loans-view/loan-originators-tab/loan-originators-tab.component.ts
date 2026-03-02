@@ -20,7 +20,7 @@ import {
   MatRowDef,
   MatTable
 } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { TranslateService } from '@ngx-translate/core';
 import { LoansService } from 'app/loans/loans.service';
@@ -28,6 +28,7 @@ import { LoanOriginator } from 'app/loans/models/loan-account.model';
 import { LoanStatus } from 'app/loans/models/loan-status.model';
 import { ConfirmationDialogComponent } from 'app/shared/confirmation-dialog/confirmation-dialog.component';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanAccountTabBaseComponent } from '../loan-account-tab-base.component';
 
 @Component({
   selector: 'mifosx-loan-originators-tab',
@@ -49,9 +50,8 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     FaIconComponent
   ]
 })
-export class LoanOriginatorsTabComponent {
+export class LoanOriginatorsTabComponent extends LoanAccountTabBaseComponent {
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private loansService = inject(LoansService);
   private translateService = inject(TranslateService);
   private dialog = inject(MatDialog);
@@ -73,6 +73,7 @@ export class LoanOriginatorsTabComponent {
   ];
 
   constructor() {
+    super();
     this.clientId = this.route.parent.parent.snapshot.paramMap.get('clientId');
     this.loanId = this.route.parent?.parent?.snapshot.paramMap.get('loanId');
     this.route.parent.parent.data.subscribe((data: { loanDetailsData: any }) => {
@@ -106,15 +107,5 @@ export class LoanOriginatorsTabComponent {
         });
       }
     });
-  }
-
-  /**
-   * Refetches data fot the component
-   */
-  private reload() {
-    const url: string = this.router.url;
-    this.router
-      .navigateByUrl(`/clients/${this.clientId}/loans-accounts`, { skipLocationChange: true })
-      .then(() => this.router.navigate([url]));
   }
 }

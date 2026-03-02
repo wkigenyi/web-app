@@ -8,14 +8,8 @@
 
 /** Angular Imports */
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, inject } from '@angular/core';
-import {
-  UntypedFormGroup,
-  UntypedFormBuilder,
-  Validators,
-  UntypedFormControl,
-  ReactiveFormsModule
-} from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { SettingsService } from 'app/settings/settings.service';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -32,6 +26,10 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanProductBasicDetails } from 'app/loans/models/loan-product.model';
+import { LoanProductService } from 'app/products/loan-products/services/loan-product.service';
+import { MatSelectChange, MatSelectTrigger } from '@angular/material/select';
+import { LoanProductBaseComponent } from 'app/products/loan-products/common/loan-product-base.component';
 
 /**
  * Loans Account Details Step
@@ -49,10 +47,11 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     MatStepperPrevious,
     FaIconComponent,
     MatStepperNext,
+    MatSelectTrigger,
     AsyncPipe
   ]
 })
-export class LoansAccountDetailsStepComponent implements OnInit, OnDestroy {
+export class LoansAccountDetailsStepComponent extends LoanProductBaseComponent implements OnInit, OnDestroy {
   private formBuilder = inject(UntypedFormBuilder);
   private loansService = inject(LoansService);
   private route = inject(ActivatedRoute);
@@ -66,6 +65,8 @@ export class LoansAccountDetailsStepComponent implements OnInit, OnDestroy {
 
   /** Loans Account Template */
   @Input() loansAccountTemplate: any;
+  /** Loan Product Basic Details lists */
+  @Input() loanProductsBasicDetails: LoanProductBasicDetails[];
 
   /** Minimum date allowed. */
   minDate = new Date(2000, 0, 1);
@@ -96,8 +97,11 @@ export class LoansAccountDetailsStepComponent implements OnInit, OnDestroy {
   /** Subject that emits when the component has been destroyed. */
   protected _onDestroy = new Subject<void>();
 
+  productSelected: LoanProductBasicDetails | null = null;
+
   /** Loans Account Template with product data  */
   @Output() loansAccountProductTemplate = new EventEmitter();
+  @Output() loansProductType = new EventEmitter();
   /**
    * Sets loans account details form.
    * @param {FormBuilder} formBuilder Form Builder.
@@ -105,6 +109,7 @@ export class LoansAccountDetailsStepComponent implements OnInit, OnDestroy {
    * @param {SettingsService} settingsService SettingsService
    */
   constructor() {
+    super();
     this.loanId = this.route.snapshot.params['loanId'];
     this.createLoansAccountDetailsForm();
   }
@@ -113,10 +118,10 @@ export class LoansAccountDetailsStepComponent implements OnInit, OnDestroy {
     this.placeHolderLabel = this.translateService.instant('labels.text.Search');
     this.noEntriesFoundLabel = this.translateService.instant('labels.text.No data found');
     this.maxDate = this.settingsService.maxFutureDate;
-    this.buildDependencies();
+    this.productList = this.loanProductsBasicDetails.sort(this.commons.dynamicSort('name'));
     if (this.loansAccountTemplate) {
-      this.productList = this.loansAccountTemplate.productOptions.sort(this.commons.dynamicSort('name'));
       if (this.loansAccountTemplate.loanProductId) {
+        this.addFormControlsBasedOnProductType();
         this.loansAccountDetailsForm.patchValue({
           productId: this.loansAccountTemplate.loanProductId,
           submittedOnDate:
@@ -130,6 +135,17 @@ export class LoansAccountDetailsStepComponent implements OnInit, OnDestroy {
             new Date(this.loansAccountTemplate.timeline.expectedDisbursementDate),
           externalId: this.loansAccountTemplate.externalId
         });
+        this.productSelected = this.loanProductsBasicDetails.find(
+          (p: LoanProductBasicDetails) =>
+            p.productType === this.loanProductService.productType.value &&
+            p.id === this.loansAccountTemplate.loanProductId
+        );
+        if (this.productSelected) {
+          this.loansAccountDetailsForm.patchValue({
+            productId: this.productSelected.shortName
+          });
+          this.loanProductSelected = true;
+        }
       }
     }
     this.filterFormCtrl.valueChanges.pipe(takeUntil(this._onDestroy)).subscribe(() => {
@@ -152,7 +168,10 @@ export class LoansAccountDetailsStepComponent implements OnInit, OnDestroy {
       } else {
         this.productData.next(
           this.productList.filter((option: any) => {
-            return option['name'].toLowerCase().indexOf(search) >= 0;
+            return (
+              option['name'].toLowerCase().indexOf(search) >= 0 ||
+              option['shortName'].toLowerCase().indexOf(search) >= 0
+            );
           })
         );
       }
@@ -164,12 +183,7 @@ export class LoansAccountDetailsStepComponent implements OnInit, OnDestroy {
    */
   createLoansAccountDetailsForm() {
     this.loansAccountDetailsForm = this.formBuilder.group({
-      productId: [
-        '',
-        Validators.required
-      ],
-      loanOfficerId: [''],
-      loanPurposeId: [''],
+      productId: [''],
       fundId: [''],
       submittedOnDate: [
         this.settingsService.businessDate,
@@ -179,34 +193,7 @@ export class LoansAccountDetailsStepComponent implements OnInit, OnDestroy {
         '',
         Validators.required
       ],
-      externalId: [''],
-      linkAccountId: [''],
-      createStandingInstructionAtDisbursement: ['']
-    });
-  }
-
-  /**
-   * Fetches loans account product template on productId value changes
-   */
-  buildDependencies() {
-    const entityId = this.loansAccountTemplate.clientId
-      ? this.loansAccountTemplate.clientId
-      : this.loansAccountTemplate.group.id;
-    const isGroup = this.loansAccountTemplate.clientId ? false : true;
-    this.loansAccountDetailsForm.get('productId').valueChanges.subscribe((productId: string) => {
-      this.loansService.getLoansAccountTemplateResource(entityId, isGroup, productId).subscribe((response: any) => {
-        this.loansAccountProductTemplate.emit(response);
-        this.loanOfficerOptions = response.loanOfficerOptions;
-        this.loanPurposeOptions = response.loanPurposeOptions;
-        this.fundOptions = response.fundOptions;
-        this.accountLinkingOptions = response.accountLinkingOptions;
-        this.loanProductSelected = true;
-        if (response.createStandingInstructionAtDisbursement) {
-          this.loansAccountDetailsForm
-            .get('createStandingInstructionAtDisbursement')
-            .patchValue(response.createStandingInstructionAtDisbursement);
-        }
-      });
+      externalId: ['']
     });
   }
 
@@ -214,6 +201,93 @@ export class LoansAccountDetailsStepComponent implements OnInit, OnDestroy {
    * Returns loans account details form value.
    */
   get loansAccountDetails() {
-    return this.loansAccountDetailsForm.getRawValue();
+    if (this.productSelected) {
+      const loanAccountDetails = {
+        ...this.loansAccountDetailsForm.getRawValue(),
+        productId: this.productSelected.id
+      };
+      return loanAccountDetails;
+    }
+    return null;
+  }
+
+  getLoanProductType(productType: string) {
+    return LoanProductService.productTypeLabel(productType);
+  }
+
+  productChange(event: MatSelectChange): void {
+    const productShortName = event.value;
+    this.productSelected = this.loanProductsBasicDetails.find(
+      (p: LoanProductBasicDetails) => p.shortName === productShortName
+    );
+    if (this.productSelected) {
+      this.loanProductService.initialize(this.productSelected.productType);
+      const entityId = this.loansAccountTemplate.clientId
+        ? this.loansAccountTemplate.clientId
+        : this.loansAccountTemplate.group.id;
+      const isGroup: boolean = this.loansAccountTemplate.clientId ? false : true;
+
+      this.loansProductType.emit(this.productSelected.productType);
+      this.addFormControlsBasedOnProductType();
+      if (this.loanProductService.isLoanProduct) {
+        this.loansService
+          .getLoansAccountTemplateResource(entityId, isGroup, this.productSelected.id)
+          .subscribe((response: any) => {
+            this.loansAccountProductTemplate.emit(response);
+            this.loanOfficerOptions = response.loanOfficerOptions;
+            this.loanPurposeOptions = response.loanPurposeOptions;
+            this.fundOptions = response.fundOptions;
+            this.accountLinkingOptions = response.accountLinkingOptions;
+            this.loanProductSelected = true;
+            if (response.createStandingInstructionAtDisbursement) {
+              this.loansAccountDetailsForm
+                .get('createStandingInstructionAtDisbursement')
+                .patchValue(response.createStandingInstructionAtDisbursement);
+            }
+          });
+      } else if (this.loanProductService.isWorkingCapital) {
+        this.loansService
+          .getWorkingCapitalLoansAccountTemplate(entityId, this.productSelected.id)
+          .subscribe((response: any) => {
+            this.loansAccountProductTemplate.emit(response);
+            this.fundOptions = response.fundOptions;
+            this.loansAccountDetailsForm.patchValue({
+              fundId: response.loanData.fundId
+            });
+            this.loanProductSelected = true;
+          });
+      } else {
+        console.log(this.productSelected.productType + ' not implemented');
+      }
+    }
+  }
+
+  addFormControlsBasedOnProductType(): void {
+    const loanOnlyControls: Record<string, UntypedFormControl> = {
+      loanOfficerId: new UntypedFormControl(''),
+      loanPurposeId: new UntypedFormControl(''),
+      linkAccountId: new UntypedFormControl(''),
+      createStandingInstructionAtDisbursement: new UntypedFormControl('')
+    };
+
+    if (this.loanProductService.isLoanProduct) {
+      Object.entries(loanOnlyControls).forEach(
+        ([
+          name,
+          control
+        ]) => {
+          if (!this.loansAccountDetailsForm.contains(name)) {
+            this.loansAccountDetailsForm.addControl(name, control);
+          }
+        }
+      );
+      return;
+    }
+
+    Object.keys(loanOnlyControls).forEach((name) => {
+      if (this.loansAccountDetailsForm.contains(name)) {
+        this.loansAccountDetailsForm.removeControl(name);
+      }
+    });
   }
 }

@@ -8,7 +8,7 @@
 
 /** Angular Imports */
 import { Component, TemplateRef, ElementRef, ViewChild, AfterViewInit, OnDestroy, inject } from '@angular/core';
-import { ActivatedRoute, Router, NavigationEnd, Data, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd, Data } from '@angular/router';
 
 /** rxjs Imports */
 import { filter, takeUntil } from 'rxjs/operators';
@@ -243,6 +243,9 @@ export class BreadcrumbComponent implements AfterViewInit, OnDestroy {
   }
 
   printableValue(value: string): string {
+    if (!value) {
+      return '';
+    }
     if (value.length <= 30) {
       return value;
     }

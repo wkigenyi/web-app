@@ -24,7 +24,7 @@ import {
   MatRowDef,
   MatRow
 } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 /** rxjs Imports */
 import { switchMap, catchError } from 'rxjs/operators';
@@ -76,7 +76,6 @@ import { LoanProductBaseComponent } from './common/loan-product-base.component';
 })
 export class LoanProductsComponent extends LoanProductBaseComponent implements OnInit, AfterViewInit {
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private configurationWizardService = inject(ConfigurationWizardService);
   private popoverService = inject(PopoverService);
   private dialog = inject(MatDialog);

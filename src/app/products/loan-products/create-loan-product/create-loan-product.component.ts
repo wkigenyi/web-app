@@ -8,7 +8,7 @@
 
 /** Angular Imports */
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 /** Custom Components */
 import { LoanProductDetailsStepComponent } from '../loan-product-stepper/loan-product-details-step/loan-product-details-step.component';
@@ -70,7 +70,6 @@ export class CreateLoanProductComponent extends LoanProductBaseComponent impleme
   private route = inject(ActivatedRoute);
   private productsService = inject(ProductsService);
   private loanProducts = inject(LoanProducts);
-  private router = inject(Router);
   private accounting = inject(Accounting);
   private advancedPaymentStrategy = inject(AdvancedPaymentStrategy);
   private cdr = inject(ChangeDetectorRef);

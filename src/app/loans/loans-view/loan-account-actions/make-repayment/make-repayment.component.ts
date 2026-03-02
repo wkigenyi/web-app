@@ -7,13 +7,10 @@
  */
 
 /** Angular Imports */
-import { Component, OnInit, Input, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 
 /** Custom Services */
-import { LoansService } from 'app/loans/loans.service';
-import { SettingsService } from 'app/settings/settings.service';
 import { Dates } from 'app/core/utils/dates';
 import { Currency } from 'app/shared/models/general.model';
 import { PenaltyManagementService } from 'app/loans/services/penalty-management.service';
@@ -23,6 +20,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { FormatNumberPipe } from '../../../../pipes/format-number.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.component';
 
 /**
  * Loan Make Repayment Component
@@ -40,18 +38,11 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     FormatNumberPipe
   ]
 })
-export class MakeRepaymentComponent implements OnInit {
+export class MakeRepaymentComponent extends LoanAccountActionsBaseComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
-  private loanService = inject(LoansService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private dateUtils = inject(Dates);
-  private settingsService = inject(SettingsService);
   private penaltyManagementService = inject(PenaltyManagementService);
 
-  @Input() dataObject: any;
-  /** Loan Id */
-  loanId: string;
   /** Payment Type Options */
   paymentTypes: any;
   /** Show payment details */
@@ -84,7 +75,7 @@ export class MakeRepaymentComponent implements OnInit {
    * @param {SettingsService} settingsService Settings Service
    */
   constructor() {
-    this.loanId = this.route.snapshot.params['loanId'];
+    super();
   }
 
   /**
@@ -354,7 +345,7 @@ export class MakeRepaymentComponent implements OnInit {
   /** Submit the repayment after penalties are waived */
   private submitRepayment(data: any) {
     this.loanService.submitLoanActionButton(this.loanId, data, this.command).subscribe((response: any) => {
-      this.router.navigate(['../../transactions'], { relativeTo: this.route });
+      this.gotoLoanView('transactions');
     });
   }
 }

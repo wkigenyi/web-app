@@ -8,7 +8,7 @@
 
 /** Angular Imports */
 import { Component, inject } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Custom Services */
@@ -31,6 +31,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { DateFormatPipe } from '../../../pipes/date-format.pipe';
 import { FormatNumberPipe } from '../../../pipes/format-number.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanAccountTabBaseComponent } from '../loan-account-tab-base.component';
 
 /**
  * View Charge Component.
@@ -47,11 +48,10 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     FormatNumberPipe
   ]
 })
-export class ViewChargeComponent {
+export class ViewChargeComponent extends LoanAccountTabBaseComponent {
   private loansService = inject(LoansService);
   private route = inject(ActivatedRoute);
   private dateUtils = inject(Dates);
-  private router = inject(Router);
   private translateService = inject(TranslateService);
   dialog = inject(MatDialog);
   private settingsService = inject(SettingsService);
@@ -73,6 +73,7 @@ export class ViewChargeComponent {
    * @param {SettingsService} settingsService Settings Service
    */
   constructor() {
+    super();
     this.route.data.subscribe((data: { loansAccountCharge: any; loanDetailsData: any }) => {
       this.chargeData = data.loansAccountCharge;
       this.allowPayCharge = this.chargeData.chargePayable && !this.chargeData.paid;
@@ -212,18 +213,11 @@ export class ViewChargeComponent {
   }
 
   adjustmentCharge(): void {
-    this.router.navigate(['adjustment'], { relativeTo: this.route });
-  }
-
-  /**
-   * Refetches data fot the component
-   * TODO: Replace by a custom reload component instead of hard-coded back-routing.
-   */
-  private reload() {
-    const clientId = this.loansAccountData.clientId;
-    const url: string = this.router.url;
-    this.router
-      .navigateByUrl(`/clients/${clientId}/loans-accounts`, { skipLocationChange: true })
-      .then(() => this.router.navigate([url]));
+    this.router.navigate(['adjustment'], {
+      queryParams: {
+        productType: this.loanProductService.productType.value
+      },
+      relativeTo: this.route
+    });
   }
 }

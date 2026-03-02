@@ -7,8 +7,8 @@
  */
 
 /** Angular Imports */
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
-import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { Component, OnDestroy, inject } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 /** Custom Services. */
@@ -45,6 +45,7 @@ import { Subject } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
 import { AlertService } from 'app/core/alert/alert.service';
 import { EMPTY } from 'rxjs';
+import { LoanProductService } from 'app/products/loan-products/services/loan-product.service';
 
 /**
  * General Tab component.
@@ -155,6 +156,7 @@ export class GeneralTabComponent implements OnDestroy {
   /** Open Loan Accounts Columns */
   openLoansColumns: string[] = [
     'Account No',
+    'Product Type',
     'Loan Account',
     'Original Loan',
     'Loan Balance',
@@ -165,6 +167,7 @@ export class GeneralTabComponent implements OnDestroy {
   /** Closed Loan Accounts Columns */
   closedLoansColumns: string[] = [
     'Account No',
+    'Product Type',
     'Loan Account',
     'Original Loan',
     'Loan Balance',
@@ -226,6 +229,7 @@ export class GeneralTabComponent implements OnDestroy {
   clientAccountData: any;
   /** Loan Accounts Data */
   loanAccounts: any[] = [];
+  workingCapitalLoanAccounts: any[] = [];
   /** Savings Accounts Data */
   savingAccounts: any[] = [];
   /** Shares Accounts Data */
@@ -273,7 +277,10 @@ export class GeneralTabComponent implements OnDestroy {
       (data: { clientAccountsData: any; clientChargesData: any; clientSummary: any; clientCollateralData: any }) => {
         this.clientAccountData = data.clientAccountsData;
         this.savingAccounts = data.clientAccountsData?.savingsAccounts ?? [];
-        this.loanAccounts = data.clientAccountsData?.loanAccounts ?? [];
+        this.loanAccounts = [];
+        this.processLoanAccounts(data.clientAccountsData?.loanAccounts ?? [], 'loan');
+        this.processLoanAccounts(data.clientAccountsData?.workingCapitalLoanAccounts ?? [], 'working-capital');
+        this.workingCapitalLoanAccounts = data.clientAccountsData?.workingCapitalLoanAccounts ?? [];
         this.shareAccounts = data.clientAccountsData?.shareAccounts ?? [];
 
         this.upcomingCharges = data.clientChargesData?.pageItems ?? [];
@@ -416,5 +423,18 @@ export class GeneralTabComponent implements OnDestroy {
     } else {
       return 'labels.buttons.View Closed Accounts';
     }
+  }
+
+  loanProductTypeLabel(productType: string): string {
+    return LoanProductService.productTypeLabel(productType);
+  }
+
+  private processLoanAccounts(accounts: any[], productType: string): void {
+    accounts.map((account: any) => {
+      this.loanAccounts.push({
+        productType: productType,
+        ...account
+      });
+    });
   }
 }

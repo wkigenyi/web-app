@@ -8,7 +8,7 @@
 
 /** Angular Imports */
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, NavigationExtras, Router, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Custom Services */
@@ -43,6 +43,7 @@ import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { FormatNumberPipe } from '../../pipes/format-number.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { LoanProducts } from 'app/products/loan-products/loan-products';
+import { LoanProductBaseComponent } from 'app/products/loan-products/common/loan-product-base.component';
 
 @Component({
   selector: 'mifosx-loans-view',
@@ -76,9 +77,8 @@ import { LoanProducts } from 'app/products/loan-products/loan-products';
     FormatNumberPipe
   ]
 })
-export class LoansViewComponent implements OnInit {
+export class LoansViewComponent extends LoanProductBaseComponent implements OnInit {
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
   loansService = inject(LoansService);
   private translateService = inject(TranslateService);
   dialog = inject(MatDialog);
@@ -113,20 +113,25 @@ export class LoansViewComponent implements OnInit {
   loanReAmortized = false;
 
   constructor() {
+    super();
     const loansService = this.loansService;
+    this.loanProductService.initialize(LoanProductBaseComponent.resolveProductTypeDefault(this.route, 'loan'));
 
     this.route.data.subscribe(
       (data: { loanDetailsData: any; loanDatatables: any; loanArrearsDelinquencyConfig: any }) => {
         this.loanDetailsData = data.loanDetailsData;
-        this.loanDatatables = data.loanDatatables;
-        this.loanDisplayArrearsDelinquency = data.loanArrearsDelinquencyConfig?.value || 0;
-        if (this.loanDetailsData) {
-          this.loanStatus = this.loanDetailsData.status;
+        if (!this.loanDetailsData.loanProductName) {
+          this.loanDetailsData.loanProductName = this.loanDetailsData.product.name;
+        }
+        this.loanDatatables = this.loanProductService.isLoanProduct ? data.loanDatatables : [];
+        this.loanStatus = this.loanDetailsData.status;
+        this.currency = this.loanDetailsData.currency;
+        if (this.loanProductService.isLoanProduct) {
+          this.loanDisplayArrearsDelinquency = data.loanArrearsDelinquencyConfig.value || 0;
           this.loanSubStatus = this.loanDetailsData.subStatus === undefined ? null : this.loanDetailsData.subStatus;
-          this.currency = this.loanDetailsData.currency;
           loansService.saveLoanDisbursementDetailsData(this.loanDetailsData.disbursementDetails);
-          if (this.loanStatus?.active) {
-            this.loanDetailsData.transactions?.forEach((lt: LoanTransaction) => {
+          if (this.loanStatus.active) {
+            this.loanDetailsData.transactions.forEach((lt: LoanTransaction) => {
               if (!lt.manuallyReversed) {
                 if (lt.type.reAge) {
                   this.loanReAged = true;
@@ -136,11 +141,10 @@ export class LoansViewComponent implements OnInit {
               }
             });
           }
-          this.clientId = this.loanDetailsData.clientId;
-          this.setConditionalButtons();
           // Filter datatables based on entity datatable checks
           this.filterDatatablesByProduct();
         }
+        this.setConditionalButtons();
       }
     );
     this.loanId = this.route.snapshot.params['loanId'];
@@ -406,7 +410,10 @@ export class LoansViewComponent implements OnInit {
         this.deleteLoanAccount();
         break;
       case 'Modify Application':
-        this.router.navigate(['edit-loans-account'], { relativeTo: this.route });
+        this.router.navigate(['edit-loans-account'], {
+          queryParams: { productType: this.loanProductService.productType.value },
+          relativeTo: this.route
+        });
         break;
       case 'Transfer Funds':
         const queryParams: any = { loanId: this.loanId, accountType: 'fromloans' };
@@ -422,6 +429,9 @@ export class LoansViewComponent implements OnInit {
         break;
       default:
         const navigationExtras: NavigationExtras = {
+          queryParams: {
+            productType: this.loanProductService.productType.value
+          },
           relativeTo: this.route,
           state: {
             data: this.loanDetailsData
@@ -553,18 +563,6 @@ export class LoansViewComponent implements OnInit {
         });
       }
     });
-  }
-
-  /**
-   * Refetches data for the component
-   * TODO: Replace by a custom reload component instead of hard-coded back-routing.
-   */
-  private reload() {
-    const clientId = this.clientId;
-    const url: string = this.router.url;
-    this.router
-      .navigateByUrl(`/clients/${clientId}/loans-accounts`, { skipLocationChange: true })
-      .then(() => this.router.navigate([url]));
   }
 
   private isContractTermination(substatus: OptionData): boolean {

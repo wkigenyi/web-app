@@ -7,15 +7,14 @@
  */
 
 /** Angular Imports */
-import { Component, OnInit, Renderer2, ViewChild, ElementRef, SecurityContext, Input, inject } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Component, OnInit, Renderer2, ViewChild, ElementRef, SecurityContext, inject } from '@angular/core';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 
 /** Custom Services */
-import { LoansService } from 'app/loans/loans.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.component';
 
 /**
  * Loans Screen Reports Component.
@@ -29,20 +28,15 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     FaIconComponent
   ]
 })
-export class LoanScreenReportsComponent implements OnInit {
+export class LoanScreenReportsComponent extends LoanAccountActionsBaseComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
-  private loansService = inject(LoansService);
-  private route = inject(ActivatedRoute);
   private sanitizer = inject(DomSanitizer);
   private renderer = inject(Renderer2);
 
-  @Input() dataObject: any;
   /** Loan Screen Reportform. */
   loanScreenReportForm: UntypedFormGroup;
   /** Templates Data */
   templatesData: any;
-  /** Loan Id */
-  loanId: any;
   /** HTML Template */
   template: any;
 
@@ -58,7 +52,7 @@ export class LoanScreenReportsComponent implements OnInit {
    * @param {Renderer2} renderer Renderer 2
    */
   constructor() {
-    this.loanId = this.route.snapshot.params['loanId'];
+    super();
   }
 
   /**
@@ -96,7 +90,7 @@ export class LoanScreenReportsComponent implements OnInit {
    */
   generate() {
     const templateId = this.loanScreenReportForm.get('templateId').value;
-    this.loansService.getTemplateData(templateId, this.loanId).subscribe((response: any) => {
+    this.loanService.getTemplateData(templateId, this.loanId).subscribe((response: any) => {
       this.template = this.sanitizer.sanitize(SecurityContext.HTML, response);
       this.renderer.setProperty(this.screenReportRef.nativeElement, 'innerHTML', this.template);
     });
