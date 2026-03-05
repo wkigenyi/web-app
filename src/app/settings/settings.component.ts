@@ -22,6 +22,7 @@ import {
 } from '@angular/material/expansion';
 import { FileUploadComponent } from '../shared/file-upload/file-upload.component';
 import { ThemePickerComponent } from '../shared/theme-picker/theme-picker.component';
+import { LanguageSelectorComponent } from '../shared/language-selector/language-selector.component';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 
 /**
@@ -38,20 +39,14 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,
     FileUploadComponent,
-    ThemePickerComponent
+    ThemePickerComponent,
+    LanguageSelectorComponent
   ]
 })
 export class SettingsComponent implements OnInit, OnDestroy {
   private settingsService = inject(SettingsService);
   private destroy$ = new Subject<void>();
 
-  /** Placeholder for languages. update once translations are set up */
-  languages: any[] = [
-    {
-      name: 'English',
-      code: 'en'
-    }
-  ];
   /** Date formats. */
   dateFormats: string[] = [
     'dd MMMM yyyy',
@@ -104,8 +99,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
   /** Placeholder for fonts. */
   fonts: any;
 
-  /** Language Setting */
-  language = new FormControl('');
   /** Date Format Setting */
   dateFormat = new FormControl('');
   /** Datetime Format Setting */
@@ -114,7 +107,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
   decimalsToDisplay = new FormControl('');
 
   ngOnInit() {
-    this.language.patchValue(this.settingsService.language);
     this.dateFormat.patchValue(this.settingsService.dateFormat);
     this.datetimeFormat.patchValue(this.settingsService.datetimeFormat);
     this.decimalsToDisplay.patchValue(this.settingsService.decimals);
@@ -125,9 +117,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
    * Subscribe to value changes.
    */
   buildDependencies() {
-    this.language.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((language: any) => {
-      this.settingsService.setLanguage(language);
-    });
     this.dateFormat.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((dateFormat: string) => {
       this.settingsService.setDateFormat(dateFormat);
     });
@@ -142,15 +131,5 @@ export class SettingsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  /**
-   * Compare function for mat-select.
-   * Useful in patching values if value is an object.
-   * @param {any} option1 option 1
-   * @param {any} option2 option 2.
-   */
-  compareOptions(option1: any, option2: any) {
-    return option1 && option2 && option1.code === option2.code;
   }
 }
