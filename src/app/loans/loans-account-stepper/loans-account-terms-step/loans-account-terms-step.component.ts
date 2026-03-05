@@ -214,7 +214,6 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
           amortizationType: this.loansAccountTermsData.amortizationType.id,
           isEqualAmortization: this.loansAccountTermsData.isEqualAmortization,
           interestType: this.loansAccountTermsData.interestType.id,
-          // TODO: 2025-03-17: Is this correct?
           isFloatingInterestRate: this.loansAccountTermsData.isLoanProductLinkedToFloatingRate ? false : null,
           interestCalculationPeriodType: this.loansAccountTermsData.interestCalculationPeriodType.id,
           allowPartialPeriodInterestCalculation: this.loansAccountTermsData.allowPartialPeriodInterestCalculation,

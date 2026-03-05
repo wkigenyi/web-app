@@ -75,7 +75,10 @@ export class TakeSurveyComponent {
     this.userId = savedCredentials.userId;
   }
 
-  // TODO: document the function
+  /**
+   * Handles survey selection change. Updates surveyData and groups
+   * questions by their componentKey for sectioned display.
+   */
   onSurveyChange(resEvent: any) {
     if (resEvent.value) {
       this.surveyData = resEvent.value;
@@ -87,7 +90,12 @@ export class TakeSurveyComponent {
     }
   }
 
-  // TODO: document the function
+  /**
+   * Groups an array of objects by the value returned from a key function.
+   * @param array The array to group.
+   * @param func A function returning the grouping key for each element.
+   * @returns An array of grouped sub-arrays.
+   */
   groupBy(array: any, func: any) {
     const groups: { [key: string]: any[] } = {};
     array.forEach((ele: any) => {
