@@ -92,7 +92,7 @@
         >
         <mifosx-loan-product-payment-strategy-step
           [advancedPaymentAllocations]="advancedPaymentAllocations"
-          [advancedCreditAllocations]="advancedCreditAllocations"
+          [advancedCreditAllocations]="loanProductService.isLoanProduct ? advancedCreditAllocations : []"
           [advancedPaymentAllocationTransactionTypes]="loanProductAndTemplate.advancedPaymentAllocationTransactionTypes"
           [paymentAllocationOrderDefault]="loanProductAndTemplate.advancedPaymentAllocationTypes"
           [advancedCreditAllocationTransactionTypes]="loanProductAndTemplate.creditAllocationTransactionTypes"

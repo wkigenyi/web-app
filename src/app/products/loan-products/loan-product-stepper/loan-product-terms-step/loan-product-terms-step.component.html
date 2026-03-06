@@ -116,7 +116,7 @@
         <input type="number" matInput formControlName="minPeriodPaymentRate" [min]="0.01" step="0.01" />
         <mat-error *ngIf="loanProductTermsForm.get('minPeriodPaymentRate')?.hasError('min')">
           {{ 'labels.commons.Minimum Value must be' | translate }}
-          <strong>{{ loanProductTermsForm.get('minPeriodPaymentRate')?.errors?.['min']?.min || 1 }}</strong>
+          <strong>{{ loanProductTermsForm.get('minPeriodPaymentRate')?.errors?.['min']?.min || 0.01 }}</strong>
         </mat-error>
       </mat-form-field>
 
@@ -136,16 +136,16 @@
         <mat-error *ngIf="loanProductTermsForm.get('periodPaymentRate')?.hasError('min')">
           {{ 'labels.catalogs.Default' | translate }} {{ 'labels.inputs.Period Payment Rate' | translate }}
           {{ 'labels.commons.is' | translate }}
-          <strong>{{ loanProductTermsForm.get('periodPaymentRate')?.errors?.['min']?.min || 1 }}</strong>
+          <strong>{{ loanProductTermsForm.get('periodPaymentRate')?.errors?.['min']?.min || 0.01 }}</strong>
         </mat-error>
       </mat-form-field>
 
       <mat-form-field class="flex-31">
         <mat-label>{{ 'labels.inputs.Maximum' | translate }}</mat-label>
-        <input type="number" matInput formControlName="maxPeriodPaymentRate" [min]="1" step="0.01" />
+        <input type="number" matInput formControlName="maxPeriodPaymentRate" [min]="0.01" step="0.01" />
         <mat-error *ngIf="loanProductTermsForm.get('maxPeriodPaymentRate')?.hasError('min')">
           {{ 'labels.commons.Minimum Value must be' | translate }}
-          <strong>{{ loanProductTermsForm.get('maxPeriodPaymentRate')?.errors?.['min']?.min || 1 }}</strong>
+          <strong>{{ loanProductTermsForm.get('maxPeriodPaymentRate')?.errors?.['min']?.min || 0.01 }}</strong>
         </mat-error>
       </mat-form-field>
     }
@@ -646,7 +646,7 @@
         }
       </mat-select>
       <mat-error>
-        {{ 'labels.inputs.Repaid every type' | translate }} {{ 'labels.commons.is' | translate }}
+        {{ 'labels.inputs.Frequency Type' | translate }} {{ 'labels.commons.is' | translate }}
         <strong>{{ 'labels.commons.required' | translate }}</strong>
       </mat-error>
     </mat-form-field>

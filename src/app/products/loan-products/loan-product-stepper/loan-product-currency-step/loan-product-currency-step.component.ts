@@ -43,10 +43,18 @@ export class LoanProductCurrencyStepComponent implements OnInit {
   ngOnInit() {
     this.currencyData = this.loanProductsTemplate.currencyOptions;
     const currency = this.loanProductsTemplate.currency ? this.loanProductsTemplate.currency : this.currencyData[0];
+
+    let decimalPlacesValue = '';
+    if (this.loanProductService.isWorkingCapital && !this.loanProductsTemplate.id) {
+      decimalPlacesValue = '';
+    } else {
+      decimalPlacesValue =
+        currency.decimalPlaces === undefined || currency.decimalPlaces === null ? '' : currency.decimalPlaces;
+    }
+
     this.loanProductCurrencyForm.patchValue({
       currencyCode: currency.code,
-      digitsAfterDecimal:
-        currency.decimalPlaces === undefined || currency.decimalPlaces === null ? '' : currency.decimalPlaces,
+      digitsAfterDecimal: decimalPlacesValue,
       inMultiplesOf:
         currency.inMultiplesOf === 0 || currency.inMultiplesOf === undefined || currency.inMultiplesOf === null
           ? ''

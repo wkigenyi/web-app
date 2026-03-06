@@ -323,20 +323,20 @@ export class LoanProductTermsStepComponent extends LoanProductBaseComponent impl
         minPeriodPaymentRate: [
           '',
           [
-            Validators.min(1)
+            Validators.min(0.01)
           ]
         ],
         periodPaymentRate: [
           '',
           [
             Validators.required,
-            Validators.min(1)
+            Validators.min(0.01)
           ]
         ],
         maxPeriodPaymentRate: [
           '',
           [
-            Validators.min(1)
+            Validators.min(0.01)
           ]
         ],
         repaymentEvery: [
