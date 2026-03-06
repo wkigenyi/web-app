@@ -96,13 +96,15 @@ export class LoanProductPaymentStrategyStepComponent implements OnInit {
         transactionTypesOptions.push(option);
       }
     });
-    this.advancedCreditAllocationTransactionTypes.forEach((option: PaymentAllocationTransactionType) => {
-      if (transactionTypesCurrent.indexOf(option.code) < 0) {
-        option.credit = true;
-        option.value = this.translateService.instant('labels.catalogs.' + option.value);
-        transactionTypesOptions.push(option);
-      }
-    });
+    if (this.advancedCreditAllocationTransactionTypes) {
+      this.advancedCreditAllocationTransactionTypes.forEach((option: PaymentAllocationTransactionType) => {
+        if (transactionTypesCurrent.indexOf(option.code) < 0) {
+          option.credit = true;
+          option.value = this.translateService.instant('labels.catalogs.' + option.value);
+          transactionTypesOptions.push(option);
+        }
+      });
+    }
 
     const formfields: FormfieldBase[] = [
       new SelectBase({
