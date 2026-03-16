@@ -14,7 +14,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { activities } from '../activities';
 import { MatAutocompleteTrigger, MatAutocomplete, MatOption } from '@angular/material/autocomplete';
-import { AsyncPipe, DecimalPipe, CurrencyPipe, PercentPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { ClientTrendsBarComponent } from './client-trends-bar/client-trends-bar.component';
 import { AmountDisbursedPieComponent } from './amount-disbursed-pie/amount-disbursed-pie.component';
 import { AmountCollectedPieComponent } from './amount-collected-pie/amount-collected-pie.component';
@@ -35,10 +35,7 @@ import { DashboardService } from './dashboard.service';
     ClientTrendsBarComponent,
     AmountDisbursedPieComponent,
     AmountCollectedPieComponent,
-    AsyncPipe,
-    DecimalPipe,
-    CurrencyPipe,
-    PercentPipe
+    AsyncPipe
   ]
 })
 export class DashboardComponent implements OnInit {
