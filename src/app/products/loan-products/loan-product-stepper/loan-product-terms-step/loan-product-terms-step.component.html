@@ -85,7 +85,7 @@
         @if (loanProductTermsForm.value.allowApprovedDisbursedAmountsOverApplied) {
           <mat-form-field class="flex-fill flex-32">
             <mat-label>{{ 'labels.inputs.Over Amount' | translate }}</mat-label>
-            <input type="number" matInput formControlName="overAppliedNumber" required />
+            <input type="number" matInput formControlName="overAppliedNumber" required [min]="0" />
             <mat-error
               *ngIf="
                 loanProductTermsForm.get('overAppliedNumber')?.hasError('required') &&
@@ -345,7 +345,7 @@
           </mat-form-field>
           <mat-form-field class="flex-31">
             <mat-label>{{ 'labels.inputs.Differential Rate' | translate }}</mat-label>
-            <input type="number" matInput formControlName="interestRateDifferential" required />
+            <input type="number" matInput formControlName="interestRateDifferential" required [min]="0" />
             <mat-error>
               {{ 'labels.inputs.Differential rate' | translate }} {{ 'labels.commons.is' | translate }}
               <strong>{{ 'labels.commons.required' | translate }}</strong>
@@ -368,7 +368,7 @@
           </mat-form-field>
           <mat-form-field class="flex-31">
             <mat-label>{{ 'labels.inputs.Default' | translate }}</mat-label>
-            <input type="number" matInput formControlName="defaultDifferentialLendingRate" required />
+            <input type="number" matInput formControlName="defaultDifferentialLendingRate" required [min]="0" />
             <mat-error>
               {{ 'labels.catalogs.Default' | translate }} {{ 'labels.inputs.Interest rate' | translate }}
               {{ 'labels.commons.is' | translate }}
@@ -377,7 +377,7 @@
           </mat-form-field>
           <mat-form-field class="flex-31">
             <mat-label>{{ 'labels.inputs.Maximum' | translate }}</mat-label>
-            <input type="number" matInput formControlName="maxDifferentialLendingRate" required />
+            <input type="number" matInput formControlName="maxDifferentialLendingRate" required [min]="0" />
             <mat-error>
               {{ 'labels.inputs.Maximum interest rate' | translate }} {{ 'labels.commons.is' | translate }}
               <strong>{{ 'labels.commons.required' | translate }}</strong>
@@ -665,7 +665,7 @@
       @if (allowFixedLength()) {
         <mat-form-field class="flex-30">
           <mat-label>{{ 'labels.inputs.Fixed Length' | translate }}</mat-label>
-          <input type="number" matInput formControlName="fixedLength" />
+          <input type="number" matInput formControlName="fixedLength" [min]="0" />
         </mat-form-field>
       }
       @if (allowFixedLength()) {
