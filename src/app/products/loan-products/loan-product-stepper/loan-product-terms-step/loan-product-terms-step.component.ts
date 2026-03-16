@@ -587,6 +587,7 @@ export class LoanProductTermsStepComponent extends LoanProductBaseComponent impl
         value: values ? values.borrowerCycleNumber : undefined,
         type: 'number',
         required: true,
+        min: 0,
         order: 2
       }),
       new InputBase({
@@ -594,6 +595,7 @@ export class LoanProductTermsStepComponent extends LoanProductBaseComponent impl
         label: this.translateService.instant('labels.inputs.Minimum'),
         value: values ? values.minValue : undefined,
         type: 'number',
+        min: 0,
         order: 3
       }),
       new InputBase({
@@ -602,6 +604,7 @@ export class LoanProductTermsStepComponent extends LoanProductBaseComponent impl
         value: values ? values.defaultValue : undefined,
         type: 'number',
         required: true,
+        min: 0,
         order: 4
       }),
       new InputBase({
@@ -609,6 +612,7 @@ export class LoanProductTermsStepComponent extends LoanProductBaseComponent impl
         label: this.translateService.instant('labels.inputs.Maximum'),
         value: values ? values.maxValue : undefined,
         type: 'number',
+        min: 0,
         order: 5
       })
     ];
