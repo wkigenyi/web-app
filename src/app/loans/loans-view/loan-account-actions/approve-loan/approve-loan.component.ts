@@ -41,8 +41,6 @@ export class ApproveLoanComponent extends LoanAccountActionsBaseComponent implem
   approveLoanForm: UntypedFormGroup;
   /** Loan data. */
   loanData: any = new Object();
-  /** Association Data */
-  associationData: any;
   /** Minimum Date allowed. */
   minDate = new Date(2000, 0, 1);
   currency: Currency;
@@ -54,6 +52,7 @@ export class ApproveLoanComponent extends LoanAccountActionsBaseComponent implem
   constructor() {
     super();
     this.route.data.subscribe((data: { actionButtonData: any }) => {
+      console.log(data.actionButtonData);
       this.loanData = data.actionButtonData;
       this.currency = data.actionButtonData.currency;
     });
@@ -62,12 +61,6 @@ export class ApproveLoanComponent extends LoanAccountActionsBaseComponent implem
 
   ngOnInit() {
     this.setApproveLoanForm();
-    this.loanService.getApproveAssociationsDetails(this.loanId).subscribe((response: any) => {
-      this.associationData = response;
-      this.approveLoanForm.patchValue({
-        expectedDisbursementDate: new Date(response.timeline.expectedDisbursementDate)
-      });
-    });
 
     // Get delinquency data for available disbursement amount with over applied
     this.loanService.getLoanDelinquencyDataForTemplate(this.loanId).subscribe((delinquencyData: any) => {
@@ -75,10 +68,6 @@ export class ApproveLoanComponent extends LoanAccountActionsBaseComponent implem
       if (delinquencyData.availableDisbursementAmountWithOverApplied !== undefined) {
         this.loanData.availableDisbursementAmountWithOverApplied =
           delinquencyData.availableDisbursementAmountWithOverApplied;
-      }
-      // Also check if it's in delinquent object
-      if (delinquencyData.delinquent) {
-        this.loanData.delinquent = delinquencyData.delinquent;
       }
     });
   }
@@ -92,7 +81,10 @@ export class ApproveLoanComponent extends LoanAccountActionsBaseComponent implem
         this.settingsService.businessDate,
         Validators.required
       ],
-      expectedDisbursementDate: [''],
+      expectedDisbursementDate: [
+        new Date(this.loanData.expectedDisbursementDate),
+        Validators.required
+      ],
       approvedLoanAmount: [
         this.loanData.approvalAmount,
         Validators.required
@@ -121,11 +113,21 @@ export class ApproveLoanComponent extends LoanAccountActionsBaseComponent implem
       dateFormat,
       locale
     };
+    const loanCommand: string = 'approve';
+    const request$ = this.isLoanProduct
+      ? this.loanService.loanActionButtons(this.loanId, loanCommand, data)
+      : this.isWorkingCapital
+        ? this.loanService.applyWorkingCapitalLoanAccountCommand(this.loanId, loanCommand, data)
+        : undefined;
 
-    if (this.isLoanProduct) {
-      this.loanService.loanActionButtons(this.loanId, 'approve', data).subscribe((response: any) => {
-        this.gotoLoanDefaultView();
-      });
+    if (!request$) {
+      this.approveLoanForm.setErrors({ unsupportedProductType: true });
+      return;
     }
+
+    request$.subscribe({
+      next: () => this.gotoLoanDefaultView(),
+      error: () => this.approveLoanForm.setErrors({ submitFailed: true })
+    });
   }
 }

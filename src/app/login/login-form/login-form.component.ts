@@ -153,4 +153,8 @@ export class LoginFormComponent implements OnInit {
 
     return '';
   }
+
+  onEnter(event: any): void {
+    this.login();
+  }
 }

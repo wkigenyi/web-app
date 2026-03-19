@@ -26,7 +26,7 @@
 
     @if (loanProductService.isWorkingCapital) {
       <mat-form-field class="flex-48">
-        <mat-label>{{ 'labels.inputs.Total Payment' | translate }}</mat-label>
+        <mat-label>{{ 'labels.inputs.Total Payment' | translate }} {{ 'labels.inputs.Volume' | translate }}</mat-label>
         <input type="number" matInput required formControlName="totalPayment" />
       </mat-form-field>
 
