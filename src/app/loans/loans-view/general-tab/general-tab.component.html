@@ -87,9 +87,7 @@
         <tr mat-row *matRowDef="let row; columns: loanSummaryColumns"></tr>
       </table>
     </div>
-  }
 
-  @if (loanDetails.summary) {
     <div>
       <h3>{{ 'labels.heading.Loan Details' | translate }}</h3>
       <table mat-table [dataSource]="detailsDataSource">
@@ -156,7 +154,20 @@
               }
             }
             @if (ele.key === 'Proposed Amount' || ele.key === 'Approved Amount' || ele.key === 'Disburse Amount') {
-              {{ ele.value }}
+              {{ ele.value | currency: currencyCode : 'symbol-narrow' : '1.2-2' }}
+            }
+            @if (ele.key === 'Product Type') {
+              <span>{{ loanProductType() | translate }}</span>
+            }
+            @if (ele.key === 'Product Name') {
+              <span
+                >{{
+                  loanDetails.loanProductName || loanDetails.product.name || ('labels.inputs.Not Available' | translate)
+                }}
+              </span>
+            }
+            @if (ele.key === 'Status') {
+              <span>{{ 'labels.status.' + loanDetails.status.value | translate }}</span>
             }
           </td>
         </ng-container>
@@ -215,37 +226,55 @@
                 <span> {{ 'labels.inputs.Not Available' | translate }} </span>
               }
             }
+            @if (ele.key === 'Product Type') {
+              <span>{{ loanProductType() | translate }}</span>
+            }
+            @if (ele.key === 'Product Name') {
+              <span
+                >{{
+                  loanDetails.loanProductName || loanDetails.product.name || ('labels.inputs.Not Available' | translate)
+                }}
+              </span>
+            }
+            @if (ele.key === 'Status') {
+              <span>{{ 'labels.status.' + loanDetails.status.value | translate }}</span>
+            }
+            @if (ele.key === 'Loan Purpose') {
+              @if (!loanDetails.loanPurposeName) {
+                <span> {{ 'labels.inputs.Not Provided' | translate }} </span>
+              }
+              @if (loanDetails.loanPurposeName) {
+                <span>
+                  {{ loanDetails.loanPurposeName }}
+                </span>
+              }
+            }
           </td>
         </ng-container>
         <tr mat-row *matRowDef="let row; columns: loanDetailsColumns"></tr>
       </table>
     </div>
-  }
 
-  @if (!loanDetails.summary) {
     <div>
-      <h3>{{ 'labels.heading.Loan Purpose' | translate }}</h3>
+      <h3>{{ 'labels.heading.Loan Amounts' | translate }}</h3>
       <div class="container">
         <div class="layout-row-wrap responsive-column">
-          <div class="flex-contents">
-            <span class="flex-50">{{ 'labels.inputs.Loan Purpose' | translate }}:</span>
-            @if (loanDetails.loanPurposeName) {
-              <span class="flex-50">
-                {{ loanDetails.loanPurposeName }}
-              </span>
-            }
-            @if (!loanDetails.loanPurposeName) {
-              <span class="flex-50">
-                {{ 'labels.inputs.Not Provided' | translate }}
-              </span>
-            }
-          </div>
           <div class="flex-contents">
             <span class="flex-50">{{ 'labels.inputs.Proposed Amount' | translate }}:</span>
             <span class="flex-50">{{
               loanDetails.proposedPrincipal | currency: currencyCode : 'symbol-narrow' : '1.2-2'
             }}</span>
           </div>
+          @if (loanDetails.balance) {
+            <div class="flex-contents">
+              <span class="flex-50"
+                >{{ 'labels.inputs.Total Payment' | translate }} {{ 'labels.inputs.Amount' | translate }}:</span
+              >
+              <span class="flex-50">{{
+                loanDetails.balance.totalPayment | currency: currencyCode : 'symbol-narrow' : '1.2-2'
+              }}</span>
+            </div>
+          }
           @if (showApprovedAmountBasedOnStatus()) {
             <div class="flex-contents">
               <span class="flex-50">{{ 'labels.inputs.Approved Amount' | translate }}:</span>

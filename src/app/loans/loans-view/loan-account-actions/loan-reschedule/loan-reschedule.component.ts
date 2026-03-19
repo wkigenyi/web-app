@@ -6,19 +6,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Component, OnInit, Input, inject, DestroyRef } from '@angular/core';
-import { LoansService } from 'app/loans/loans.service';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-  UntypedFormControl,
-  ReactiveFormsModule
-} from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, UntypedFormControl } from '@angular/forms';
 
 /** Custom Services */
-import { SettingsService } from 'app/settings/settings.service';
 import { Dates } from 'app/core/utils/dates';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { PenaltyManagementService } from 'app/loans/services/penalty-management.service';
@@ -26,6 +17,7 @@ import { FormatNumberPipe } from '../../../../pipes/format-number.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RepaymentSchedulePeriod } from 'app/loans/models/loan-account.model';
+import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.component';
 
 @Component({
   selector: 'mifosx-loan-reschedule',
@@ -37,18 +29,12 @@ import { RepaymentSchedulePeriod } from 'app/loans/models/loan-account.model';
     FormatNumberPipe
   ]
 })
-export class LoanRescheduleComponent implements OnInit {
+export class LoanRescheduleComponent extends LoanAccountActionsBaseComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
-  private loanService = inject(LoansService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private dateUtils = inject(Dates);
-  private settingsService = inject(SettingsService);
   private penaltyManagementService = inject(PenaltyManagementService);
   private destroyRef = inject(DestroyRef);
 
-  @Input() dataObject: any;
-  loanId: any;
   rescheduleLoanForm: UntypedFormGroup;
 
   /** Minimum Date allowed. */
@@ -81,7 +67,7 @@ export class LoanRescheduleComponent implements OnInit {
    * @param {SettingsService} settingsService Settings Service
    */
   constructor() {
-    this.loanId = this.route.snapshot.params['loanId'];
+    super();
   }
 
   ngOnInit() {
@@ -186,10 +172,7 @@ export class LoanRescheduleComponent implements OnInit {
   /** Submit the reschedule after penalties are waived */
   private submitReschedule(data: any) {
     this.loanService.submitRescheduleData(data).subscribe((response: any) => {
-      // TODO: needs to be updated
-      // mentioned in Community App:
-      // location.path('/loans-accounts/' + scope.loanId + '/viewreschedulerequest/'+ data.resourceId);
-      this.router.navigate(['../../general'], { relativeTo: this.route });
+      this.gotoLoanDefaultView();
     });
   }
 

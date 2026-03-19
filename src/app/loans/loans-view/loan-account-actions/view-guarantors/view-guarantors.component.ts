@@ -7,12 +7,8 @@
  */
 
 /** Angular Imports */
-import { Component, OnInit, Input, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-
-/** Custom Services */
-import { LoansService } from 'app/loans/loans.service';
 
 /** Dialog Components */
 import { DeleteDialogComponent } from 'app/shared/delete-dialog/delete-dialog.component';
@@ -35,6 +31,7 @@ import {
 import { AccountsFilterPipe } from '../../../../pipes/accounts-filter.pipe';
 import { FormatNumberPipe } from '../../../../pipes/format-number.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.component';
 
 /**
  * View Guarantors Action
@@ -61,17 +58,12 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     FormatNumberPipe
   ]
 })
-export class ViewGuarantorsComponent implements OnInit {
+export class ViewGuarantorsComponent extends LoanAccountActionsBaseComponent implements OnInit {
   dialog = inject(MatDialog);
-  loansService = inject(LoansService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
 
-  @Input() dataObject: any;
-  loanData: any = {};
+  loanData: any;
   guarantorDetails: any;
   showDeletedGuarantorsAccounts = false;
-  loanId: any;
   guarantorsDisplayedColumns: string[] = [
     'fullname',
     'relationship',
@@ -84,6 +76,7 @@ export class ViewGuarantorsComponent implements OnInit {
   ];
 
   constructor() {
+    super();
     this.loanId = this.route.snapshot.params['loanId'];
     // Get loan data from navigation state (passed by LoansViewComponent)
     const navData = this.router.getCurrentNavigation()?.extras?.state?.data;
@@ -91,14 +84,27 @@ export class ViewGuarantorsComponent implements OnInit {
       this.loanData = navData;
     } else {
       // Fallback: fetch from API (e.g. on page refresh)
-      this.loansService.getLoanAccountAssociationDetails(this.loanId).subscribe((data: any) => {
+      this.loanService.getLoanAccountAssociationDetails(this.loanId).subscribe((data: any) => {
         this.loanData = data || {};
       });
     }
   }
 
   ngOnInit() {
-    this.guarantorDetails = this.dataObject;
+    this.guarantorDetails = this.dataObject.guarantors;
+
+    // Get delinquency data for available disbursement amount with over applied
+    this.loanService.getLoanDelinquencyDataForTemplate(this.loanId).subscribe((delinquencyData: any) => {
+      // Check if the field is at root level
+      if (delinquencyData.availableDisbursementAmountWithOverApplied !== undefined) {
+        this.dataObject.availableDisbursementAmountWithOverApplied =
+          delinquencyData.availableDisbursementAmountWithOverApplied;
+      }
+      // Also check if it's in delinquent object
+      if (delinquencyData.delinquent) {
+        this.dataObject.delinquent = delinquencyData.delinquent;
+      }
+    });
   }
 
   toggleGuarantorsDetailsOverview() {
@@ -109,9 +115,9 @@ export class ViewGuarantorsComponent implements OnInit {
     const deleteGuarantorDialogRef = this.dialog.open(DeleteDialogComponent, {
       data: { deleteContext: `the guarantor id: ${id}` }
     });
-    deleteGuarantorDialogRef.afterClosed().subscribe((response: any) => {
+    deleteGuarantorDialogRef.afterClosed().subscribe((response?: { delete?: boolean }) => {
       if (response?.delete) {
-        this.loansService.deleteGuarantor(this.loanId, id).subscribe(() => {
+        this.loanService.deleteGuarantor(this.loanId, id).subscribe(() => {
           this.refreshGuarantors();
         });
       }
@@ -126,7 +132,7 @@ export class ViewGuarantorsComponent implements OnInit {
   }
 
   editGuarantor(guarantorData: any) {
-    this.loansService.getGuarantorTemplate(this.loanId).subscribe((templateData: any) => {
+    this.loanService.getGuarantorTemplate(this.loanId).subscribe((templateData: any) => {
       const editDialogRef = this.dialog.open(EditGuarantorDialogComponent, {
         data: {
           guarantorData: guarantorData,
@@ -144,7 +150,7 @@ export class ViewGuarantorsComponent implements OnInit {
               delete payload[key];
             }
           });
-          this.loansService.updateGuarantor(this.loanId, guarantorData.id, payload).subscribe(() => {
+          this.loanService.updateGuarantor(this.loanId, guarantorData.id, payload).subscribe(() => {
             this.refreshGuarantors();
           });
         }
@@ -156,7 +162,7 @@ export class ViewGuarantorsComponent implements OnInit {
    * Re-fetches guarantor data in place without navigating away.
    */
   private refreshGuarantors() {
-    this.loansService.getGuarantors(this.loanId).subscribe((data: any) => {
+    this.loanService.getGuarantors(this.loanId).subscribe((data: any) => {
       this.guarantorDetails = data;
     });
   }

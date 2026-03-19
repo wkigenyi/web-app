@@ -8,7 +8,7 @@
 
 /** Angular Imports */
 import { Component, OnInit, ViewChild, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -49,6 +49,7 @@ import { DateFormatPipe } from '../../../pipes/date-format.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { LoanCharge } from 'app/loans/models/loan-charge.model';
 import { FormatNumberPipe } from '@pipes/format-number.pipe';
+import { LoanAccountTabBaseComponent } from '../loan-account-tab-base.component';
 
 @Component({
   selector: 'mifosx-charges-tab',
@@ -75,11 +76,10 @@ import { FormatNumberPipe } from '@pipes/format-number.pipe';
     FormatNumberPipe
   ]
 })
-export class ChargesTabComponent implements OnInit {
+export class ChargesTabComponent extends LoanAccountTabBaseComponent implements OnInit {
   private loansService = inject(LoansService);
   private route = inject(ActivatedRoute);
   private dateUtils = inject(Dates);
-  private router = inject(Router);
   private translateService = inject(TranslateService);
   private dialog = inject(MatDialog);
   private settingsService = inject(SettingsService);
@@ -120,6 +120,7 @@ export class ChargesTabComponent implements OnInit {
    * @param {SettingsService} settingsService Settings Service
    */
   constructor() {
+    super();
     this.route.parent.data.subscribe((data: { loanDetailsData: any }) => {
       this.loanDetails = data.loanDetailsData;
     });
@@ -159,7 +160,12 @@ export class ChargesTabComponent implements OnInit {
    * @param {any} chargeId Charge Id
    */
   adjustCharge(chargeId: string) {
-    this.router.navigate([`${chargeId}/adjustment`], { relativeTo: this.route });
+    this.router.navigate([`${chargeId}/adjustment`], {
+      queryParams: {
+        productType: this.loanProductService.productType.value
+      },
+      relativeTo: this.route
+    });
   }
 
   /**
@@ -285,18 +291,6 @@ export class ChargesTabComponent implements OnInit {
    */
   routeEdit($event: MouseEvent) {
     $event.stopPropagation();
-  }
-
-  /**
-   * Refetches data fot the component
-   * TODO: Replace by a custom reload component instead of hard-coded back-routing.
-   */
-  private reload() {
-    const clientId = this.loanDetails.clientId;
-    const url: string = this.router.url;
-    this.router
-      .navigateByUrl(`/clients/${clientId}/loans-accounts`, { skipLocationChange: true })
-      .then(() => this.router.navigate([url]));
   }
 
   isPercentageCharge(loanCharge: LoanCharge): boolean {

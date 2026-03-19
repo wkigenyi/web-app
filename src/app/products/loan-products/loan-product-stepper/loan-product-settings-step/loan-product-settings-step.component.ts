@@ -305,7 +305,6 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
             (attribute: boolean) => attribute
           ),
           allowAttributeOverrides: {
-            flatPercentageAmount: this.loanProductsTemplate.allowAttributeOverrides.flatPercentageAmount,
             delinquencyBucketClassification:
               this.loanProductsTemplate.allowAttributeOverrides.delinquencyBucketClassification,
             discountDefault: this.loanProductsTemplate.allowAttributeOverrides.discountDefault,
@@ -426,7 +425,6 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
           ]
         ],
         allowAttributeOverrides: this.formBuilder.group({
-          flatPercentageAmount: [true],
           delinquencyBucketClassification: [true],
           discountDefault: [true],
           periodPaymentFrequency: [true],
@@ -788,7 +786,6 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
         .valueChanges.subscribe((allowAttributeConfiguration: any) => {
           if (allowAttributeConfiguration) {
             allowAttributeOverrides.patchValue({
-              flatPercentageAmount: true,
               delinquencyBucketClassification: true,
               discountDefault: true,
               periodPaymentFrequency: true,
@@ -796,7 +793,6 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
             });
           } else {
             allowAttributeOverrides.patchValue({
-              flatPercentageAmount: false,
               delinquencyBucketClassification: false,
               discountDefault: false,
               periodPaymentFrequency: false,

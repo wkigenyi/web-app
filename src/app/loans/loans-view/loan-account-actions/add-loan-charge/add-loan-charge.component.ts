@@ -8,20 +8,12 @@
 
 /** Angular Imports */
 import { Component, OnInit, inject } from '@angular/core';
-import {
-  UntypedFormGroup,
-  UntypedFormBuilder,
-  Validators,
-  UntypedFormControl,
-  ReactiveFormsModule
-} from '@angular/forms';
-import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl } from '@angular/forms';
 
 /** Custom Services */
-import { LoansService } from '../../../loans.service';
-import { SettingsService } from 'app/settings/settings.service';
 import { Dates } from 'app/core/utils/dates';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.component';
 
 /**
  * Create Add Loan Charge component.
@@ -34,13 +26,9 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     ...STANDALONE_SHARED_IMPORTS
   ]
 })
-export class AddLoanChargeComponent implements OnInit {
+export class AddLoanChargeComponent extends LoanAccountActionsBaseComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private dateUtils = inject(Dates);
-  private loansService = inject(LoansService);
-  private settingsService = inject(SettingsService);
 
   /** Minimum Due Date allowed. */
   minDate = new Date(2000, 0, 1);
@@ -64,18 +52,14 @@ export class AddLoanChargeComponent implements OnInit {
       value: any;
     };
   }[];
-  /** loan Id of the loan account. */
-  loanId: string;
 
   /**
    * Retrieves the loan charge template data from `resolve`.
    * @param {FormBuilder} formBuilder Form Builder.
-   * @param {AccountingService} accountingService Accounting Service.
-   * @param {ActivatedRoute} route Activated Route.
-   * @param {Router} router Router for navigation.
    * @param {SettingsService} settingsService Settings Service
    */
   constructor() {
+    super();
     this.route.data.subscribe((data: { actionButtonData: any }) => {
       this.loanChargeOptions = data.actionButtonData.chargeOptions;
     });
@@ -136,8 +120,8 @@ export class AddLoanChargeComponent implements OnInit {
       dateFormat,
       locale
     };
-    this.loansService.createLoanCharge(this.loanId, 'charges', data).subscribe((res) => {
-      this.router.navigate(['../../general'], { relativeTo: this.route });
+    this.loanService.createLoanCharge(this.loanId, 'charges', data).subscribe((res) => {
+      this.gotoLoanDefaultView();
     });
   }
 }

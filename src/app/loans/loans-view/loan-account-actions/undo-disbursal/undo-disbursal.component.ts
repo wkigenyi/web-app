@@ -12,9 +12,9 @@ import { UntypedFormControl, UntypedFormBuilder, Validators, ReactiveFormsModule
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 
 /** Custom Services */
-import { LoansService } from '../../../loans.service';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.component';
 
 /**
  * Undo Disbursal component.
@@ -28,27 +28,16 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     CdkTextareaAutosize
   ]
 })
-export class UndoDisbursalComponent implements OnInit {
+export class UndoDisbursalComponent extends LoanAccountActionsBaseComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
-  private loansService = inject(LoansService);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   @Input() actionName: string;
 
-  /** Loan ID. */
-  loanId: any;
   /** Undo disbursal form. */
   note: UntypedFormControl;
 
-  /**
-   * @param {FormBuilder} formBuilder Form Builder.
-   * @param {LoansService} loansService Loans Service.
-   * @param {ActivatedRoute} route Activated Route.
-   * @param {Router} router Router for navigation.
-   */
   constructor() {
-    this.loanId = this.route.snapshot.params['loanId'];
+    super();
   }
 
   /**
@@ -66,8 +55,8 @@ export class UndoDisbursalComponent implements OnInit {
     if (this.actionName === 'Undo Last Disbursal') {
       command = 'undolastdisbursal';
     }
-    this.loansService.loanActionButtons(this.loanId, command, { note: this.note.value }).subscribe((response: any) => {
-      this.router.navigate(['../../general'], { relativeTo: this.route });
+    this.loanService.loanActionButtons(this.loanId, command, { note: this.note.value }).subscribe((response: any) => {
+      this.gotoLoanDefaultView();
     });
   }
 }

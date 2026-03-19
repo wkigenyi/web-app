@@ -41,6 +41,7 @@ import { AddInterestPauseComponent } from './add-interest-pause/add-interest-pau
 import { UndoWriteOffComponent } from './undo-write-off/undo-write-off.component';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { AttachOriginatorComponent } from './attach-originator/attach-originator.component';
+import { LoanProductBaseComponent } from 'app/products/loan-products/common/loan-product-base.component';
 
 /**
  * Loan Account Actions component.
@@ -48,7 +49,7 @@ import { AttachOriginatorComponent } from './attach-originator/attach-originator
 @Component({
   selector: 'mifosx-loan-account-actions',
   templateUrl: './loan-account-actions.component.html',
-  styleUrls: ['./loan-account-actions.component.scss'],
+  styleUrls: [],
   imports: [
     ...STANDALONE_SHARED_IMPORTS,
     LoansAccountCloseComponent,
@@ -203,5 +204,6 @@ export class LoanAccountActionsComponent {
     });
 
     this.actionButtonData['actionName'] = this.actionName;
+    this.actionButtonData['productType'] = LoanProductBaseComponent.resolveProductTypeDefault(this.route, 'loan');
   }
 }

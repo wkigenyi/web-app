@@ -17,6 +17,7 @@ import { catchError } from 'rxjs/operators';
 /** Custom Services */
 import { LoansService } from '../loans.service';
 import { OrganizationService } from 'app/organization/organization.service';
+import { LoanProductService } from 'app/products/loan-products/services/loan-product.service';
 
 /**
  * Loans notes data resolver.
@@ -25,6 +26,7 @@ import { OrganizationService } from 'app/organization/organization.service';
 export class LoanActionButtonResolver {
   private loansService = inject(LoansService);
   private organizationService = inject(OrganizationService);
+  private loanProductService = inject(LoanProductService);
 
   /**
    * Returns the Loans Notes Data.
@@ -74,7 +76,9 @@ export class LoanActionButtonResolver {
     } else if (loanActionButton === 'Loan Screen Reports') {
       return this.loansService.getLoanScreenReportsData();
     } else if (loanActionButton === 'Approve') {
-      return this.loansService.getLoanApprovalTemplate(loanId);
+      return this.loanProductService.isLoanProduct
+        ? this.loansService.getLoanApprovalTemplate(loanId)
+        : this.loansService.getWorkingCapitalLoanActionTemplate(loanId, loanActionButton.toLowerCase());
     } else if (loanActionButton === 'Add Loan Charge') {
       return this.loansService.getLoanChargeTemplateResource(loanId);
     } else if (loanActionButton === 'Foreclosure') {

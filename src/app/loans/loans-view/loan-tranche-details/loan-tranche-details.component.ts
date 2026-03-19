@@ -8,7 +8,7 @@
 
 import { Component, OnInit, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Dates } from 'app/core/utils/dates';
 import { LoansService } from 'app/loans/loans.service';
 import { DisbursementData } from 'app/loans/models/loan-account.model';
@@ -18,7 +18,7 @@ import { FormDialogComponent } from 'app/shared/form-dialog/form-dialog.componen
 import { DatepickerBase } from 'app/shared/form-dialog/formfield/model/datepicker-base';
 import { FormfieldBase } from 'app/shared/form-dialog/formfield/model/formfield-base';
 import { InputBase } from 'app/shared/form-dialog/formfield/model/input-base';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import {
   MatTable,
@@ -37,6 +37,7 @@ import { DateFormatPipe } from '../../../pipes/date-format.pipe';
 import { FormatNumberPipe } from '../../../pipes/format-number.pipe';
 import { YesnoPipe } from '../../../pipes/yesno.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanAccountTabBaseComponent } from '../loan-account-tab-base.component';
 
 @Component({
   selector: 'mifosx-loan-tranche-details',
@@ -62,9 +63,8 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     YesnoPipe
   ]
 })
-export class LoanTrancheDetailsComponent implements OnInit {
+export class LoanTrancheDetailsComponent extends LoanAccountTabBaseComponent implements OnInit {
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private dialog = inject(MatDialog);
   private loanServices = inject(LoansService);
   private settingsService = inject(SettingsService);
@@ -99,6 +99,7 @@ export class LoanTrancheDetailsComponent implements OnInit {
    * @param {ActivatedRoute} route Activated Route.
    */
   constructor() {
+    super();
     this.route.parent.data.subscribe((data: { loanDetailsData: any }) => {
       this.loanId = data.loanDetailsData.id;
       this.loanDetails = data.loanDetailsData;
@@ -282,10 +283,5 @@ export class LoanTrancheDetailsComponent implements OnInit {
         this.reload();
         this.pristine = true;
       });
-  }
-
-  reload() {
-    const url: string = this.router.url;
-    this.router.navigateByUrl(`/clients`, { skipLocationChange: true }).then(() => this.router.navigate([url]));
   }
 }

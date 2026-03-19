@@ -8,13 +8,11 @@
 
 /** Angular Imports */
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Custom Services */
 import { LoansService } from 'app/loans/loans.service';
 import { ConfirmationDialogComponent } from 'app/shared/confirmation-dialog/confirmation-dialog.component';
-import { SettingsService } from 'app/settings/settings.service';
 import { Dates } from 'app/core/utils/dates';
 import { OrganizationService } from 'app/organization/organization.service';
 import { FormfieldBase } from 'app/shared/form-dialog/formfield/model/formfield-base';
@@ -45,6 +43,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TransactionPaymentDetailComponent } from '../../../../shared/transaction-payment-detail/transaction-payment-detail.component';
 import { DateFormatPipe } from '../../../../pipes/date-format.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanAccountActionsBaseComponent } from '../../loan-account-actions/loan-account-actions-base.component';
 
 /** Custom Dialogs */
 
@@ -78,14 +77,11 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     DateFormatPipe
   ]
 })
-export class ViewTransactionComponent implements OnInit {
+export class ViewTransactionComponent extends LoanAccountActionsBaseComponent implements OnInit {
   private loansService = inject(LoansService);
-  private route = inject(ActivatedRoute);
   private dateUtils = inject(Dates);
-  private router = inject(Router);
   dialog = inject(MatDialog);
   private translateService = inject(TranslateService);
-  private settingsService = inject(SettingsService);
   private organizationService = inject(OrganizationService);
   private alertService = inject(AlertService);
 
@@ -112,7 +108,6 @@ export class ViewTransactionComponent implements OnInit {
   amountRelationsAllowed = 0;
 
   clientId: number;
-  loanId: number;
 
   /**
    * Retrieves the Transaction data from `resolve`.
@@ -125,6 +120,7 @@ export class ViewTransactionComponent implements OnInit {
    * @param {AlertService} alertService Alert Service
    */
   constructor() {
+    super();
     this.route.data.subscribe((data: { loansAccountTransaction: any }) => {
       this.transactionData = data.loansAccountTransaction;
       this.transactionType = this.transactionData.type;
@@ -252,7 +248,12 @@ export class ViewTransactionComponent implements OnInit {
           };
 
           this.loansService.loanActionButtons(accountId, 'undoContractTermination', payload).subscribe(() => {
-            this.router.navigate(['../'], { relativeTo: this.route });
+            this.router.navigate(['../'], {
+              queryParams: {
+                productType: this.loanProductService.productType.value
+              },
+              relativeTo: this.route
+            });
           });
         }
       });
@@ -283,7 +284,12 @@ export class ViewTransactionComponent implements OnInit {
           this.loansService
             .executeLoansAccountTransactionsCommand(accountId, command, data, transactionId)
             .subscribe(() => {
-              this.router.navigate(['../'], { relativeTo: this.route });
+              this.router.navigate(['../'], {
+                queryParams: {
+                  productType: this.loanProductService.productType.value
+                },
+                relativeTo: this.route
+              });
             });
         }
       });
@@ -329,7 +335,12 @@ export class ViewTransactionComponent implements OnInit {
           this.loansService
             .executeLoansAccountTransactionsCommand(accountId, 'chargeback', payload, this.transactionData.id)
             .subscribe(() => {
-              this.router.navigate(['../'], { relativeTo: this.route });
+              this.router.navigate(['../'], {
+                queryParams: {
+                  productType: this.loanProductService.productType.value
+                },
+                relativeTo: this.route
+              });
             });
         } else {
           this.alertService.alert({

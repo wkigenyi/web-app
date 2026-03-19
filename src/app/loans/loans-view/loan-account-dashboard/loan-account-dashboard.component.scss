@@ -8,7 +8,6 @@
 
 .dashboard-container {
   padding: 20px;
-  background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #1976d2 100%);
 }
 
 .dashboard-header-card {
@@ -25,15 +24,10 @@
 
     h3 {
       margin: 0;
-      color: white;
       font-size: 22px;
       font-weight: 600;
       display: flex;
       align-items: center;
-
-      fa-icon {
-        color: white;
-      }
     }
   }
 }

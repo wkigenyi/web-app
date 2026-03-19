@@ -867,9 +867,6 @@
       }
       @if (loanProductService.isWorkingCapital) {
         <div formGroupName="allowAttributeOverrides" class="flex-fill layout-row-wrap gap-2percent responsive-column">
-          <mat-checkbox labelPosition="before" formControlName="flatPercentageAmount" class="margin-v flex-48">
-            {{ 'labels.inputs.Flat Percentage Amount' | translate }}
-          </mat-checkbox>
           <mat-checkbox
             labelPosition="before"
             formControlName="delinquencyBucketClassification"

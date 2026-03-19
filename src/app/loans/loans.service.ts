@@ -203,6 +203,11 @@ export class LoansService {
     return this.http.get(`/loans/${loanId}`, { params: httpParams });
   }
 
+  getWorkingCapitalLoannDetails(loanId: string) {
+    const httpParams = new HttpParams().set('associations', 'all');
+    return this.http.get(`/working-capital-loans/${loanId}`, { params: httpParams });
+  }
+
   getApproveAssociationsDetails(loanId: any) {
     const httpParams = new HttpParams().set('associations', 'multiDisburseDetails');
     return this.http.get(`/loans/${loanId}`, { params: httpParams });
@@ -357,6 +362,11 @@ export class LoansService {
     return this.http.post(`/loans/${loanId}`, data, { params: httpParams });
   }
 
+  applyWorkingCapitalLoanAccountCommand(loanId: any, command: any, data?: any): Observable<any> {
+    const httpParams = new HttpParams().set('command', command);
+    return this.http.post(`/working-capital-loans/${loanId}`, data, { params: httpParams });
+  }
+
   addInterestPauseToLoan(loanId: any, data?: any): Observable<any> {
     return this.http.post(`/loans/${loanId}/interest-pauses`, data);
   }
@@ -449,6 +459,12 @@ export class LoansService {
     return this.http.get('/loans/template', { params: httpParams });
   }
 
+  getWorkingCapitalLoansAccountTemplate(clientId: number, productId?: number): Observable<any> {
+    let httpParams = new HttpParams().set('clientId', clientId);
+    httpParams = productId ? httpParams.set('productId', productId) : httpParams;
+    return this.http.get('/working-capital-loans/template', { params: httpParams });
+  }
+
   getLoansAccountAndTemplateResource(loanId: any): Observable<any> {
     const httpParams = new HttpParams()
       .set('associations', 'charges,collateral,meeting,multiDisburseDetails')
@@ -473,8 +489,8 @@ export class LoansService {
    * Creates Loans Account
    * @param {any} loanAccount Loan Account
    */
-  createLoansAccount(loanAccount: any): Observable<any> {
-    return this.http.post('/loans', loanAccount);
+  createLoansAccount(productType: string, loanAccount: any): Observable<any> {
+    return this.http.post(`/${productType}`, loanAccount);
   }
 
   getLoanDocuments(loanId: any): Observable<any> {
@@ -537,6 +553,11 @@ export class LoansService {
   getLoanApprovalTemplate(loanId: string): Observable<any> {
     const httpParams = new HttpParams().set('templateType', 'approval').set('associations', 'delinquency');
     return this.http.get(`/loans/${loanId}/template`, { params: httpParams });
+  }
+
+  getWorkingCapitalLoanActionTemplate(loanId: string, actionName: string): Observable<any> {
+    const httpParams = new HttpParams().set('templateType', actionName);
+    return this.http.get(`/working-capital-loans/${loanId}/template`, { params: httpParams });
   }
 
   guarantorAccountResource(loanId: string, clientId: any): Observable<any> {

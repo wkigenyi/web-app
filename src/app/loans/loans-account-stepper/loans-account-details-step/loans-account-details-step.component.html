@@ -11,10 +11,19 @@
     <mat-form-field class="flex-fill">
       <mat-label>{{ 'labels.inputs.Product Name' | translate }}</mat-label>
       <mat-select
-        required
         matTooltip="{{ 'tooltips.Name of the loan product' | translate }}"
         formControlName="productId"
+        panelClass="loan-product-select-panel"
+        (selectionChange)="productChange($event)"
       >
+        <mat-select-trigger>
+          @if (productSelected) {
+            <span class="selected-product-trigger">
+              <strong>{{ getLoanProductType(productSelected.productType) | translate }} : </strong
+              >{{ productSelected.name }}
+            </span>
+          }
+        </mat-select-trigger>
         <mat-option>
           <ngx-mat-select-search
             placeholderLabel="{{ placeHolderLabel }}"
@@ -23,8 +32,13 @@
           ></ngx-mat-select-search>
         </mat-option>
         @for (product of productData | async; track product) {
-          <mat-option [value]="product.id">
-            {{ product.name }}
+          <mat-option [value]="product.shortName" class="product-option">
+            <ng-container
+              [ngTemplateOutlet]="productOption"
+              [ngTemplateOutletContext]="{ product: product }"
+              class="xyz product-option"
+            >
+            </ng-container>
           </mat-option>
         }
       </mat-select>
@@ -45,7 +59,7 @@
           matTooltip="{{ 'tooltips.Provides an external id' | translate }}"
         />
       </mat-form-field>
-      @if (loanProductSelected) {
+      @if (loanProductService.isLoanProduct) {
         <mat-form-field class="flex-48">
           <mat-label>{{ 'labels.inputs.Loan officer' | translate }}</mat-label>
           <mat-select
@@ -59,17 +73,17 @@
             }
           </mat-select>
         </mat-form-field>
+        <mat-form-field class="flex-48">
+          <mat-label>{{ 'labels.inputs.Loan Purpose' | translate }}</mat-label>
+          <mat-select formControlName="loanPurposeId" matTooltip="{{ 'tooltips.Provides an indication' | translate }}">
+            @for (loanPurpose of loanPurposeOptions; track loanPurpose) {
+              <mat-option [value]="loanPurpose.id">
+                {{ loanPurpose.name }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
       }
-      <mat-form-field class="flex-48">
-        <mat-label>{{ 'labels.inputs.Loan Purpose' | translate }}</mat-label>
-        <mat-select formControlName="loanPurposeId" matTooltip="{{ 'tooltips.Provides an indication' | translate }}">
-          @for (loanPurpose of loanPurposeOptions; track loanPurpose) {
-            <mat-option [value]="loanPurpose.id">
-              {{ loanPurpose.name }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
       <mat-form-field class="flex-48">
         <mat-label>{{ 'labels.inputs.Fund' | translate }}</mat-label>
         <mat-select formControlName="fundId">
@@ -120,21 +134,23 @@
           </mat-error>
         }
       </mat-form-field>
-      <mat-divider class="flex-98"></mat-divider>
-      <h3 class="mat-h3 flex-fill">{{ 'labels.heading.Savings Linkage' | translate }}</h3>
-      <mat-form-field class="flex-48">
-        <mat-label>{{ 'labels.inputs.Link savings' | translate }}</mat-label>
-        <mat-select formControlName="linkAccountId">
-          @for (savingaccount of accountLinkingOptions; track savingaccount) {
-            <mat-option [value]="savingaccount.id">
-              ({{ savingaccount.accountNo }}) {{ savingaccount.productName }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <mat-checkbox class="flex-48" formControlName="createStandingInstructionAtDisbursement">
-        <p>{{ 'labels.inputs.Create standing instructions at disbursement' | translate }}</p>
-      </mat-checkbox>
+      @if (loanProductService.isLoanProduct) {
+        <mat-divider class="flex-98"></mat-divider>
+        <h3 class="mat-h3 flex-fill">{{ 'labels.heading.Savings Linkage' | translate }}</h3>
+        <mat-form-field class="flex-48">
+          <mat-label>{{ 'labels.inputs.Link savings' | translate }}</mat-label>
+          <mat-select formControlName="linkAccountId">
+            @for (savingaccount of accountLinkingOptions; track savingaccount) {
+              <mat-option [value]="savingaccount.id">
+                ({{ savingaccount.accountNo }}) {{ savingaccount.productName }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-checkbox class="flex-48" formControlName="createStandingInstructionAtDisbursement">
+          <p>{{ 'labels.inputs.Create standing instructions at disbursement' | translate }}</p>
+        </mat-checkbox>
+      }
     </div>
   }
 
@@ -162,3 +178,25 @@
     }
   </div>
 </form>
+
+<ng-template #productOption let-product="product">
+  <div class="product-option-row">
+    <div class="product-option-name">
+      <strong>{{ product.name }}</strong>
+    </div>
+    <div class="product-option-meta">
+      <div class="meta-item">
+        <span class="meta-label">{{ 'labels.inputs.Product Type' | translate }}</span>
+        <span class="meta-value">{{ getLoanProductType(product.productType) | translate }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">{{ 'labels.inputs.Short Name' | translate }}</span>
+        <span class="meta-value">{{ product.shortName }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">{{ 'labels.inputs.Currency' | translate }}</span>
+        <span class="meta-value">{{ product.currency?.code }}</span>
+      </div>
+    </div>
+  </div>
+</ng-template>

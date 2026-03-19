@@ -8,23 +8,16 @@
 
 /** Angular Imports */
 import { Component, OnInit, inject } from '@angular/core';
-import {
-  UntypedFormGroup,
-  UntypedFormBuilder,
-  Validators,
-  UntypedFormControl,
-  ReactiveFormsModule
-} from '@angular/forms';
-import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl } from '@angular/forms';
 import { Dates } from 'app/core/utils/dates';
 
 /** Custom Services */
 import { LoansService } from 'app/loans/loans.service';
-import { SettingsService } from 'app/settings/settings.service';
 import { Currency } from 'app/shared/models/general.model';
 import { InputAmountComponent } from '../../../../shared/input-amount/input-amount.component';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanAccountActionsBaseComponent } from '../../loan-account-actions/loan-account-actions-base.component';
 
 /**
  * Edit Transaction component.
@@ -39,13 +32,10 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     MatSlideToggle
   ]
 })
-export class EditTransactionComponent implements OnInit {
+export class EditTransactionComponent extends LoanAccountActionsBaseComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private dateUtils = inject(Dates);
   private loansService = inject(LoansService);
-  private settingsService = inject(SettingsService);
 
   /** Minimum Due Date allowed. */
   minDate = new Date(2000, 0, 1);
@@ -79,6 +69,7 @@ export class EditTransactionComponent implements OnInit {
    * @param {SettingsService} settingsService Settings Service
    */
   constructor() {
+    super();
     this.route.data.subscribe((data: { loansAccountTransactionTemplate: any }) => {
       this.transactionTemplateData = data.loansAccountTransactionTemplate;
       if (data.loansAccountTransactionTemplate.currency) {
@@ -161,7 +152,12 @@ export class EditTransactionComponent implements OnInit {
     this.loansService
       .executeLoansAccountTransactionsCommand(this.loanAccountId, 'modify', data, this.transactionTemplateData.id)
       .subscribe((res: any) => {
-        this.router.navigate(['../'], { relativeTo: this.route });
+        this.router.navigate(['../'], {
+          queryParams: {
+            productType: this.loanProductService.productType.value
+          },
+          relativeTo: this.route
+        });
       });
   }
 }

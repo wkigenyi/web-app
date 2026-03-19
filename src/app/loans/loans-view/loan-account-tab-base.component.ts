@@ -7,30 +7,16 @@
  */
 
 import { inject } from '@angular/core';
-import { LoanProductService } from '../services/loan-product.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { LoanProductService } from 'app/products/loan-products/services/loan-product.service';
 
-export abstract class LoanProductBaseComponent {
+export abstract class LoanAccountTabBaseComponent {
   protected router = inject(Router);
   protected loanProductService = inject(LoanProductService);
 
   static PRODUCT_TYPE_PARAM: string = 'productType';
 
   constructor() {}
-
-  getProductTypeLabel(upperCase: boolean): string {
-    return upperCase
-      ? this.loanProductService.loanProductTypeLabel.toUpperCase()
-      : this.loanProductService.loanProductTypeLabel;
-  }
-
-  static resolveProductType(route: ActivatedRoute): string {
-    return route.snapshot.queryParamMap.get(this.PRODUCT_TYPE_PARAM) || null;
-  }
-
-  static resolveProductTypeDefault(route: ActivatedRoute, defaultType: string): string {
-    return route.snapshot.queryParamMap.get(this.PRODUCT_TYPE_PARAM) || defaultType;
-  }
 
   protected reload() {
     const url: string = this.router.url.split('?')[0];

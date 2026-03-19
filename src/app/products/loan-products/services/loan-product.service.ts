@@ -22,10 +22,12 @@ export class LoanProductService {
   constructor() {}
 
   initialize(productType: string): void {
-    if (productType === 'loan') {
-      this.productType.next(LOAN_PRODUCT_TYPE.LOAN);
-    } else if (productType === 'working-capital') {
-      this.productType.next(LOAN_PRODUCT_TYPE.WORKING_CAPITAL);
+    if (productType !== null) {
+      if (productType === 'loan') {
+        this.productType.next(LOAN_PRODUCT_TYPE.LOAN);
+      } else if (productType === 'working-capital') {
+        this.productType.next(LOAN_PRODUCT_TYPE.WORKING_CAPITAL);
+      }
     }
   }
 
@@ -45,5 +47,13 @@ export class LoanProductService {
 
   get loanProductPath(): string {
     return this.isLoanProduct ? 'loanproducts' : 'working-capital-loan-products';
+  }
+
+  get loanAccountPath(): string {
+    return this.isLoanProduct ? 'loans' : 'working-capital-loans';
+  }
+
+  static productTypeLabel(productType: string): string {
+    return productType === 'loan' ? 'labels.heading.Loan Product' : 'labels.heading.Working Capital Product';
   }
 }

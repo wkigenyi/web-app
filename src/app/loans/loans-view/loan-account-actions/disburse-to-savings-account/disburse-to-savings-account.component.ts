@@ -6,17 +6,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Dates } from 'app/core/utils/dates';
-import { LoansService } from 'app/loans/loans.service';
-import { SettingsService } from 'app/settings/settings.service';
 import { Currency } from 'app/shared/models/general.model';
 import { InputAmountComponent } from '../../../../shared/input-amount/input-amount.component';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { FormatNumberPipe } from '../../../../pipes/format-number.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.component';
 
 @Component({
   selector: 'mifosx-disburse-to-savings-account',
@@ -29,15 +27,9 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     FormatNumberPipe
   ]
 })
-export class DisburseToSavingsAccountComponent implements OnInit {
+export class DisburseToSavingsAccountComponent extends LoanAccountActionsBaseComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private dateUtils = inject(Dates);
-  private loanService = inject(LoansService);
-  private settingsService = inject(SettingsService);
-
-  @Input() dataObject: any;
 
   /** Minimum Date allowed. */
   minDate = new Date(2000, 0, 1);
@@ -47,6 +39,10 @@ export class DisburseToSavingsAccountComponent implements OnInit {
   disbursementForm: UntypedFormGroup;
   currency: Currency;
 
+  constructor() {
+    super();
+  }
+
   ngOnInit() {
     this.maxDate = this.settingsService.businessDate;
     this.setDisbursementToSavingsForm();
@@ -55,8 +51,7 @@ export class DisburseToSavingsAccountComponent implements OnInit {
     }
 
     // Get delinquency data for available disbursement amount with over applied
-    const loanId = this.route.snapshot.params['loanId'];
-    this.loanService.getLoanDelinquencyDataForTemplate(loanId).subscribe((delinquencyData: any) => {
+    this.loanService.getLoanDelinquencyDataForTemplate(this.loanId).subscribe((delinquencyData: any) => {
       // Check if the field is at root level
       if (delinquencyData.availableDisbursementAmountWithOverApplied !== undefined) {
         this.dataObject.availableDisbursementAmountWithOverApplied =
@@ -111,10 +106,14 @@ export class DisburseToSavingsAccountComponent implements OnInit {
       dateFormat,
       locale
     };
-    const loanId = this.route.snapshot.params['loanId'];
     data['transactionAmount'] = data['transactionAmount'] * 1;
-    this.loanService.loanActionButtons(loanId, 'disbursetosavings', data).subscribe((response: any) => {
-      this.router.navigate(['../../general'], { relativeTo: this.route });
+    this.loanService.loanActionButtons(this.loanId, 'disbursetosavings', data).subscribe((response: any) => {
+      this.router.navigate(['../../general'], {
+        queryParams: {
+          productType: this.loanProductService.productType.value
+        },
+        relativeTo: this.route
+      });
     });
   }
 }

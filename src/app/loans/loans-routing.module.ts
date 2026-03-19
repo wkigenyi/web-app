@@ -77,6 +77,7 @@ import { LoanDeferredIncomeDataResolver } from './common-resolvers/loan-deferred
 import { LoanBuyDownFeesDataResolver } from './common-resolvers/loan-buy-down-fees-data.resolver';
 import { LoanOriginatorsTabComponent } from './loans-view/loan-originators-tab/loan-originators-tab.component';
 import { LoanOriginatorsResolver } from './common-resolvers/loan-originators.resolver';
+import { LoanProductsResolver } from './common-resolvers/loan-products.resolver';
 
 /** Loans Route. */
 const routes: Routes = [
@@ -89,7 +90,8 @@ const routes: Routes = [
         data: { title: 'Create Loans Account', breadcrumb: 'Create Loans Account' },
         component: CreateLoansAccountComponent,
         resolve: {
-          loansAccountTemplate: LoansAccountTemplateResolver
+          loansAccountTemplate: LoansAccountTemplateResolver,
+          loanProductsBasicDetails: LoanProductsResolver
         }
       },
       {
@@ -205,7 +207,6 @@ const routes: Routes = [
             component: LoanTermVariationsTabComponent,
             data: { title: 'Loan Term Variations', breadcrumb: 'Loan Term Variations', routeParamBreadcrumb: false },
             resolve: {
-              loanDetailsData: LoanDetailsResolver,
               interestPausesData: LoanTermVariationsResolver
             }
           },
@@ -337,6 +338,7 @@ const routes: Routes = [
         data: { title: 'Modify Loans Account', breadcrumb: 'Modify Loans Account', routeParamBreadcrumb: 'Edit' },
         component: EditLoansAccountComponent,
         resolve: {
+          loanProductsBasicDetails: LoanProductsResolver,
           loansAccountAndTemplate: LoansAccountAndTemplateResolver
         }
       },
@@ -444,7 +446,8 @@ const routes: Routes = [
     LoanDelinquencyDataResolver,
     LoanTermVariationsResolver,
     LoanDeferredIncomeDataResolver,
-    LoanBuyDownFeesDataResolver
+    LoanBuyDownFeesDataResolver,
+    LoanProductsResolver
   ]
 })
 export class LoansRoutingModule {}
