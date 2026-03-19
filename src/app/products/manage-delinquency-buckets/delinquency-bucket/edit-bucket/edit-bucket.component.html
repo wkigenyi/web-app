@@ -45,7 +45,7 @@
               <mat-select required formControlName="frequencyType">
                 @for (frequencyType of frequencyTypeOptions; track frequencyType) {
                   <mat-option [value]="frequencyType.id">
-                    {{ getCatalogLabel(frequencyType.name) | translateKey: 'catalogs' }}
+                    {{ getCatalogLabel(frequencyType.code) | translateKey: 'catalogs' }}
                   </mat-option>
                 }
               </mat-select>
@@ -79,7 +79,7 @@
               <mat-select required formControlName="minimumPaymentType">
                 @for (minimumPaymentType of minimumPaymentOptions; track minimumPaymentType) {
                   <mat-option [value]="minimumPaymentType.id">
-                    {{ getCatalogLabel(minimumPaymentType.name) | translateKey: 'catalogs' }}
+                    {{ getCatalogLabel(minimumPaymentType.code) | translateKey: 'catalogs' }}
                   </mat-option>
                 }
               </mat-select>

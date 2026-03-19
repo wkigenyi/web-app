@@ -36,21 +36,21 @@ export abstract class DelinquencyBucketBaseComponent {
     return DELINQUENCY_BUCKET_TYPE.REGULAR === this.delinquencyBucketType.value;
   }
 
-  bucketTypeLabel(bucketType: number): string {
-    if (bucketType === 1) {
+  bucketTypeLabel(bucketType: string): string {
+    if (bucketType === 'REGULAR') {
       return 'Regular';
     }
-    if (bucketType === 2) {
+    if (bucketType === 'WORKING_CAPITAL') {
       return 'Working Capital';
     }
     return '';
   }
 
-  bucketType(bucketType: number): string {
-    if (bucketType === 1) {
+  bucketType(bucketType: string): string {
+    if (bucketType === 'REGULAR') {
       return 'regular';
     }
-    if (bucketType === 2) {
+    if (bucketType === 'WORKING_CAPITAL') {
       return 'workingcapital';
     }
     return '';
