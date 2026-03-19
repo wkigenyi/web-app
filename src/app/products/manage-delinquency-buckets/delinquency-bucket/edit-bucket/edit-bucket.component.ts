@@ -34,7 +34,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { FindPipe } from '../../../../pipes/find.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { DelinquencyBucketBaseComponent } from '../../delinquency-base.component';
-import { EnumOptionData } from 'app/shared/models/option-data.model';
+import { EnumOptionData, StringEnumOptionData } from 'app/shared/models/option-data.model';
 
 @Component({
   selector: 'mifosx-edit-bucket',
@@ -89,8 +89,8 @@ export class EditBucketComponent extends DelinquencyBucketBaseComponent implemen
     'actions'
   ];
 
-  frequencyTypeOptions: EnumOptionData[] = [];
-  minimumPaymentOptions: EnumOptionData[] = [];
+  frequencyTypeOptions: StringEnumOptionData[] = [];
+  minimumPaymentOptions: StringEnumOptionData[] = [];
 
   constructor() {
     super();
@@ -230,7 +230,7 @@ export class EditBucketComponent extends DelinquencyBucketBaseComponent implemen
   }
 
   get payloadData() {
-    const bucketType: number = this.isRegularBucket ? 1 : 2;
+    const bucketType: string = this.isRegularBucket ? 'REGULAR' : 'WORKING_CAPITAL';
     const ranges: any = [];
     this.rangesDataSource.forEach((item: any) => {
       ranges.push(item.id);
