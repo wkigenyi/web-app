@@ -84,10 +84,17 @@ export class RejectLoanComponent extends LoanAccountActionsBaseComponent impleme
       dateFormat,
       locale
     };
+    const loanCommand: string = 'reject';
     if (this.isLoanProduct) {
-      this.loanService.loanActionButtons(this.loanId, 'reject', data).subscribe((response: any) => {
+      this.loanService.loanActionButtons(this.loanId, loanCommand, data).subscribe((response: any) => {
         this.gotoLoanDefaultView();
       });
+    } else if (this.isWorkingCapital) {
+      this.loanService
+        .applyWorkingCapitalLoanAccountCommand(this.loanId, loanCommand, data)
+        .subscribe((response: any) => {
+          this.gotoLoanDefaultView();
+        });
     }
   }
 }

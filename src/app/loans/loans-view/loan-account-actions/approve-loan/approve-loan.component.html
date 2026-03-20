@@ -36,6 +36,7 @@
               matInput
               [min]="minDate"
               [matDatepicker]="disbursementDatePicker"
+              required
               formControlName="expectedDisbursementDate"
             />
             <mat-datepicker-toggle matSuffix [for]="disbursementDatePicker"></mat-datepicker-toggle>
@@ -50,11 +51,13 @@
           >
           </mifosx-input-amount>
 
-          <!-- Display Available Disbursement Amount with Over Applied if available -->
-          <mat-form-field>
-            <mat-label>{{ 'labels.inputs.Available Disbursement Amount (with Over Applied)' | translate }}</mat-label>
-            <input matInput [value]="loanData.availableDisbursementAmountWithOverApplied | formatNumber" readonly />
-          </mat-form-field>
+          @if (isLoanProduct) {
+            <!-- Display Available Disbursement Amount with Over Applied if available -->
+            <mat-form-field>
+              <mat-label>{{ 'labels.inputs.Available Disbursement Amount (with Over Applied)' | translate }}</mat-label>
+              <input matInput [value]="loanData.availableDisbursementAmountWithOverApplied | formatNumber" readonly />
+            </mat-form-field>
+          }
 
           <mat-form-field>
             <mat-label>{{ 'labels.inputs.Note' | translate }}</mat-label>
