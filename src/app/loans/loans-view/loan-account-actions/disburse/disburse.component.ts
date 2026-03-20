@@ -63,22 +63,10 @@ export class DisburseComponent extends LoanAccountActionsBaseComponent implement
     this.maxDate = this.settingsService.maxFutureDate;
     this.createDisbursementLoanForm();
     this.setDisbursementLoanDetails();
+    console.log(this.dataObject);
     if (this.dataObject.currency) {
       this.currency = this.dataObject.currency;
     }
-
-    // Get delinquency data for available disbursement amount with over applied
-    this.loanService.getLoanDelinquencyDataForTemplate(this.loanId).subscribe((delinquencyData: any) => {
-      // Check if the field is at root level
-      if (delinquencyData.availableDisbursementAmountWithOverApplied !== undefined) {
-        this.dataObject.availableDisbursementAmountWithOverApplied =
-          delinquencyData.availableDisbursementAmountWithOverApplied;
-      }
-      // Also check if it's in delinquent object
-      if (delinquencyData.delinquent) {
-        this.dataObject.delinquent = delinquencyData.delinquent;
-      }
-    });
   }
 
   /**
@@ -103,7 +91,7 @@ export class DisburseComponent extends LoanAccountActionsBaseComponent implement
   setDisbursementLoanDetails() {
     this.paymentTypes = this.dataObject.paymentTypeOptions;
     this.disbursementLoanForm.patchValue({
-      transactionAmount: this.dataObject.amount
+      transactionAmount: this.dataObject.amount || this.dataObject.expectedAmount
       // actualDisbursementDate: new Date(this.dataObject.date)
     });
   }
@@ -146,8 +134,22 @@ export class DisburseComponent extends LoanAccountActionsBaseComponent implement
       locale
     };
     data['transactionAmount'] = data['transactionAmount'] * 1;
-    this.loanService.loanActionButtons(this.loanId, 'disburse', data).subscribe((response: any) => {
-      this.gotoLoanDefaultView();
+
+    const loanCommand: string = 'disburse';
+    const request$ = this.isLoanProduct
+      ? this.loanService.loanActionButtons(this.loanId, loanCommand, data)
+      : this.isWorkingCapital
+        ? this.loanService.applyWorkingCapitalLoanAccountCommand(this.loanId, loanCommand, data)
+        : undefined;
+
+    if (!request$) {
+      this.disbursementLoanForm.setErrors({ unsupportedProductType: true });
+      return;
+    }
+
+    request$.subscribe({
+      next: () => this.gotoLoanDefaultView(),
+      error: () => this.disbursementLoanForm.setErrors({ submitFailed: true })
     });
   }
 }
