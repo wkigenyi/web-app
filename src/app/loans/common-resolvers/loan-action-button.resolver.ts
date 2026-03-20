@@ -72,7 +72,9 @@ export class LoanActionButtonResolver {
     } else if (loanActionButton === 'Create Guarantor') {
       return this.loansService.getGuarantorTemplate(loanId);
     } else if (loanActionButton === 'Disburse') {
-      return this.loansService.getLoanActionTemplate(loanId, 'disburse');
+      return this.loanProductService.isLoanProduct
+        ? this.loansService.getLoanActionTemplate(loanId, loanActionButton.toLowerCase())
+        : this.loansService.getWorkingCapitalLoanActionTemplate(loanId, loanActionButton.toLowerCase());
     } else if (loanActionButton === 'Loan Screen Reports') {
       return this.loansService.getLoanScreenReportsData();
     } else if (loanActionButton === 'Approve') {
