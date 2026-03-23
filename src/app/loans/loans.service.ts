@@ -16,6 +16,13 @@ import { Dates } from 'app/core/utils/dates';
 import { SettingsService } from 'app/settings/settings.service';
 import { DisbursementData } from './models/loan-account.model';
 
+export interface WorkingCapitalLoanDiscountUpdateRequest {
+  discountAmount: number;
+  note?: string;
+  locale: string;
+  dateFormat: string;
+}
+
 /**
  * Loans service.
  */
@@ -558,6 +565,13 @@ export class LoansService {
   getWorkingCapitalLoanActionTemplate(loanId: string, actionName: string): Observable<any> {
     const httpParams = new HttpParams().set('templateType', actionName);
     return this.http.get(`/working-capital-loans/${loanId}/template`, { params: httpParams });
+  }
+
+  updateWorkingCapitalLoanDiscount(
+    loanId: string | number,
+    data: WorkingCapitalLoanDiscountUpdateRequest
+  ): Observable<any> {
+    return this.http.put(`/working-capital-loans/${loanId}/discount`, data);
   }
 
   guarantorAccountResource(loanId: string, clientId: any): Observable<any> {
