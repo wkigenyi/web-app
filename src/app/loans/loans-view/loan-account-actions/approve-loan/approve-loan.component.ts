@@ -8,7 +8,7 @@
 
 /** Angular Imports. */
 import { Component, OnInit, inject } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl } from '@angular/forms';
 import { Dates } from 'app/core/utils/dates';
 
 /** Custom Services. */
@@ -91,6 +91,9 @@ export class ApproveLoanComponent extends LoanAccountActionsBaseComponent implem
       ],
       note: ['']
     });
+    if (this.isWorkingCapital) {
+      this.approveLoanForm.addControl('discountAmount', new UntypedFormControl());
+    }
   }
 
   /**
