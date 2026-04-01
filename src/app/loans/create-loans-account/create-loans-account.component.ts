@@ -122,6 +122,7 @@ export class CreateLoansAccountComponent extends LoanProductBaseComponent implem
     if (templateData.loanData) {
       this.loansAccountProductTemplate = templateData.loanData;
       this.loansAccountProductTemplate.options = {
+        breachOptions: templateData.breachOptions,
         delinquencyBucketOptions: templateData.delinquencyBucketOptions,
         fundOptions: templateData.fundOptions,
         periodFrequencyTypeOptions: templateData.periodFrequencyTypeOptions,
@@ -291,10 +292,16 @@ export class CreateLoansAccountComponent extends LoanProductBaseComponent implem
       }
     }
 
-    // No Empty discount value to be sent
-    if (payload['discount'] == null || payload['discount'] === '') {
-      delete payload['discount'];
-    }
+    // No Empty values to be sent
+    [
+      'discount',
+      'delinquencyGraceDays',
+      'delinquencyStartType'
+    ].forEach((attr: string) => {
+      if (payload[attr] === null || payload[attr] === '') {
+        delete payload[attr];
+      }
+    });
 
     this.loansService
       .createLoansAccount(this.loanProductService.loanAccountPath, payload)

@@ -186,6 +186,12 @@ export interface LoanProduct {
   buydownFeeClassificationToIncomeAccountMappings?: ClassificationToIncomeAccountMapping[];
   capitalizedIncomeClassificationToIncomeAccountMappings?: ClassificationToIncomeAccountMapping[];
   writeOffReasonsToExpenseMappings?: ChargeOffReasonToExpenseAccountMapping[];
+
+  // Working Capital attributes
+  enableNearBreach?: boolean;
+  nearBreachEvalFrequency?: number;
+  nearBreachEvalFrequencyType?: OptionData;
+  nearBreachThreshold?: number;
 }
 
 export interface AllowAttributeOverrides {
@@ -236,4 +242,12 @@ export interface AdvancedMappingDTO {
 export interface AccountingMappingDTO {
   value: CodeValue;
   glAccount: GLAccount;
+}
+
+export interface Breach {
+  id: number;
+  breachFrequency: number;
+  breachFrequencyType: StringEnumOptionData;
+  breachAmountCalculationType: StringEnumOptionData;
+  breachAmount: number;
 }

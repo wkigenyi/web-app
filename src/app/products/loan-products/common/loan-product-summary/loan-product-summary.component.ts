@@ -52,6 +52,7 @@ import { YesnoPipe } from '../../../../pipes/yesno.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { LoanProductService } from '../../services/loan-product.service';
 import { LoanProductBaseComponent } from '../loan-product-base.component';
+import { BreachDisplayComponent } from 'app/shared/loan/breach-display/breach-display.component';
 
 @Component({
   selector: 'mifosx-loan-product-summary',
@@ -77,7 +78,8 @@ import { LoanProductBaseComponent } from '../loan-product-base.component';
     ChargesPenaltyFilterPipe,
     DateFormatPipe,
     FormatNumberPipe,
-    YesnoPipe
+    YesnoPipe,
+    BreachDisplayComponent
   ]
 })
 export class LoanProductSummaryComponent extends LoanProductBaseComponent implements OnInit, OnChanges {

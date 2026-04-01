@@ -56,6 +56,44 @@
           }
         </mat-select>
       </mat-form-field>
+
+      <mat-form-field class="flex-48">
+        <mat-label>{{ 'labels.inputs.Delinquency Bucket' | translate }}</mat-label>
+        <mat-select formControlName="delinquencyBucketId">
+          @for (delinquencyBucket of delinquencyBucketData; track delinquencyBucket) {
+            <mat-option [value]="delinquencyBucket.id">
+              {{ delinquencyBucket.name }}
+            </mat-option>
+          }
+        </mat-select>
+        @if (loanProductSettingsForm.controls.delinquencyBucketId) {
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="clearProperty($event, 'delinquencyBucketId')">
+            <fa-icon icon="close" size="md"></fa-icon>
+          </button>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="flex-48">
+        <mat-label>{{ 'labels.inputs.Breach' | translate }}</mat-label>
+        <mat-select formControlName="breachId" class="breach-id-select" panelClass="breach-select-panel">
+          <mat-select-trigger>
+            @if (selectedBreach) {
+              <mifosx-breach-display [singleRow]="true" [breach]="selectedBreach" />
+            }
+          </mat-select-trigger>
+          @for (breach of breachOptions; track breach) {
+            <mat-option [value]="breach.id">
+              <mifosx-breach-display [singleRow]="true" [breach]="breach" />
+            </mat-option>
+          }
+        </mat-select>
+        @if (loanProductSettingsForm.controls.breachId) {
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="clearProperty($event, 'breachId')">
+            <fa-icon icon="close" size="md"></fa-icon>
+          </button>
+        }
+      </mat-form-field>
+      <mat-divider class="flex-98"></mat-divider>
     } @else if (loanProductService.isLoanProduct) {
       <mat-form-field class="flex-30">
         <mat-label>{{ 'labels.inputs.products.loan.Amortization' | translate }}</mat-label>
@@ -323,23 +361,23 @@
       </mat-form-field>
 
       <mat-divider class="flex-98"></mat-divider>
-    }
 
-    <mat-form-field class="flex-48">
-      <mat-label>{{ 'labels.inputs.Delinquency Bucket' | translate }}</mat-label>
-      <mat-select formControlName="delinquencyBucketId">
-        @for (delinquencyBucket of delinquencyBucketData; track delinquencyBucket) {
-          <mat-option [value]="delinquencyBucket.id">
-            {{ delinquencyBucket.name }}
-          </mat-option>
+      <mat-form-field class="flex-48">
+        <mat-label>{{ 'labels.inputs.Delinquency Bucket' | translate }}</mat-label>
+        <mat-select formControlName="delinquencyBucketId">
+          @for (delinquencyBucket of delinquencyBucketData; track delinquencyBucket) {
+            <mat-option [value]="delinquencyBucket.id">
+              {{ delinquencyBucket.name }}
+            </mat-option>
+          }
+        </mat-select>
+        @if (loanProductSettingsForm.controls.delinquencyBucketId) {
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="clearProperty($event, 'delinquencyBucketId')">
+            <fa-icon icon="close" size="md"></fa-icon>
+          </button>
         }
-      </mat-select>
-      @if (loanProductSettingsForm.controls.delinquencyBucketId) {
-        <button matSuffix mat-icon-button aria-label="Clear" (click)="clearProperty($event, 'delinquencyBucketId')">
-          <fa-icon icon="close" size="md"></fa-icon>
-        </button>
-      }
-    </mat-form-field>
+      </mat-form-field>
+    }
 
     @if (loanProductService.isLoanProduct && loanProductSettingsForm.value.delinquencyBucketId) {
       <mat-checkbox class="flex-48 margin-v" labelPosition="before" formControlName="enableInstallmentLevelDelinquency">
@@ -883,6 +921,9 @@
       }
       @if (loanProductService.isWorkingCapital) {
         <div formGroupName="allowAttributeOverrides" class="flex-fill layout-row-wrap gap-2percent responsive-column">
+          <mat-checkbox labelPosition="before" formControlName="breach" class="margin-v flex-48">
+            {{ 'labels.inputs.Breach' | translate }}
+          </mat-checkbox>
           <mat-checkbox
             labelPosition="before"
             formControlName="delinquencyBucketClassification"

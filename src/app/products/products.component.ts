@@ -8,7 +8,7 @@
 
 /** Angular Imports */
 import { AfterViewInit, Component, ElementRef, TemplateRef, ViewChild, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 /** Custom Services */
 import { ConfigurationWizardService } from '../configuration-wizard/configuration-wizard.service';
@@ -65,7 +65,7 @@ export class ProductsComponent implements AfterViewInit {
   /* Template for popover on recurring deposit products */
   @ViewChild('templateRecurringDepositProducts') templateRecurringDepositProducts: TemplateRef<any>;
   // Initialize an array of 11 boolean values, all set to false
-  arrowBooleans: boolean[] = new Array(11).fill(false);
+  arrowBooleans: boolean[] = new Array(12).fill(false);
 
   /**
    * To show popover.

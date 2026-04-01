@@ -1,0 +1,43 @@
+<!--
+  Copyright since 2025 Mifos Initiative
+
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+-->
+
+@if (breach) {
+  @if (singleRow) {
+    <div class="breach-single-row">
+      <span class="breach-col frequency-col">
+        {{ breach.breachFrequency | formatNumber: '' : 0 }}
+        {{ breach.breachFrequencyType.code | translateKey: 'catalogs' }}
+      </span>
+      <span class="breach-col calc-type-col">
+        {{ camalize(breach.breachAmountCalculationType.code) | translateKey: 'catalogs' }}
+      </span>
+      <span class="breach-col amount-col">
+        {{ breach.breachAmount | formatNumber }}
+      </span>
+    </div>
+  }
+  @if (!singleRow) {
+    <div class="breach-display-column">
+      <div class="flex-fill layout-row">
+        <span class="flex-30 attribute-name">{{ 'labels.inputs.Frequency' | translate }}:</span>
+        <span class="flex-30"
+          >{{ breach.breachFrequency | formatNumber: '' : 0 }}
+          {{ breach.breachFrequencyType.code | translateKey: 'catalogs' }}</span
+        >
+      </div>
+      <div class="flex-fill layout-row">
+        <span class="flex-30 attribute-name">{{ 'labels.inputs.Calculation Type' | translate }}:</span>
+        <span class="flex-30">{{ camalize(breach.breachAmountCalculationType.code) | translateKey: 'catalogs' }}</span>
+      </div>
+      <div class="flex-fill layout-row">
+        <span class="flex-30 attribute-name">{{ 'labels.inputs.Amount' | translate }}:</span>
+        <span class="flex-30">{{ breach.breachAmount | formatNumber }}</span>
+      </div>
+    </div>
+  }
+}
