@@ -257,6 +257,13 @@ export class LoansViewComponent extends LoanProductBaseComponent implements OnIn
       return;
     }
     this.buttonConfig = new LoansAccountButtonConfiguration(this.status, this.loanSubStatus);
+    if (this.canShowWorkingCapitalDiscountUpdate()) {
+      this.buttonConfig.addButton({
+        name: 'Update discount',
+        icon: 'edit',
+        taskPermissionName: 'UPDATEDISCOUNT_WORKINGCAPITALLOAN'
+      });
+    }
 
     if (this.status === 'Submitted and pending approval') {
       this.buttonConfig.addOption({
@@ -570,5 +577,12 @@ export class LoansViewComponent extends LoanProductBaseComponent implements OnIn
       return false;
     }
     return substatus.code === 'loanSubStatus.loanSubStatusType.contractTermination';
+  }
+
+  private canShowWorkingCapitalDiscountUpdate(): boolean {
+    if (!this.loanProductService.isWorkingCapital || !this.loanDetailsData) {
+      return false;
+    }
+    return this.loanDetailsData?.status?.active === true;
   }
 }
