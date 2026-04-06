@@ -279,7 +279,7 @@ const routes: Routes = [
           },
           {
             path: 'originators',
-            data: { title: 'Loans Originators', breadcrumb: 'Originators', routeParamBreadcrumb: false },
+            data: { title: 'Loan Originators', breadcrumb: 'Originators', routeParamBreadcrumb: false },
             resolve: {
               loanOriginatorsData: LoanOriginatorsResolver
             },
