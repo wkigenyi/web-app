@@ -13,7 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { LoansAccountAddCollateralDialogComponent } from 'app/loans/custom-dialog/loans-account-add-collateral-dialog/loans-account-add-collateral-dialog.component';
 import { LoanProducts } from 'app/products/loan-products/loan-products';
-import { LoanProduct } from 'app/products/loan-products/models/loan-product.model';
+import { Breach, LoanProduct } from 'app/products/loan-products/models/loan-product.model';
 import { SettingsService } from 'app/settings/settings.service';
 import { DeleteDialogComponent } from 'app/shared/delete-dialog/delete-dialog.component';
 import { FormDialogComponent } from 'app/shared/form-dialog/form-dialog.component';
@@ -47,6 +47,7 @@ import { YesnoPipe } from '../../../pipes/yesno.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { LoanProductBaseComponent } from 'app/products/loan-products/common/loan-product-base.component';
 import { amountValueValidator } from 'app/shared/validators/amount-value.validator';
+import { BreachDisplayComponent } from 'app/shared/loan/breach-display/breach-display.component';
 
 interface DisbursementData {
   id?: number;
@@ -83,7 +84,8 @@ interface DisbursementData {
     MatStepperNext,
     FindPipe,
     DateFormatPipe,
-    YesnoPipe
+    YesnoPipe,
+    BreachDisplayComponent
   ]
 })
 export class LoansAccountTermsStepComponent extends LoanProductBaseComponent implements OnInit, OnChanges {
@@ -165,7 +167,7 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
   loanScheduleType: OptionData | null = null;
   loanProduct: LoanProduct | null = null;
   interestRateFrequencyTypeData: any[] = [];
-  currency: Currency;
+  currency: Currency | null = null;
 
   productEnableDownPayment = false;
   enableIncomeCapitalization = false;
@@ -175,6 +177,7 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
   allowAttributeOverrides: any | null = null;
 
   delinquencyStartTypeOptions: StringEnumOptionData[] = [];
+  breachOptions: Breach[] = [];
 
   constructor() {
     super();
@@ -322,6 +325,7 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
       this.currency = this.loansAccountTermsData.currency;
       this.termFrequencyTypeData = this.loansAccountTermsData.options?.periodFrequencyTypeOptions;
       this.delinquencyStartTypeOptions = this.loansAccountTermsData.options?.delinquencyStartTypeOptions;
+      this.breachOptions = this.loansAccountTermsData.options?.breachOptions ?? [];
       if (this.loanId != null && 'accountNo' in this.loansAccountTemplate) {
         this.loansAccountTermsData = this.loansAccountTemplate;
         this.loansAccountTermsForm.patchValue({
@@ -332,14 +336,16 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
           repaymentEvery: this.loansAccountTermsData.repaymentEvery,
           repaymentFrequencyType: this.loansAccountTermsData.repaymentFrequencyType?.id,
           delinquencyGraceDays: this.loansAccountTermsData.delinquencyGraceDays,
-          delinquencyStartType: this.loansAccountTermsData.delinquencyStartType?.code
+          delinquencyStartType: this.loansAccountTermsData.delinquencyStartType?.code,
+          breachId: this.loansAccountTermsData.breach?.id
         });
       } else {
         this.loansAccountTermsForm.patchValue({
           discount: this.loansAccountTermsData.product.discount || '',
           principalAmount: this.loansAccountTermsData.product.principal,
           delinquencyGraceDays: this.loansAccountTermsData.product.delinquencyGraceDays || '',
-          delinquencyStartType: this.loansAccountTermsData.product.delinquencyStartType?.code || ''
+          delinquencyStartType: this.loansAccountTermsData.product.delinquencyStartType?.code || '',
+          breachId: this.loansAccountTermsData.product.breach?.id || ''
         });
       }
       this.allowAttributeOverrides = this.loansAccountProductTemplate.product.allowAttributeOverrides;
@@ -357,6 +363,9 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
       }
       if (!this.allowAttributeOverrides.discountDefault || this.allowAttributeOverrides.discountDefault === false) {
         this.loansAccountTermsForm.controls.discount.disable();
+      }
+      if (!this.allowAttributeOverrides.breach || this.allowAttributeOverrides.breach === false) {
+        this.loansAccountTermsForm.controls.breachId.disable();
       }
     }
   }
@@ -449,7 +458,8 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
             this.loansAccountTermsData.delinquencyGraceDays || this.loansAccountTermsData.product.delinquencyGraceDays,
           delinquencyStartType:
             this.loansAccountTermsData.delinquencyStartType?.id ||
-            this.loansAccountTermsData.product.delinquencyStartType?.id
+            this.loansAccountTermsData.product.delinquencyStartType?.id,
+          breachId: this.loansAccountTermsData.breach?.id || this.loansAccountTermsData.product.breach?.id
         });
       }
     }
@@ -648,7 +658,8 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
             Validators.min(0)
           ]
         ],
-        delinquencyStartType: ['']
+        delinquencyStartType: [''],
+        breachId: ['']
       });
     }
   }
@@ -838,5 +849,10 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
    */
   isFullTermTrancheEditable(): boolean {
     return this.isProgressive && !!this.multiDisburseLoan;
+  }
+
+  get selectedBreach(): Breach | undefined {
+    const id = this.loansAccountTermsForm.get('breachId')?.value;
+    return this.breachOptions ? this.breachOptions.find((b) => b.id === id) : undefined;
   }
 }

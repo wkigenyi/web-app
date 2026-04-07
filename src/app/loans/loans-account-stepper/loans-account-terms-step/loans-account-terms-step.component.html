@@ -91,6 +91,22 @@
           }
         </mat-select>
       </mat-form-field>
+
+      <mat-form-field class="flex-48">
+        <mat-label>{{ 'labels.inputs.Breach' | translate }}</mat-label>
+        <mat-select formControlName="breachId" class="breach-id-select" panelClass="breach-select-panel">
+          <mat-select-trigger>
+            @if (selectedBreach) {
+              <mifosx-breach-display [singleRow]="true" [breach]="selectedBreach" />
+            }
+          </mat-select-trigger>
+          @for (breach of breachOptions; track breach) {
+            <mat-option [value]="breach.id">
+              <mifosx-breach-display [singleRow]="true" [breach]="breach" />
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
     }
 
     @if (loanProductService.isLoanProduct) {

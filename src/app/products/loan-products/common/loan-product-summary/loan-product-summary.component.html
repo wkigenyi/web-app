@@ -107,6 +107,10 @@
         <span class="flex-40">{{ 'labels.inputs.Discount' | translate }}:</span>
         <span class="flex-60">{{ loanProduct.discount | formatNumber }}</span>
       </div>
+      <div class="flex-fill layout-row">
+        <span class="flex-40">{{ 'labels.inputs.Breach' | translate }}:</span>
+        <span class="flex-60"><mifosx-breach-display [singleRow]="false" [breach]="loanProduct.breach" /></span>
+      </div>
     }
     @if (loanProductService.isLoanProduct) {
       <div class="flex-fill layout-row">
@@ -896,6 +900,10 @@
       }
       @if (loanProductService.isWorkingCapital) {
         <div>
+          <div class="flex-fill layout-row">
+            <span class="flex-40">{{ 'labels.inputs.Breach' | translate }}:</span>
+            <span class="flex-60">{{ loanProduct.allowAttributeOverrides.breach | yesNo }}</span>
+          </div>
           <div class="flex-fill layout-row">
             <span class="flex-40">{{ 'labels.inputs.Delinquency Bucket Classification' | translate }}:</span>
             <span class="flex-60">{{

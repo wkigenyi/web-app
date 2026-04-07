@@ -107,6 +107,7 @@ export class EditLoansAccountComponent extends LoanProductBaseComponent {
     if (templateData.loanData) {
       this.loansAccountProductTemplate = templateData.loanData;
       this.loansAccountProductTemplate.options = {
+        breachOptions: templateData.breachOptions,
         delinquencyBucketOptions: templateData.delinquencyBucketOptions,
         fundOptions: templateData.fundOptions,
         periodFrequencyTypeOptions: templateData.periodFrequencyTypeOptions,

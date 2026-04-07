@@ -21,6 +21,9 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { LoanProductBaseComponent } from '../../common/loan-product-base.component';
+import { Breach } from '../../models/loan-product.model';
+import { BreachDisplayComponent } from 'app/shared/loan/breach-display/breach-display.component';
+import { MatSelectTrigger } from '@angular/material/select';
 
 @Component({
   selector: 'mifosx-loan-product-settings-step',
@@ -34,7 +37,9 @@ import { LoanProductBaseComponent } from '../../common/loan-product-base.compone
     MatIconButton,
     FaIconComponent,
     MatStepperPrevious,
-    MatStepperNext
+    MatStepperNext,
+    MatSelectTrigger,
+    BreachDisplayComponent
   ]
 })
 export class LoanProductSettingsStepComponent extends LoanProductBaseComponent implements OnInit {
@@ -81,6 +86,9 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
   defaultConfigValues: GlobalConfiguration[] = [];
 
   delinquencyStartTypeOptions: StringEnumOptionData[] = [];
+  breachOptions: Breach[] = [];
+
+  frequencyTypesOptions: StringEnumOptionData[] = [];
 
   constructor() {
     super();
@@ -168,6 +176,8 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
     }
 
     if (this.loanProductService.isWorkingCapital) {
+      this.frequencyTypesOptions = this.loanProductsTemplate.periodFrequencyTypeOptions ?? [];
+      this.breachOptions = this.loanProductsTemplate.breachOptions ?? [];
       this.delinquencyStartTypeOptions = this.loanProductsTemplate.delinquencyStartTypeOptions;
       this.loanProductSettingsForm.patchValue({
         amortizationType: this.loanProductsTemplate.amortizationType
@@ -177,8 +187,18 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
         delinquencyGraceDays: this.loanProductsTemplate.delinquencyGraceDays,
         delinquencyStartType: this.loanProductsTemplate.delinquencyStartType
           ? this.loanProductsTemplate.delinquencyStartType.id
-          : null
+          : null,
+        breachId: this.loanProductsTemplate.breach?.id ?? null,
+        enableNearBreach: this.loanProductsTemplate.enableNearBreach || false
       });
+
+      if (this.loanProductsTemplate.enableNearBreach) {
+        this.loanProductSettingsForm.patchValue({
+          nearBreachEvalFrequency: this.loanProductsTemplate.nearBreachEvalFrequency || '',
+          nearBreachEvalFrequencyType: this.loanProductsTemplate.nearBreachEvalFrequencyType?.id || '',
+          nearBreachThreshold: this.loanProductsTemplate.nearBreachThreshold || ''
+        });
+      }
     }
 
     this.isAdvancedTransactionProcessingStrategy = LoanProducts.isAdvancedPaymentAllocationStrategy(
@@ -316,7 +336,8 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
               this.loanProductsTemplate.allowAttributeOverrides.delinquencyBucketClassification,
             discountDefault: this.loanProductsTemplate.allowAttributeOverrides.discountDefault,
             periodPaymentFrequency: this.loanProductsTemplate.allowAttributeOverrides.periodPaymentFrequency,
-            periodPaymentFrequencyType: this.loanProductsTemplate.allowAttributeOverrides.periodPaymentFrequencyType
+            periodPaymentFrequencyType: this.loanProductsTemplate.allowAttributeOverrides.periodPaymentFrequencyType,
+            breach: this.loanProductsTemplate.allowAttributeOverrides.breach
           }
         });
       }
@@ -435,7 +456,8 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
           delinquencyBucketClassification: [true],
           discountDefault: [true],
           periodPaymentFrequency: [true],
-          periodPaymentFrequencyType: [true]
+          periodPaymentFrequencyType: [true],
+          breach: [true]
         }),
         allowAttributeConfiguration: [true],
         delinquencyBucketId: [''],
@@ -445,7 +467,9 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
             Validators.min(0)
           ]
         ],
-        delinquencyStartType: ['']
+        delinquencyStartType: [''],
+        breachId: [''],
+        enableNearBreach: [false]
       });
     }
   }
@@ -803,17 +827,44 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
               delinquencyBucketClassification: true,
               discountDefault: true,
               periodPaymentFrequency: true,
-              periodPaymentFrequencyType: true
+              periodPaymentFrequencyType: true,
+              breach: true
             });
           } else {
             allowAttributeOverrides.patchValue({
               delinquencyBucketClassification: false,
               discountDefault: false,
               periodPaymentFrequency: false,
-              periodPaymentFrequencyType: false
+              periodPaymentFrequencyType: false,
+              breach: false
             });
           }
         });
+
+      this.loanProductSettingsForm.get('enableNearBreach').valueChanges.subscribe((enableNearBreach: any) => {
+        if (enableNearBreach) {
+          this.loanProductSettingsForm.addControl(
+            'nearBreachEvalFrequency',
+            new UntypedFormControl('', Validators.required)
+          );
+          this.loanProductSettingsForm.addControl(
+            'nearBreachEvalFrequencyType',
+            new UntypedFormControl('', Validators.required)
+          );
+          this.loanProductSettingsForm.addControl(
+            'nearBreachThreshold',
+            new UntypedFormControl('', [
+              Validators.required,
+              Validators.min(0.01),
+              Validators.max(100.0)
+            ])
+          );
+        } else {
+          this.loanProductSettingsForm.removeControl('nearBreachEvalFrequency');
+          this.loanProductSettingsForm.removeControl('nearBreachEvalFrequencyType');
+          this.loanProductSettingsForm.removeControl('nearBreachThreshold');
+        }
+      });
     }
   }
 
@@ -878,6 +929,11 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
     }
     this.loanProductSettingsForm.markAsDirty();
     $event.stopPropagation();
+  }
+
+  get selectedBreach(): Breach | undefined {
+    const id = this.loanProductSettingsForm.get('breachId')?.value;
+    return this.breachOptions ? this.breachOptions.find((b) => b.id === id) : undefined;
   }
 
   get loanProductSettings() {

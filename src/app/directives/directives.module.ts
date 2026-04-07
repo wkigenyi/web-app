@@ -15,6 +15,7 @@ import { HasPermissionDirective } from './has-permission/has-permission.directiv
 import { FormatAmountDirective } from './format-amount.directive';
 import { ValidateOnFocusDirective } from './validate-on-focus.directive';
 import { PositiveNumberDirective } from './positive-number.directive';
+import { PositiveIntegerDirective } from './positive-integer.directive';
 
 /**
  *  Directives Module
@@ -27,13 +28,15 @@ import { PositiveNumberDirective } from './positive-number.directive';
     HasPermissionDirective,
     FormatAmountDirective,
     ValidateOnFocusDirective,
-    PositiveNumberDirective
+    PositiveNumberDirective,
+    PositiveIntegerDirective
   ],
   exports: [
     HasPermissionDirective,
     FormatAmountDirective,
     ValidateOnFocusDirective,
-    PositiveNumberDirective
+    PositiveNumberDirective,
+    PositiveIntegerDirective
   ]
 })
 export class DirectivesModule {}
