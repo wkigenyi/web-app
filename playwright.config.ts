@@ -44,7 +44,7 @@ export default defineConfig({
 
   // Global test settings
   use: {
-    // Base URL for the Angular app (aligned with global-setup.ts)
+    // Base URL for the Angular app (aligned with global-setup.ts and configurable via env for CI)
     baseURL: process.env.E2E_BASE_URL || 'http://localhost:4200',
 
     // Handle self-signed certificates from Fineract backend
@@ -74,17 +74,25 @@ export default defineConfig({
   // Global test timeout (per test)
   timeout: process.env.CI ? 180000 : 120000,
 
-  // Configure projects for different browsers
+  // Configure projects for authentication setup and browser testing
   projects: [
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+      testDir: './playwright',
+      retries: process.env.CI ? 2 : 0
+    },
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/user.json',
         // Launch options for handling SSL in headed mode
         launchOptions: {
           args: ['--ignore-certificate-errors']
         }
-      }
+      },
+      dependencies: ['setup']
     }
   ],
 
