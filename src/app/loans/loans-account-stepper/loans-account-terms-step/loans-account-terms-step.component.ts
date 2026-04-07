@@ -311,12 +311,15 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
         if (this.allowAddDisbursementDetails()) {
           this.loansAccountTermsForm.addControl(
             'maxOutstandingLoanBalance',
-            new UntypedFormControl(this.loansAccountTermsData?.maxOutstandingLoanBalance ?? null, Validators.required)
+            new UntypedFormControl(this.loansAccountTermsData?.maxOutstandingLoanBalance ?? null, [
+              Validators.required,
+              Validators.min(0)
+            ])
           );
         } else {
           this.loansAccountTermsForm.addControl(
             'maxOutstandingLoanBalance',
-            new UntypedFormControl(this.loansAccountTermsData?.maxOutstandingLoanBalance ?? null)
+            new UntypedFormControl(this.loansAccountTermsData?.maxOutstandingLoanBalance ?? null, [Validators.min(0)])
           );
         }
       }
@@ -439,12 +442,15 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
         this.loansAccountTermsForm.removeControl('maxOutstandingLoanBalance');
         this.loansAccountTermsForm.addControl(
           'maxOutstandingLoanBalance',
-          new UntypedFormControl(this.loansAccountTermsData?.maxOutstandingLoanBalance ?? null, Validators.required)
+          new UntypedFormControl(this.loansAccountTermsData?.maxOutstandingLoanBalance ?? null, [
+            Validators.required,
+            Validators.min(0)
+          ])
         );
       } else {
         this.loansAccountTermsForm.addControl(
           'maxOutstandingLoanBalance',
-          new UntypedFormControl(this.loansAccountTermsData?.maxOutstandingLoanBalance ?? null)
+          new UntypedFormControl(this.loansAccountTermsData?.maxOutstandingLoanBalance ?? null, [Validators.min(0)])
         );
       }
     } else if (this.loanProductService.isWorkingCapital) {
