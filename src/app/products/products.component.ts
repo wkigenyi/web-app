@@ -64,8 +64,8 @@ export class ProductsComponent implements AfterViewInit {
   @ViewChild('recurringDepositProducts') recurringDepositProducts: ElementRef<any>;
   /* Template for popover on recurring deposit products */
   @ViewChild('templateRecurringDepositProducts') templateRecurringDepositProducts: TemplateRef<any>;
-  // Initialize an array of 11 boolean values, all set to false
-  arrowBooleans: boolean[] = new Array(12).fill(false);
+  // Initialize an array of 13 boolean values, all set to false
+  arrowBooleans: boolean[] = new Array(13).fill(false);
 
   /**
    * To show popover.

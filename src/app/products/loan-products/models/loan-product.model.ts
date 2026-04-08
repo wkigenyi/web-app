@@ -186,6 +186,12 @@ export interface LoanProduct {
   buydownFeeClassificationToIncomeAccountMappings?: ClassificationToIncomeAccountMapping[];
   capitalizedIncomeClassificationToIncomeAccountMappings?: ClassificationToIncomeAccountMapping[];
   writeOffReasonsToExpenseMappings?: ChargeOffReasonToExpenseAccountMapping[];
+
+  // Working Capital attributes
+  breach?: Breach;
+  breachId?: number;
+  nearBreach?: NearBreach;
+  nearBreachId?: number;
 }
 
 export interface AllowAttributeOverrides {
@@ -240,8 +246,17 @@ export interface AccountingMappingDTO {
 
 export interface Breach {
   id: number;
+  name: string;
   breachFrequency: number;
   breachFrequencyType: StringEnumOptionData;
   breachAmountCalculationType: StringEnumOptionData;
   breachAmount: number;
+}
+
+export interface NearBreach {
+  id: number;
+  name: string;
+  frequency: number;
+  frequencyType: StringEnumOptionData;
+  threshold: number;
 }

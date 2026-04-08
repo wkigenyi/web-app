@@ -25,16 +25,16 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
-import { Breach } from '../../models/loan-product.model';
+import { NearBreach } from '../../models/loan-product.model';
 import { FormatNumberPipe } from '@pipes/format-number.pipe';
 import { ProductsService } from 'app/products/products.service';
 import { DeleteDialogComponent } from 'app/shared/delete-dialog/delete-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-  selector: 'mifosx-breach-configuration',
-  templateUrl: './breach-configuration.component.html',
-  styleUrl: './breach-configuration.component.scss',
+  selector: 'mifosx-near-breach-configuration',
+  templateUrl: './near-breach-configuration.component.html',
+  styleUrl: './near-breach-configuration.component.scss',
   standalone: true,
   imports: [
     ...STANDALONE_SHARED_IMPORTS,
@@ -55,44 +55,42 @@ import { MatDialog } from '@angular/material/dialog';
     FormatNumberPipe
   ]
 })
-export class BreachConfigurationComponent implements OnInit {
+export class NearBreachConfigurationComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private productsService = inject(ProductsService);
   private dialog = inject(MatDialog);
 
-  breachesData: Breach[] = [];
-  /** Columns to be displayed in breaches table. */
+  nearBreachesData: NearBreach[] = [];
+  /** Columns to be displayed in near breaches table. */
   displayedColumns: string[] = [
     'id',
     'name',
-    'breachFrequency',
-    'breachAmountCalculationType',
-    'breachAmount',
+    'frequency',
+    'threshold',
     'actions'
   ];
-  /** Data source for breaches table. */
-  dataSource: MatTableDataSource<Breach>;
-  /** Paginator for breaches table. */
+  /** Data source for near breaches table. */
+  dataSource: MatTableDataSource<NearBreach>;
+  /** Paginator for near breaches table. */
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  /** Sorter for breaches table. */
+  /** Sorter for near breaches table. */
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor() {
-    this.route.data.subscribe((data: { breaches: Breach[] }) => {
-      this.breachesData = data.breaches ?? [];
+    this.route.data.subscribe((data: { nearBreaches: NearBreach[] }) => {
+      this.nearBreachesData = data.nearBreaches ?? [];
     });
   }
 
   ngOnInit(): void {
-    this.dataSource = new MatTableDataSource(this.breachesData);
-    this.dataSource.filterPredicate = (data: Breach, filter: string) =>
+    this.dataSource = new MatTableDataSource(this.nearBreachesData);
+    this.dataSource.filterPredicate = (data: NearBreach, filter: string) =>
       [
         data.id,
         data.name,
-        data.breachFrequency,
-        data.breachFrequencyType?.code,
-        data.breachAmountCalculationType?.code,
-        data.breachAmount
+        data.frequency,
+        data.frequencyType?.code,
+        data.threshold
       ]
         .join(' ')
         .toLowerCase()
@@ -101,25 +99,21 @@ export class BreachConfigurationComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
-  /**
-   * Filters data in breaches table based on passed value.
-   * @param {string} filterValue Value to filter data.
-   */
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
     this.dataSource.paginator?.firstPage();
   }
 
-  delete(item: Breach): void {
+  delete(item: NearBreach): void {
     const deleteDataTableDialogRef = this.dialog.open(DeleteDialogComponent, {
       data: { deleteContext: ` the item of ${item.id}` }
     });
     deleteDataTableDialogRef.afterClosed().subscribe((response: any) => {
       if (response?.delete) {
-        this.productsService.deleteWrokingCapitalBreach(item.id).subscribe(() => {
-          this.productsService.getWorkingCapitalBreaches().subscribe((breachesData: Breach[]) => {
-            this.breachesData = breachesData;
-            this.dataSource = new MatTableDataSource(this.breachesData);
+        this.productsService.deleteWrokingCapitalNearBreach(item.id).subscribe(() => {
+          this.productsService.getWorkingCapitalNearBreaches().subscribe((nearBreachesData: NearBreach[]) => {
+            this.nearBreachesData = nearBreachesData;
+            this.dataSource = new MatTableDataSource(this.nearBreachesData);
           });
         });
       }

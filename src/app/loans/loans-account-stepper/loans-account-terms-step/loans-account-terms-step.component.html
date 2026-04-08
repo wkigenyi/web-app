@@ -106,7 +106,35 @@
             </mat-option>
           }
         </mat-select>
+        @if (loansAccountTermsForm.controls.breachId) {
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="clearProperty($event, 'breachId')">
+            <fa-icon icon="close" size="md"></fa-icon>
+          </button>
+        }
       </mat-form-field>
+
+      @if (loansAccountTermsForm.value.breachId) {
+        <mat-form-field class="flex-48">
+          <mat-label>{{ 'labels.inputs.Near Breach' | translate }}</mat-label>
+          <mat-select formControlName="nearBreachId" class="breach-id-select" panelClass="breach-select-panel">
+            <mat-select-trigger>
+              @if (selectedNearBreach) {
+                <mifosx-breach-display [singleRow]="true" [nearBreach]="selectedNearBreach" />
+              }
+            </mat-select-trigger>
+            @for (nearBreach of nearBreachOptions; track nearBreach) {
+              <mat-option [value]="nearBreach.id">
+                <mifosx-breach-display [singleRow]="true" [nearBreach]="nearBreach" />
+              </mat-option>
+            }
+          </mat-select>
+          @if (loansAccountTermsForm.controls.nearBreachId) {
+            <button matSuffix mat-icon-button aria-label="Clear" (click)="clearProperty($event, 'nearBreachId')">
+              <fa-icon icon="close" size="md"></fa-icon>
+            </button>
+          }
+        </mat-form-field>
+      }
     }
 
     @if (loanProductService.isLoanProduct) {

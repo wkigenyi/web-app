@@ -650,4 +650,39 @@ export class ProductsService {
   deleteWrokingCapitalBreach(breachId: number): Observable<any> {
     return this.http.delete(`/working-capital/breach/breaches/${breachId}`);
   }
+
+  /**
+   * @returns {Observable<any>} Working Capital Near Breaches data.
+   */
+  getWorkingCapitalNearBreaches(): Observable<any> {
+    return this.http.get('/working-capital/near-breach');
+  }
+
+  /**
+   * @returns {Observable<any>} Working Capital Near Breach data.
+   */
+  getWorkingCapitalNearBreach(nearBreachId: string): Observable<any> {
+    return this.http.get(`/working-capital/near-breach/${nearBreachId}`);
+  }
+
+  /**
+   * @returns {Observable<any>} Working Capital Near Breach creation.
+   */
+  createWrokingCapitalNearBreach(payload: any): Observable<any> {
+    return this.http.post(`/working-capital/near-breach`, payload);
+  }
+
+  /**
+   * @returns {Observable<any>} Working Capital Near Breach update.
+   */
+  updateWrokingCapitalNearBreach(nearBreachId: number, payload: any): Observable<any> {
+    return this.http.put(`/working-capital/near-breach/${nearBreachId}`, payload);
+  }
+
+  /**
+   * @returns {Observable<any>} Working Capital NearBreach delete.
+   */
+  deleteWrokingCapitalNearBreach(nearBreachId: number): Observable<any> {
+    return this.http.delete(`/working-capital/near-breach/${nearBreachId}`);
+  }
 }

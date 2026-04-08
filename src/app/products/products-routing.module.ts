@@ -141,6 +141,13 @@ import { ViewBreachConfigurationComponent } from './loan-products/working-capita
 import { CreateBreachConfigurationComponent } from './loan-products/working-capital/breach-configuration/create-breach-configuration/create-breach-configuration.component';
 import { BreachTemplateResolver } from './loan-products/working-capital/breach-configuration/breach-template.resolver';
 import { EditBreachConfigurationComponent } from './loan-products/working-capital/breach-configuration/edit-breach-configuration/edit-breach-configuration.component';
+import { NearBreachConfigurationComponent } from './loan-products/working-capital/near-breach-configuration/near-breach-configuration.component';
+import { NearBreachesResolver } from './loan-products/working-capital/near-breach-configuration/near-breaches.resolver';
+import { CreateNearBreachConfigurationComponent } from './loan-products/working-capital/near-breach-configuration/create-near-breach-configuration/create-near-breach-configuration.component';
+import { NearBreachTemplateResolver } from './loan-products/working-capital/near-breach-configuration/near-breach-template.resolver';
+import { ViewNearBreachConfigurationComponent } from './loan-products/working-capital/near-breach-configuration/view-near-breach-configuration/view-near-breach-configuration.component';
+import { NearBreachResolver } from './loan-products/working-capital/near-breach-configuration/near-breach.resolver';
+import { EditNearBreachConfigurationComponent } from './loan-products/working-capital/near-breach-configuration/edit-near-breach-configuration/edit-near-breach-configuration.component';
 
 /** Products Routes */
 const routes: Routes = [
@@ -939,6 +946,49 @@ const routes: Routes = [
               ]
             }
           ]
+        },
+        {
+          path: 'near-breach-configurations',
+          data: { title: 'Near Breach Configurations', breadcrumb: 'Near Breach Configurations' },
+          children: [
+            {
+              path: '',
+              component: NearBreachConfigurationComponent,
+              resolve: {
+                nearBreaches: NearBreachesResolver
+              }
+            },
+            {
+              path: 'create',
+              component: CreateNearBreachConfigurationComponent,
+              data: { title: 'Create Near Breach', breadcrumb: 'Create' },
+              resolve: {
+                breachTemplate: BreachTemplateResolver
+              }
+            },
+            {
+              path: ':id',
+              data: { title: 'View Near Breach', routeParamBreadcrumb: 'id' },
+              children: [
+                {
+                  path: '',
+                  component: ViewNearBreachConfigurationComponent,
+                  resolve: {
+                    nearBreachData: NearBreachResolver
+                  }
+                },
+                {
+                  path: 'edit',
+                  component: EditNearBreachConfigurationComponent,
+                  data: { title: 'Edit Near Breach', breadcrumb: 'Edit', routeParamBreadcrumb: false },
+                  resolve: {
+                    nearBreachData: NearBreachResolver,
+                    breachTemplate: BreachTemplateResolver
+                  }
+                }
+              ]
+            }
+          ]
         }
       ]
     }
@@ -1001,7 +1051,9 @@ const routes: Routes = [
     DelinquencyBucketComponentsResolver,
     BreachTemplateResolver,
     BreachesResolver,
-    BreachResolver
+    BreachResolver,
+    NearBreachesResolver,
+    NearBreachResolver
   ]
 })
 export class ProductsRoutingModule {}

@@ -233,6 +233,43 @@
               </div>
             </div>
           </mat-list-item>
+
+          <mat-list-item
+            [routerLink]="['near-breach-configurations']"
+            *mifosxHasPermission="'READ_WORKINGCAPITALNEARBREACH'"
+          >
+            <div class="menu-list-item-content">
+              <div class="menu-left-section" [routerLink]="['near-breach-configurations']">
+                <mat-icon matListIcon>
+                  <fa-icon icon="check-double" size="sm"></fa-icon>
+                </mat-icon>
+                <div matLine>
+                  {{ 'labels.heading.Near Breach Configuration' | translate }}
+                  @if (arrowBooleans[12]) {
+                    <p matLine [routerLink]="['near-breach-configurations']" class="menu-explanation">
+                      {{ 'labels.text.Define near breaches for working capital products' | translate }}
+                    </p>
+                  }
+                </div>
+              </div>
+              <div class="menu-right-section">
+                @if (!arrowBooleans[12]) {
+                  <fa-icon
+                    (click)="arrowBooleansToggle(12); $event.stopPropagation()"
+                    icon="arrow-down"
+                    size="md"
+                  ></fa-icon>
+                }
+                @if (arrowBooleans[12]) {
+                  <fa-icon
+                    (click)="arrowBooleansToggle(12); $event.stopPropagation()"
+                    icon="arrow-up"
+                    size="md"
+                  ></fa-icon>
+                }
+              </div>
+            </div>
+          </mat-list-item>
         </mat-nav-list>
       </div>
 

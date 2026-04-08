@@ -9,7 +9,7 @@
 import { Component, Input } from '@angular/core';
 import { FormatNumberPipe } from '@pipes/format-number.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
-import { Breach } from 'app/products/loan-products/models/loan-product.model';
+import { Breach, NearBreach } from 'app/products/loan-products/models/loan-product.model';
 
 @Component({
   selector: 'mifosx-breach-display',
@@ -22,6 +22,7 @@ import { Breach } from 'app/products/loan-products/models/loan-product.model';
 })
 export class BreachDisplayComponent {
   @Input() breach: Breach | null = null;
+  @Input() nearBreach: NearBreach | null = null;
   @Input() singleRow: boolean = false;
 
   camalize(word: string) {

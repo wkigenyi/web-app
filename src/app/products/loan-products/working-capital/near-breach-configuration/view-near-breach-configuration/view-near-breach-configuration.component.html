@@ -11,7 +11,7 @@
     mat-raised-button
     color="primary"
     [routerLink]="['edit']"
-    *mifosxHasPermission="'UPDATE_WORKINGCAPITALBREACH'"
+    *mifosxHasPermission="'UPDATE_WORKINGCAPITALNEARBREACH'"
   >
     <fa-icon icon="edit" class="m-r-10"></fa-icon>
     {{ 'labels.heading.Edit' | translate }}
@@ -21,14 +21,14 @@
 <div class="container">
   <mat-card>
     <mat-card-content>
-      @if (breachData) {
+      @if (nearBreachData) {
         <div class="layout-row-wrap">
           <div class="flex-50 mat-body-strong">
             {{ 'labels.inputs.Id' | translate }}
           </div>
 
           <div class="flex-50">
-            {{ breachData.id }}
+            {{ nearBreachData.id }}
           </div>
 
           <div class="flex-50 mat-body-strong">
@@ -36,7 +36,7 @@
           </div>
 
           <div class="flex-50">
-            {{ breachData.name }}
+            {{ nearBreachData.name }}
           </div>
 
           <div class="flex-50 mat-body-strong">
@@ -44,7 +44,7 @@
           </div>
 
           <div class="flex-50">
-            {{ breachData.breachFrequency | formatNumber: '' : 0 }}
+            {{ nearBreachData.frequency | formatNumber: '' : 0 }}
           </div>
 
           <div class="flex-50 mat-body-strong">
@@ -52,24 +52,14 @@
           </div>
 
           <div class="flex-50">
-            {{ breachData.breachFrequencyType.code | translateKey: 'catalogs' }}
+            {{ nearBreachData.frequencyType.code | translateKey: 'catalogs' }}
           </div>
 
           <div class="flex-50 mat-body-strong">
-            {{ 'labels.inputs.Calculation Type' | translate }}
+            {{ 'labels.inputs.Threshold' | translate }}
           </div>
 
-          <div class="flex-50">
-            {{ breachData.breachAmountCalculationType.code | translateKey: 'catalogs' }}
-          </div>
-
-          <div class="flex-50 mat-body-strong">
-            {{ 'labels.inputs.Amount' | translate }}
-          </div>
-
-          <div class="flex-50">
-            {{ breachData.breachAmount | formatNumber }}
-          </div>
+          <div class="flex-50">{{ nearBreachData.threshold | formatNumber }} %</div>
         </div>
 
         <div class="layout-row layout-align-center gap-2percent column-on-mobile">

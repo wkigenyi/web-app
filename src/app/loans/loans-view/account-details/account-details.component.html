@@ -60,6 +60,15 @@
           <span class="flex-50"><mifosx-breach-display [singleRow]="false" [breach]="loanDetails.breach" /></span>
         </div>
       }
+
+      @if (loanDetails.nearBreach) {
+        <div class="flex-fill layout-row">
+          <span class="flex-50"> {{ 'labels.inputs.Near Breach' | translate }} </span>
+          <span class="flex-50"
+            ><mifosx-breach-display [singleRow]="false" [nearBreach]="loanDetails.nearBreach"
+          /></span>
+        </div>
+      }
     }
 
     @if (loanProductService.isLoanProduct) {
