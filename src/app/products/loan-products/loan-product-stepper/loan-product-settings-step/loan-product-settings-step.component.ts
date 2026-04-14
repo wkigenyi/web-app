@@ -188,17 +188,8 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
         delinquencyStartType: this.loanProductsTemplate.delinquencyStartType
           ? this.loanProductsTemplate.delinquencyStartType.id
           : null,
-        breachId: this.loanProductsTemplate.breach?.id ?? null,
-        enableNearBreach: this.loanProductsTemplate.enableNearBreach || false
+        breachId: this.loanProductsTemplate.breach?.id ?? null
       });
-
-      if (this.loanProductsTemplate.enableNearBreach) {
-        this.loanProductSettingsForm.patchValue({
-          nearBreachEvalFrequency: this.loanProductsTemplate.nearBreachEvalFrequency || '',
-          nearBreachEvalFrequencyType: this.loanProductsTemplate.nearBreachEvalFrequencyType?.id || '',
-          nearBreachThreshold: this.loanProductsTemplate.nearBreachThreshold || ''
-        });
-      }
     }
 
     this.isAdvancedTransactionProcessingStrategy = LoanProducts.isAdvancedPaymentAllocationStrategy(
@@ -468,8 +459,7 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
           ]
         ],
         delinquencyStartType: [''],
-        breachId: [''],
-        enableNearBreach: [false]
+        breachId: ['']
       });
     }
   }
@@ -870,31 +860,6 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
             });
           }
         });
-
-      this.loanProductSettingsForm.get('enableNearBreach').valueChanges.subscribe((enableNearBreach: any) => {
-        if (enableNearBreach) {
-          this.loanProductSettingsForm.addControl(
-            'nearBreachEvalFrequency',
-            new UntypedFormControl('', Validators.required)
-          );
-          this.loanProductSettingsForm.addControl(
-            'nearBreachEvalFrequencyType',
-            new UntypedFormControl('', Validators.required)
-          );
-          this.loanProductSettingsForm.addControl(
-            'nearBreachThreshold',
-            new UntypedFormControl('', [
-              Validators.required,
-              Validators.min(0.01),
-              Validators.max(100.0)
-            ])
-          );
-        } else {
-          this.loanProductSettingsForm.removeControl('nearBreachEvalFrequency');
-          this.loanProductSettingsForm.removeControl('nearBreachEvalFrequencyType');
-          this.loanProductSettingsForm.removeControl('nearBreachThreshold');
-        }
-      });
     }
   }
 

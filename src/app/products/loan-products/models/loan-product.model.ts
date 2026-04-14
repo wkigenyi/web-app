@@ -186,12 +186,6 @@ export interface LoanProduct {
   buydownFeeClassificationToIncomeAccountMappings?: ClassificationToIncomeAccountMapping[];
   capitalizedIncomeClassificationToIncomeAccountMappings?: ClassificationToIncomeAccountMapping[];
   writeOffReasonsToExpenseMappings?: ChargeOffReasonToExpenseAccountMapping[];
-
-  // Working Capital attributes
-  enableNearBreach?: boolean;
-  nearBreachEvalFrequency?: number;
-  nearBreachEvalFrequencyType?: OptionData;
-  nearBreachThreshold?: number;
 }
 
 export interface AllowAttributeOverrides {
