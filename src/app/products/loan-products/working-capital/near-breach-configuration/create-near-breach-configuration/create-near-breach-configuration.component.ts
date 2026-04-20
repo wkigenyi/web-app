@@ -18,72 +18,68 @@ import { ErrorHandlerService } from 'app/core/error-handler/error-handler.servic
 import { catchError } from 'rxjs';
 
 @Component({
-  selector: 'mifosx-create-breach-configuration',
-  templateUrl: './create-breach-configuration.component.html',
-  styleUrl: './create-breach-configuration.component.scss',
+  selector: 'mifosx-create-near-breach-configuration',
+  templateUrl: './create-near-breach-configuration.component.html',
+  styleUrl: './create-near-breach-configuration.component.scss',
   standalone: true,
   imports: [
     ...STANDALONE_SHARED_IMPORTS,
     InputPositiveIntegerComponent
   ]
 })
-export class CreateBreachConfigurationComponent implements OnInit {
+export class CreateNearBreachConfigurationComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private formBuilder = inject(UntypedFormBuilder);
   private productsService = inject(ProductsService);
   private errorHandler = inject(ErrorHandlerService);
 
-  breachForm: UntypedFormGroup;
-
-  breachFrequencyTypeOptions: StringEnumOptionData[] = [];
-  breachAmountCalculationTypeOptions: StringEnumOptionData[] = [];
+  nearBreachForm: UntypedFormGroup;
+  frequencyTypeOptions: StringEnumOptionData[] = [];
+  maxThreshold: number = 100.0;
 
   constructor() {
     this.route.data.subscribe((data: { breachTemplate?: any }) => {
       const breachTemplate = data.breachTemplate ?? {};
-      this.breachFrequencyTypeOptions = breachTemplate.breachFrequencyTypeOptions || [];
-      this.breachAmountCalculationTypeOptions = breachTemplate.breachAmountCalculationTypeOptions || [];
+      this.frequencyTypeOptions = breachTemplate.breachFrequencyTypeOptions || [];
     });
   }
 
   ngOnInit(): void {
-    this.breachForm = this.formBuilder.group({
-      name: [
+    this.nearBreachForm = this.formBuilder.group({
+      nearBreachName: [
         '',
         [
           Validators.required
         ]
       ],
-      breachFrequency: [
+      nearBreachFrequency: [
         '',
         [
           Validators.required
         ]
       ],
-      breachFrequencyType: [
+      nearBreachFrequencyType: [
         '',
         Validators.required
       ],
-      breachAmountCalculationType: [
-        '',
-        Validators.required
-      ],
-      breachAmount: [
+      nearBreachThreshold: [
         '',
         [
           amountValueValidator(),
-          Validators.required
+          Validators.required,
+          Validators.min(0),
+          Validators.max(this.maxThreshold)
         ]
       ]
     });
   }
 
   submit(): void {
-    const payload = this.breachForm.getRawValue();
+    const payload = this.nearBreachForm.getRawValue();
     this.productsService
-      .createWrokingCapitalBreach(payload)
-      .pipe(catchError((error) => this.errorHandler.handleError(error, 'Breach Configuration Creation')))
+      .createWrokingCapitalNearBreach(payload)
+      .pipe(catchError((error) => this.errorHandler.handleError(error, 'Near Breach Configuration Creation')))
       .subscribe({
         next: () => {
           this.router.navigate(['../'], { relativeTo: this.route });

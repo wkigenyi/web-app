@@ -142,7 +142,8 @@ import {
   faNotEqual,
   faPercent,
   faMoneyCheckDollar,
-  faSackDollar
+  faSackDollar,
+  faCheckDouble
 } from '@fortawesome/free-solid-svg-icons';
 
 /**
@@ -178,6 +179,7 @@ export class IconsModule {
       faChartBar,
       faCheck,
       faCheckCircle,
+      faCheckDouble,
       faChevronDown,
       faChevronLeft,
       faChevronRight,

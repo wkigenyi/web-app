@@ -123,6 +123,7 @@ export class CreateLoansAccountComponent extends LoanProductBaseComponent implem
       this.loansAccountProductTemplate = templateData.loanData;
       this.loansAccountProductTemplate.options = {
         breachOptions: templateData.breachOptions,
+        nearBreachOptions: templateData.nearBreachOptions,
         delinquencyBucketOptions: templateData.delinquencyBucketOptions,
         fundOptions: templateData.fundOptions,
         periodFrequencyTypeOptions: templateData.periodFrequencyTypeOptions,

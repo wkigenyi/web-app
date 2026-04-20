@@ -32,6 +32,10 @@ const log = new Logger('ErrorHandlerInterceptor');
 export class ErrorHandlerInterceptor implements HttpInterceptor {
   private alertService = inject(AlertService);
   private translate = inject(TranslateService);
+  private databaseErrorCodes: string[] = [
+    'error.msg.data.integrity.issue.entity.duplicated',
+    'error.msg.data.integrity.issue'
+  ];
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(catchError((error) => this.handleError(error, request)));
@@ -88,12 +92,18 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
         : nestedMessage
       : topLevelMessage;
     let parameterName: string | null = null;
-    if (errorBody?.errors?.[0]) {
-      if (!nestedMessage) {
-        errorMessage =
-          errorBody.errors[0].defaultUserMessage?.replace(/\\./g, ' ') ||
-          errorBody.errors[0].developerMessage?.replace(/\\./g, ' ') ||
-          errorMessage;
+    if (response.error.errors) {
+      if (response.error.errors[0]) {
+        if (
+          response.error.errors[0].userMessageGlobalisationCode &&
+          this.databaseErrorCodes.indexOf(response.error.errors[0].userMessageGlobalisationCode) > -1
+        ) {
+          errorMessage = this.translate.instant('errors.error.msg.data.integrity.issue');
+        } else {
+          errorMessage =
+            response.error.errors[0].defaultUserMessage.replace(/\\./g, ' ') ||
+            response.error.errors[0].developerMessage.replace(/\\./g, ' ');
+        }
       }
       if ('parameterName' in errorBody.errors[0]) {
         parameterName = errorBody.errors[0].parameterName;

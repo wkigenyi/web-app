@@ -121,6 +121,24 @@
       </div>
     }
 
+    @if (loansAccount.breachId) {
+      <div class="flex-fill">
+        <span class="flex-30">{{ 'labels.inputs.Breach' | translate }}:</span>
+        <span class="flex-60"
+          ><mifosx-breach-display [singleRow]="false" [breach]="getBreach(loansAccount.breachId)"
+        /></span>
+      </div>
+    }
+
+    @if (loansAccount.nearBreachId) {
+      <div class="flex-fill">
+        <span class="flex-30">{{ 'labels.inputs.Near Breach' | translate }}:</span>
+        <span class="flex-60"
+          ><mifosx-breach-display [singleRow]="false" [nearBreach]="getNearBreach(loansAccount.nearBreachId)"
+        /></span>
+      </div>
+    }
+
     <div class="flex-fill">
       <span class="flex-30">{{ 'labels.inputs.Period Payment Rate' | translate }}:</span>
       <span class="flex-70"> {{ loansAccount.periodPaymentRate | formatNumber }} % </span>

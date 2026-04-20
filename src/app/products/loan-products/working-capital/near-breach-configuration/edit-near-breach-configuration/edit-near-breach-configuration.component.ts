@@ -13,79 +13,77 @@ import { StringEnumOptionData } from 'app/shared/models/option-data.model';
 import { amountValueValidator } from 'app/shared/validators/amount-value.validator';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { Router } from '@angular/router';
-import { Breach } from 'app/products/loan-products/models/loan-product.model';
+import { NearBreach } from 'app/products/loan-products/models/loan-product.model';
 import { InputPositiveIntegerComponent } from 'app/shared/input-positive-integer/input-positive-integer.component';
 
 @Component({
-  selector: 'mifosx-edit-breach-configuration',
-  templateUrl: './edit-breach-configuration.component.html',
-  styleUrl: './edit-breach-configuration.component.scss',
+  selector: 'mifosx-edit-near-breach-configuration',
+  templateUrl: './edit-near-breach-configuration.component.html',
+  styleUrl: './edit-near-breach-configuration.component.scss',
   imports: [
     ...STANDALONE_SHARED_IMPORTS,
     InputPositiveIntegerComponent
   ]
 })
-export class EditBreachConfigurationComponent implements OnInit {
+export class EditNearBreachConfigurationComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private formBuilder = inject(UntypedFormBuilder);
   private productsService = inject(ProductsService);
 
-  breachForm: UntypedFormGroup;
+  nearBreachForm: UntypedFormGroup;
 
-  breachData: Breach | null = null;
-  breachFrequencyTypeOptions: StringEnumOptionData[] = [];
-  breachAmountCalculationTypeOptions: StringEnumOptionData[] = [];
+  nearBreachData: NearBreach | null = null;
+  frequencyTypeOptions: StringEnumOptionData[] = [];
+  maxThreshold: number = 100.0;
 
   ngOnInit(): void {
-    this.route.data.subscribe((data: { breachData: Breach; breachTemplate: any }) => {
-      this.breachData = data.breachData;
-      this.breachFrequencyTypeOptions = data.breachTemplate.breachFrequencyTypeOptions || [];
-      this.breachAmountCalculationTypeOptions = data.breachTemplate.breachAmountCalculationTypeOptions || [];
+    this.route.data.subscribe((data: { nearBreachData: NearBreach; breachTemplate: any }) => {
+      this.nearBreachData = data.nearBreachData;
+      console.log(this.nearBreachData);
+      this.frequencyTypeOptions = data.breachTemplate.breachFrequencyTypeOptions || [];
       this.initForm();
     });
   }
 
   private initForm(): void {
-    this.breachForm = this.formBuilder.group({
-      name: [
-        this.breachData!.name,
+    this.nearBreachForm = this.formBuilder.group({
+      nearBreachName: [
+        this.nearBreachData!.name,
         [
           Validators.required
         ]
       ],
-      breachFrequency: [
-        this.breachData!.breachFrequency,
+      nearBreachFrequency: [
+        this.nearBreachData!.frequency,
         [
           Validators.required
         ]
       ],
-      breachFrequencyType: [
-        this.breachData!.breachFrequencyType.code,
+      nearBreachFrequencyType: [
+        this.nearBreachData!.frequencyType.code,
         Validators.required
       ],
-      breachAmountCalculationType: [
-        this.breachData!.breachAmountCalculationType.code,
-        Validators.required
-      ],
-      breachAmount: [
-        this.breachData!.breachAmount,
+      nearBreachThreshold: [
+        this.nearBreachData!.threshold,
         [
           amountValueValidator(),
-          Validators.required
+          Validators.required,
+          Validators.min(0),
+          Validators.max(this.maxThreshold)
         ]
       ]
     });
   }
 
   submit(): void {
-    const payload = this.breachForm.getRawValue();
-    this.productsService.updateWrokingCapitalBreach(this.breachData.id, payload).subscribe({
+    const payload = this.nearBreachForm.getRawValue();
+    this.productsService.updateWrokingCapitalNearBreach(this.nearBreachData.id, payload).subscribe({
       next: () => {
         this.router.navigate(['../'], { relativeTo: this.route });
       },
       error: (err) => {
-        console.error('Failed to update breach configuration', err);
+        console.error('Failed to update near breach configuration', err);
       }
     });
   }

@@ -109,8 +109,18 @@
       </div>
       <div class="flex-fill layout-row">
         <span class="flex-40">{{ 'labels.inputs.Breach' | translate }}:</span>
-        <span class="flex-60"><mifosx-breach-display [singleRow]="false" [breach]="loanProduct.breach" /></span>
+        <span class="flex-60"><mifosx-breach-display [singleRow]="false" [breach]="getBreach()" /></span>
       </div>
+      <div class="flex-fill layout-row">
+        <span class="flex-40">{{ 'labels.inputs.Enable Near Breach' | translate }}:</span>
+        <span class="flex-60">{{ enableNearBreach() | yesNo }}</span>
+      </div>
+      @if (enableNearBreach()) {
+        <div class="flex-fill layout-row">
+          <span class="flex-40">{{ 'labels.inputs.Near Breach' | translate }}:</span>
+          <span class="flex-60"><mifosx-breach-display [singleRow]="false" [nearBreach]="getNearBreach()" /></span>
+        </div>
+      }
     }
     @if (loanProductService.isLoanProduct) {
       <div class="flex-fill layout-row">

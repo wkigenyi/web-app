@@ -21,9 +21,10 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { LoanProductBaseComponent } from '../../common/loan-product-base.component';
-import { Breach } from '../../models/loan-product.model';
+import { Breach, NearBreach } from '../../models/loan-product.model';
 import { BreachDisplayComponent } from 'app/shared/loan/breach-display/breach-display.component';
 import { MatSelectTrigger } from '@angular/material/select';
+import { InputPositiveIntegerComponent } from 'app/shared/input-positive-integer/input-positive-integer.component';
 
 @Component({
   selector: 'mifosx-loan-product-settings-step',
@@ -39,7 +40,8 @@ import { MatSelectTrigger } from '@angular/material/select';
     MatStepperPrevious,
     MatStepperNext,
     MatSelectTrigger,
-    BreachDisplayComponent
+    BreachDisplayComponent,
+    InputPositiveIntegerComponent
   ]
 })
 export class LoanProductSettingsStepComponent extends LoanProductBaseComponent implements OnInit {
@@ -87,6 +89,7 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
 
   delinquencyStartTypeOptions: StringEnumOptionData[] = [];
   breachOptions: Breach[] = [];
+  nearBreachOptions: NearBreach[] = [];
 
   frequencyTypesOptions: StringEnumOptionData[] = [];
 
@@ -178,6 +181,7 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
     if (this.loanProductService.isWorkingCapital) {
       this.frequencyTypesOptions = this.loanProductsTemplate.periodFrequencyTypeOptions ?? [];
       this.breachOptions = this.loanProductsTemplate.breachOptions ?? [];
+      this.nearBreachOptions = this.loanProductsTemplate.nearBreachOptions ?? [];
       this.delinquencyStartTypeOptions = this.loanProductsTemplate.delinquencyStartTypeOptions;
       this.loanProductSettingsForm.patchValue({
         amortizationType: this.loanProductsTemplate.amortizationType
@@ -188,7 +192,8 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
         delinquencyStartType: this.loanProductsTemplate.delinquencyStartType
           ? this.loanProductsTemplate.delinquencyStartType.id
           : null,
-        breachId: this.loanProductsTemplate.breach?.id ?? null
+        breachId: this.loanProductsTemplate.breach?.id ?? null,
+        nearBreachId: this.loanProductsTemplate.nearBreach?.id ?? null
       });
     }
 
@@ -459,7 +464,8 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
           ]
         ],
         delinquencyStartType: [''],
-        breachId: ['']
+        breachId: [''],
+        nearBreachId: ['']
       });
     }
   }
@@ -921,6 +927,15 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
           delinquencyBucketId: ''
         });
       }
+    } else if (propertyName === 'breachId') {
+      this.loanProductSettingsForm.patchValue({
+        breachId: '',
+        nearBreachId: ''
+      });
+    } else if (propertyName === 'nearBreachId') {
+      this.loanProductSettingsForm.patchValue({
+        nearBreachId: ''
+      });
     }
     this.loanProductSettingsForm.markAsDirty();
     $event.stopPropagation();
@@ -929,6 +944,11 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
   get selectedBreach(): Breach | undefined {
     const id = this.loanProductSettingsForm.get('breachId')?.value;
     return this.breachOptions ? this.breachOptions.find((b) => b.id === id) : undefined;
+  }
+
+  get selectedNearBreach(): NearBreach | undefined {
+    const id = this.loanProductSettingsForm.get('nearBreachId')?.value;
+    return id ? (this.nearBreachOptions ? this.nearBreachOptions.find((b) => b.id === id) : undefined) : undefined;
   }
 
   get loanProductSettings() {
