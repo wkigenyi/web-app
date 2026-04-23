@@ -106,14 +106,14 @@
             </mat-option>
           }
         </mat-select>
-        @if (loansAccountTermsForm.controls.breachId) {
+        @if (loansAccountTermsForm.controls.breachId && allowAttributeOverridesBreach) {
           <button matSuffix mat-icon-button aria-label="Clear" (click)="clearProperty($event, 'breachId')">
             <fa-icon icon="close" size="md"></fa-icon>
           </button>
         }
       </mat-form-field>
 
-      @if (loansAccountTermsForm.value.breachId) {
+      @if (selectedBreach) {
         <mat-form-field class="flex-48">
           <mat-label>{{ 'labels.inputs.Near Breach' | translate }}</mat-label>
           <mat-select formControlName="nearBreachId" class="breach-id-select" panelClass="breach-select-panel">
@@ -128,7 +128,7 @@
               </mat-option>
             }
           </mat-select>
-          @if (loansAccountTermsForm.controls.nearBreachId) {
+          @if (loansAccountTermsForm.controls.nearBreachId && allowAttributeOverridesBreach) {
             <button matSuffix mat-icon-button aria-label="Clear" (click)="clearProperty($event, 'nearBreachId')">
               <fa-icon icon="close" size="md"></fa-icon>
             </button>
