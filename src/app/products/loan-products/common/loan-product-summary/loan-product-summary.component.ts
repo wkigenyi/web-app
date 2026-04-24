@@ -135,7 +135,7 @@ export class LoanProductSummaryComponent extends LoanProductBaseComponent implem
   writeOffReasonsToExpenseMappings: ChargeOffReasonToExpenseAccountMapping[] = [];
 
   ngOnInit() {
-    this.accountingRuleData = this.accounting.getAccountingRulesForLoans();
+    this.accountingRuleData = this.accounting.getAccountingRulesForLoans(this.loanProductService.isLoanProduct);
     this.setCurrentValues();
   }
 
@@ -180,86 +180,81 @@ export class LoanProductSummaryComponent extends LoanProductBaseComponent implem
         }
       }
 
+      const assetAccountData = this.loanProductsTemplate.accountingMappingOptions.assetAccountOptions || [];
+      const incomeAccountData = this.loanProductsTemplate.accountingMappingOptions.incomeAccountOptions || [];
+      const expenseAccountData = this.loanProductsTemplate.accountingMappingOptions.expenseAccountOptions || [];
+      const liabilityAccountData = this.loanProductsTemplate.accountingMappingOptions.liabilityAccountOptions || [];
+      const assetAndLiabilityAccountData = assetAccountData.concat(liabilityAccountData);
+      const chargeOffReasonOptions: any = this.loanProductsTemplate.chargeOffReasonOptions || [];
+      const writeOffReasonOptions: any = this.loanProductsTemplate.writeOffReasonOptions || [];
+
+      this.accountingMappings = {
+        fundSourceAccount: this.glAccountLookUp(this.loanProduct.fundSourceAccountId, assetAndLiabilityAccountData),
+        loanPortfolioAccount: this.glAccountLookUp(this.loanProduct.loanPortfolioAccountId, assetAccountData),
+        receivableInterestAccount: this.glAccountLookUp(this.loanProduct.receivableInterestAccountId, assetAccountData),
+        receivableFeeAccount: this.glAccountLookUp(this.loanProduct.receivableFeeAccountId, assetAccountData),
+        receivablePenaltyAccount: this.glAccountLookUp(this.loanProduct.receivablePenaltyAccountId, assetAccountData),
+        transfersInSuspenseAccount: this.glAccountLookUp(
+          this.loanProduct.transfersInSuspenseAccountId,
+          assetAccountData
+        ),
+
+        interestOnLoanAccount: this.glAccountLookUp(this.loanProduct.interestOnLoanAccountId, incomeAccountData),
+        incomeFromDiscountFeeAccount: this.glAccountLookUp(
+          this.loanProduct.incomeFromDiscountFeeAccountId,
+          incomeAccountData
+        ),
+        incomeFromFeeAccount: this.glAccountLookUp(this.loanProduct.incomeFromFeeAccountId, incomeAccountData),
+        incomeFromPenaltyAccount: this.glAccountLookUp(this.loanProduct.incomeFromPenaltyAccountId, incomeAccountData),
+        incomeFromRecoveryAccount: this.glAccountLookUp(
+          this.loanProduct.incomeFromRecoveryAccountId,
+          incomeAccountData
+        ),
+        incomeFromChargeOffInterestAccount: this.glAccountLookUp(
+          this.loanProduct.incomeFromChargeOffInterestAccountId,
+          incomeAccountData
+        ),
+        incomeFromChargeOffFeesAccount: this.glAccountLookUp(
+          this.loanProduct.incomeFromChargeOffFeesAccountId,
+          incomeAccountData
+        ),
+        incomeFromChargeOffPenaltyAccount: this.glAccountLookUp(
+          this.loanProduct.incomeFromChargeOffPenaltyAccountId,
+          incomeAccountData
+        ),
+        incomeFromCapitalizationAccount: this.glAccountLookUp(
+          this.loanProduct.incomeFromCapitalizationAccountId,
+          incomeAccountData
+        ),
+        incomeFromBuyDownAccount: this.glAccountLookUp(this.loanProduct.incomeFromBuyDownAccountId, incomeAccountData),
+
+        writeOffAccount: this.glAccountLookUp(this.loanProduct.writeOffAccountId, expenseAccountData),
+        goodwillCreditAccount: this.glAccountLookUp(this.loanProduct.goodwillCreditAccountId, expenseAccountData),
+        chargeOffExpenseAccount: this.glAccountLookUp(this.loanProduct.chargeOffExpenseAccountId, expenseAccountData),
+        chargeOffFraudExpenseAccount: this.glAccountLookUp(
+          this.loanProduct.chargeOffFraudExpenseAccountId,
+          expenseAccountData
+        ),
+        buyDownExpenseAccount: this.glAccountLookUp(this.loanProduct.buyDownExpenseAccountId, expenseAccountData),
+
+        overpaymentLiabilityAccount: this.glAccountLookUp(
+          this.loanProduct.overpaymentLiabilityAccountId,
+          liabilityAccountData
+        ),
+        deferredIncomeLiabilityAccount: this.glAccountLookUp(
+          this.loanProduct.deferredIncomeLiabilityAccountId,
+          liabilityAccountData
+        )
+      };
+
       if (this.loanProductService.isLoanProduct) {
         if (
           (this.loanProduct.accountingRule && this.loanProduct.accountingRule > 1) ||
           this.loanProductsTemplate.accountingRule.value !== 'NONE'
         ) {
-          const assetAccountData = this.loanProductsTemplate.accountingMappingOptions.assetAccountOptions || [];
-          const incomeAccountData = this.loanProductsTemplate.accountingMappingOptions.incomeAccountOptions || [];
-          const expenseAccountData = this.loanProductsTemplate.accountingMappingOptions.expenseAccountOptions || [];
-          const liabilityAccountData = this.loanProductsTemplate.accountingMappingOptions.liabilityAccountOptions || [];
-          const assetAndLiabilityAccountData =
-            this.loanProductsTemplate.accountingMappingOptions.assetAndLiabilityAccountOptions || [];
-          const chargeOffReasonOptions: any = this.loanProductsTemplate.chargeOffReasonOptions || [];
-          const writeOffReasonOptions: any = this.loanProductsTemplate.writeOffReasonOptions || [];
           const buydownFeeClassificationOptions: any = this.loanProductsTemplate.buydownFeeClassificationOptions || [];
           const capitalizedIncomeClassificationOptions: any =
             this.loanProductsTemplate.capitalizedIncomeClassificationOptions || [];
-
-          this.accountingMappings = {
-            fundSourceAccount: this.glAccountLookUp(this.loanProduct.fundSourceAccountId, assetAndLiabilityAccountData),
-            loanPortfolioAccount: this.glAccountLookUp(this.loanProduct.loanPortfolioAccountId, assetAccountData),
-            receivableInterestAccount: this.glAccountLookUp(
-              this.loanProduct.receivableInterestAccountId,
-              assetAccountData
-            ),
-            receivableFeeAccount: this.glAccountLookUp(this.loanProduct.receivableFeeAccountId, assetAccountData),
-            receivablePenaltyAccount: this.glAccountLookUp(
-              this.loanProduct.receivablePenaltyAccountId,
-              assetAccountData
-            ),
-            transfersInSuspenseAccount: this.glAccountLookUp(
-              this.loanProduct.transfersInSuspenseAccountId,
-              assetAccountData
-            ),
-
-            interestOnLoanAccount: this.glAccountLookUp(this.loanProduct.interestOnLoanAccountId, incomeAccountData),
-            incomeFromFeeAccount: this.glAccountLookUp(this.loanProduct.incomeFromFeeAccountId, incomeAccountData),
-            incomeFromPenaltyAccount: this.glAccountLookUp(
-              this.loanProduct.incomeFromPenaltyAccountId,
-              incomeAccountData
-            ),
-            incomeFromRecoveryAccount: this.glAccountLookUp(
-              this.loanProduct.incomeFromRecoveryAccountId,
-              incomeAccountData
-            ),
-            incomeFromChargeOffInterestAccount: this.glAccountLookUp(
-              this.loanProduct.incomeFromChargeOffInterestAccountId,
-              incomeAccountData
-            ),
-            incomeFromChargeOffFeesAccount: this.glAccountLookUp(
-              this.loanProduct.incomeFromChargeOffFeesAccountId,
-              incomeAccountData
-            ),
-            incomeFromChargeOffPenaltyAccount: this.glAccountLookUp(
-              this.loanProduct.incomeFromChargeOffPenaltyAccountId,
-              incomeAccountData
-            ),
-            incomeFromCapitalizationAccount: this.glAccountLookUp(
-              this.loanProduct.incomeFromCapitalizationAccountId,
-              incomeAccountData
-            ),
-            incomeFromBuyDownAccount: this.glAccountLookUp(
-              this.loanProduct.incomeFromBuyDownAccountId,
-              incomeAccountData
-            ),
-
-            writeOffAccount: this.glAccountLookUp(this.loanProduct.writeOffAccountId, expenseAccountData),
-            goodwillCreditAccount: this.glAccountLookUp(this.loanProduct.goodwillCreditAccountId, expenseAccountData),
-            chargeOffExpenseAccount: this.glAccountLookUp(this.loanProduct.writeOffAccountId, expenseAccountData),
-            chargeOffFraudExpenseAccount: this.glAccountLookUp(this.loanProduct.writeOffAccountId, expenseAccountData),
-            buyDownExpenseAccount: this.glAccountLookUp(this.loanProduct.buyDownExpenseAccountId, expenseAccountData),
-
-            overpaymentLiabilityAccount: this.glAccountLookUp(
-              this.loanProduct.overpaymentLiabilityAccountId,
-              liabilityAccountData
-            ),
-            deferredIncomeLiabilityAccount: this.glAccountLookUp(
-              this.loanProduct.deferredIncomeLiabilityAccountId,
-              liabilityAccountData
-            )
-          };
 
           this.paymentChannelToFundSourceMappings = [];
           if (this.loanProduct.paymentChannelToFundSourceMappings?.length > 0) {
@@ -658,10 +653,7 @@ export class LoanProductSummaryComponent extends LoanProductBaseComponent implem
     return delinquencyBucketData;
   }
 
-  accountingRule(): number {
-    if (this.loanProductService.isWorkingCapital) {
-      return 0;
-    }
+  accountingRule(): any {
     return this.loanProduct.accountingRule.id ? this.loanProduct.accountingRule.id : this.loanProduct.accountingRule;
   }
 
@@ -670,7 +662,7 @@ export class LoanProductSummaryComponent extends LoanProductBaseComponent implem
   }
 
   isAccountingEnabled(): boolean {
-    return this.accountingRule() >= 2;
+    return this.loanProductService.isLoanProduct ? this.accountingRule() >= 2 : this.accountingRule() !== 'NONE';
   }
 
   isAdvancedAccountingEnabled(): boolean {
@@ -690,7 +682,7 @@ export class LoanProductSummaryComponent extends LoanProductBaseComponent implem
   }
 
   getAccountingRuleName(value: string): string {
-    return this.loanProductService.isWorkingCapital ? '' : this.accounting.getAccountRuleName(value.toUpperCase());
+    return this.accounting.getAccountRuleName(value.toUpperCase());
   }
 
   mapHumanReadableValueStringEnumOptionDataList(incomingParameter: StringEnumOptionData[]): string[] {

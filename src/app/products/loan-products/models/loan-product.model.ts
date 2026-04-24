@@ -172,8 +172,11 @@ export interface LoanProduct {
   receivableFeeAccountId?: number;
   receivablePenaltyAccountId?: number;
   transfersInSuspenseAccountId?: number;
+  incomeFromDiscountFeeAccountId?: number;
   writeOffAccountId?: number;
   deferredIncomeLiabilityAccountId?: number;
+  chargeOffExpenseAccountId?: number;
+  chargeOffFraudExpenseAccountId?: number;
   // Advanced Accounting
   paymentChannelToFundSourceMappings?: PaymentChannelToFundSourceMapping[];
   feeToIncomeAccountMappings?: ChargeToIncomeAccountMapping[];

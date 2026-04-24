@@ -86,7 +86,7 @@ export class CreateLoanProductComponent extends LoanProductBaseComponent impleme
   loanProductSettingsStep: LoanProductSettingsStepComponent;
   @ViewChild(LoanProductChargesStepComponent, { static: false })
   loanProductChargesStep: LoanProductChargesStepComponent;
-  @ViewChild(LoanProductAccountingStepComponent, { static: false })
+  @ViewChild(LoanProductAccountingStepComponent, { static: true })
   loanProductAccountingStep: LoanProductAccountingStepComponent;
 
   loanProductsTemplate: any;
@@ -127,10 +127,9 @@ export class CreateLoanProductComponent extends LoanProductBaseComponent impleme
   }
 
   ngOnInit() {
-    this.accountingRuleData = this.accounting.getAccountingRulesForLoans();
+    this.accountingRuleData = this.accounting.getAccountingRulesForLoans(this.loanProductService.isLoanProduct);
     this.buildAdvancedPaymentAllocation();
     if (this.loanProductService.isWorkingCapital) {
-      this.accountingRuleData = ['NONE'];
       this.loanProductsTemplate['creditAllocationTransactionTypes'] = [];
     }
   }
@@ -249,9 +248,7 @@ export class CreateLoanProductComponent extends LoanProductBaseComponent impleme
   }
 
   get loanProductAccountingForm() {
-    if (this.loanProductService.isLoanProduct) {
-      return this.loanProductAccountingStep?.loanProductAccountingForm;
-    }
+    return this.loanProductAccountingStep?.loanProductAccountingForm;
   }
 
   get loanProductFormValid() {
@@ -280,7 +277,8 @@ export class CreateLoanProductComponent extends LoanProductBaseComponent impleme
         this.loanProductDetailsForm.valid &&
         this.loanProductCurrencyForm.valid &&
         this.loanProductTermsForm.valid &&
-        this.loanProductSettingsForm.valid
+        this.loanProductSettingsForm.valid &&
+        this.loanProductAccountingForm?.valid
       );
     }
   }
@@ -328,7 +326,8 @@ export class CreateLoanProductComponent extends LoanProductBaseComponent impleme
         ...this.loanProductDetailsStep.loanProductDetails,
         ...this.loanProductCurrencyStep.loanProductCurrency,
         ...this.loanProductTermsStep.loanProductTerms,
-        ...this.loanProductSettingsStep.loanProductSettings
+        ...this.loanProductSettingsStep.loanProductSettings,
+        ...this.loanProductAccountingStep.loanProductAccounting
       };
       loanProduct['paymentAllocation'] = this.paymentAllocation;
       return loanProduct;
@@ -376,7 +375,14 @@ export class CreateLoanProductComponent extends LoanProductBaseComponent impleme
   submitWCProduct(): void {
     const loanProduct = this.loanProducts.buildPayload(this.loanProduct, this.itemsByDefault);
 
-    loanProduct['accountingRule'] = 'NONE';
+    // No Empty values to be sent
+    [
+      'nearBreachId'
+    ].forEach((attr: string) => {
+      if (loanProduct[attr] === null || loanProduct[attr] === '') {
+        delete loanProduct[attr];
+      }
+    });
 
     this.productsService
       .createLoanProduct(this.loanProductService.loanProductPath, loanProduct)
