@@ -179,6 +179,7 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
   delinquencyStartTypeOptions: StringEnumOptionData[] = [];
   breachOptions: Breach[] = [];
   nearBreachOptions: NearBreach[] = [];
+  allowAttributeOverridesBreach: boolean = true;
 
   constructor() {
     super();
@@ -372,6 +373,7 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
         this.loansAccountTermsForm.controls.discount.disable();
       }
       if (!this.allowAttributeOverrides.breach || this.allowAttributeOverrides.breach === false) {
+        this.allowAttributeOverridesBreach = false;
         this.loansAccountTermsForm.controls.breachId.disable();
         this.loansAccountTermsForm.controls.nearBreachId.disable();
       }

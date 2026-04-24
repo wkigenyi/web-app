@@ -28,22 +28,22 @@
     <div class="breach-display-column">
       <div class="flex-fill layout-row">
         <span class="flex-30 attribute-name">{{ 'labels.inputs.Breach' | translate }}:</span>
-        <span class="flex-30">{{ breach.name }}</span>
+        <span class="flex-60">{{ breach.name }}</span>
       </div>
       <div class="flex-fill layout-row">
         <span class="flex-30 attribute-name">{{ 'labels.inputs.Frequency' | translate }}:</span>
-        <span class="flex-30"
+        <span class="flex-60"
           >{{ breach.breachFrequency | formatNumber: '' : 0 }}
           {{ breach.breachFrequencyType.code | translateKey: 'catalogs' }}</span
         >
       </div>
       <div class="flex-fill layout-row">
         <span class="flex-30 attribute-name">{{ 'labels.inputs.Calculation Type' | translate }}:</span>
-        <span class="flex-30">{{ camalize(breach.breachAmountCalculationType.code) | translateKey: 'catalogs' }}</span>
+        <span class="flex-60">{{ camalize(breach.breachAmountCalculationType.code) | translateKey: 'catalogs' }}</span>
       </div>
       <div class="flex-fill layout-row">
         <span class="flex-30 attribute-name">{{ 'labels.inputs.Amount' | translate }}:</span>
-        <span class="flex-30">{{ breach.breachAmount | formatNumber }}</span>
+        <span class="flex-60">{{ breach.breachAmount | formatNumber }}</span>
       </div>
     </div>
   }
@@ -66,18 +66,18 @@
     <div class="breach-display-column">
       <div class="flex-fill layout-row">
         <span class="flex-30 attribute-name">{{ 'labels.inputs.Near Breach' | translate }}:</span>
-        <span class="flex-30">{{ nearBreach.name }}</span>
+        <span class="flex-60">{{ nearBreach.name }}</span>
       </div>
       <div class="flex-fill layout-row">
         <span class="flex-30 attribute-name">{{ 'labels.inputs.Frequency' | translate }}:</span>
-        <span class="flex-30"
+        <span class="flex-60"
           >{{ nearBreach.frequency | formatNumber: '' : 0 }}
           {{ nearBreach.frequencyType.code | translateKey: 'catalogs' }}</span
         >
       </div>
       <div class="flex-fill layout-row">
         <span class="flex-30 attribute-name">{{ 'labels.inputs.Threshold' | translate }}:</span>
-        <span class="flex-30">{{ nearBreach.threshold | formatNumber }} %</span>
+        <span class="flex-60">{{ nearBreach.threshold | formatNumber }} %</span>
       </div>
     </div>
   }
