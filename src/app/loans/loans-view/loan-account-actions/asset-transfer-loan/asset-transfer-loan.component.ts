@@ -12,6 +12,7 @@ import { Dates } from 'app/core/utils/dates';
 import { ExternalAssetOwnerService } from 'app/loans/services/external-asset-owner.service';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.component';
+import { rangeValidator } from 'app/shared/validators/percentage.validator';
 
 @Component({
   selector: 'mifosx-asset-transfer-loan',
@@ -35,7 +36,7 @@ export class AssetTransferLoanComponent extends LoanAccountActionsBaseComponent 
   /** Maximum Date allowed. */
   maxDate = new Date();
   /** Sell Loan Form */
-  saleLoanForm: UntypedFormGroup;
+  saleLoanForm!: UntypedFormGroup;
 
   constructor() {
     super();
@@ -68,7 +69,10 @@ export class AssetTransferLoanComponent extends LoanAccountActionsBaseComponent 
       ],
       purchasePriceRatio: [
         '',
-        Validators.required
+        [
+          Validators.required,
+          rangeValidator(0, 100)
+        ]
       ],
       transferExternalId: '',
       ownerExternalId: [

@@ -18,6 +18,8 @@ import { InputAmountComponent } from 'app/shared/input-amount/input-amount.compo
 import { LoanTransactionTemplate } from 'app/loans/models/loan-transaction-type.model';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.component';
+import { InputPositiveIntegerComponent } from 'app/shared/input-positive-integer/input-positive-integer.component';
+import { positiveIntegerValidator } from 'app/shared/validators/positive-integer.validator';
 
 @Component({
   selector: 'mifosx-loan-reaging',
@@ -26,7 +28,8 @@ import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.co
   imports: [
     ...STANDALONE_SHARED_IMPORTS,
     InputAmountComponent,
-    MatSlideToggle
+    MatSlideToggle,
+    InputPositiveIntegerComponent
   ]
 })
 export class LoanReagingComponent extends LoanAccountActionsBaseComponent implements OnInit {
@@ -35,7 +38,7 @@ export class LoanReagingComponent extends LoanAccountActionsBaseComponent implem
   private dialog = inject(MatDialog);
 
   /** Repayment Loan Form */
-  reagingLoanForm: UntypedFormGroup;
+  reagingLoanForm!: UntypedFormGroup;
 
   reAgeReasonOptions: any[] = [];
   periodFrequencyOptions: OptionData[] = [];
@@ -68,7 +71,10 @@ export class LoanReagingComponent extends LoanAccountActionsBaseComponent implem
     this.reagingLoanForm = this.formBuilder.group({
       numberOfInstallments: [
         1,
-        Validators.required
+        [
+          Validators.required,
+          positiveIntegerValidator()
+        ]
       ],
       startDate: [
         this.settingsService.businessDate,
@@ -76,7 +82,10 @@ export class LoanReagingComponent extends LoanAccountActionsBaseComponent implem
       ],
       frequencyNumber: [
         1,
-        Validators.required
+        [
+          Validators.required,
+          positiveIntegerValidator()
+        ]
       ],
       frequencyType: [
         ,
@@ -123,7 +132,7 @@ export class LoanReagingComponent extends LoanAccountActionsBaseComponent implem
 
     this.loanService.getReAgePreview(this.loanId, data).subscribe({
       next: (response: RepaymentSchedule) => {
-        const currencyCode = response.currency?.code || this.loanTransactionData.currency.code;
+        const currencyCode = response.currency?.code || this.loanTransactionData?.currency?.code;
 
         if (!currencyCode) {
           console.error('Currency code is not available in API response or loan details');
